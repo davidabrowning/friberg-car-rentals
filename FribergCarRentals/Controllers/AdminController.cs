@@ -1,8 +1,11 @@
 ﻿using FribergCarRentals.Data;
 using FribergCarRentals.Models;
+using FribergCarRentals.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Controllers
 {
@@ -10,17 +13,30 @@ namespace FribergCarRentals.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdminController(ApplicationDbContext applicationDbContext    )
+        public AdminController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
         {
             _applicationDbContext = applicationDbContext;
+            _userManager = userManager;
         }
 
         // GET: AdminController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            AdminControlPanelViewModel adminControlPanelViewModel = new AdminControlPanelViewModel();
             List<ApplicationUser> applicationUsers = _applicationDbContext.Users.ToList();
-            return View(applicationUsers);
+            foreach (ApplicationUser user in applicationUsers)
+            {
+                bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                bool isUser = await _userManager.IsInRoleAsync(user, "User");
+                adminControlPanelViewModel.UsersWithRoles.Add(new UserWithRolesViewModel(){
+                    ApplicationUser = user,
+                    IsAdmin = isAdmin,
+                    IsUser = isUser
+                });
+            }
+            return View(adminControlPanelViewModel);
         }
 
         // GET: AdminController/Details/5
