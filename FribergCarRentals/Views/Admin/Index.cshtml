@@ -1,8 +1,14 @@
-﻿@{
+﻿@model List<FribergCarRentals.Models.ApplicationUser>
+
+@{
     ViewData["Title"] = "Admin Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Admin Page</h1>
     <p>Control panel for admins.</p>
+    @foreach (var user in Model)
+    {
+        <p>@user.UserName</p>
+    }
 </div>

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FribergCarRentals.Data;
+using FribergCarRentals.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,10 +9,18 @@ namespace FribergCarRentals.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
+        private readonly ApplicationDbContext _applicationDbContext;
+
+        public AdminController(ApplicationDbContext applicationDbContext    )
+        {
+            _applicationDbContext = applicationDbContext;
+        }
+
         // GET: AdminController
         public ActionResult Index()
         {
-            return View();
+            List<ApplicationUser> applicationUsers = _applicationDbContext.Users.ToList();
+            return View(applicationUsers);
         }
 
         // GET: AdminController/Details/5
