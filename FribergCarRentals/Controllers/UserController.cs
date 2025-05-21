@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace FribergCarRentals.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         // GET: UserController
