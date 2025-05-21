@@ -13,6 +13,7 @@
 			<th>Email</th>
 			<th>IsAdmin</th>
 			<th>IsUser</th>
+			<th></th>
 		</tr>
 		@foreach (var user in Model.UsersWithRoles)
 		{
@@ -35,6 +36,15 @@
 				{
 					<td>No</td>
 				}
+				<td>
+					<a class="btn btn-outline-primary"
+					   asp-area=""
+					   asp-controller="Admin"
+					   asp-action="Edit"
+					   asp-route-id="@user.ApplicationUser.Id">
+						Edit user
+					</a>
+				</td>
 			</tr>
 		}
 	</table>

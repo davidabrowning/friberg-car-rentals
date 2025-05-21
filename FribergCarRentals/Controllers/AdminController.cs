@@ -39,6 +39,21 @@ namespace FribergCarRentals.Controllers
             return View(adminControlPanelViewModel);
         }
 
+        // POST: AdminController
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
         // GET: AdminController/Details/5
         public ActionResult Details(int id)
         {
@@ -67,9 +82,16 @@ namespace FribergCarRentals.Controllers
         }
 
         // GET: AdminController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(string id)
         {
-            return View();
+            ApplicationUser applicationUser = _applicationDbContext.Users.Where(u => u.Id.Equals(id)).FirstOrDefault();
+            bool isAdmin = await _userManager.IsInRoleAsync(applicationUser, "Admin");
+            bool isUser = await _userManager.IsInRoleAsync(applicationUser, "User");
+            UserWithRolesViewModel userWithRoles = new() { 
+                ApplicationUser = applicationUser, 
+                IsAdmin = isAdmin, 
+                IsUser = isUser };
+            return View(userWithRoles);
         }
 
         // POST: AdminController/Edit/5
