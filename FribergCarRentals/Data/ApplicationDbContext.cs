@@ -10,5 +10,6 @@ namespace FribergCarRentals.Data
             : base(options)
         {
         }
+        public DbSet<Car> Cars { get; set; }
     }
 }
