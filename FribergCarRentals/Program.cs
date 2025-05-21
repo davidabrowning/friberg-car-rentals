@@ -59,24 +59,45 @@ namespace FribergCarRentals
         {
             using (var scope = app.Services.CreateScope())
             {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                string[] roles = { "Admin", "User" };
+                await SeedRoles(scope);
+                await SeedDefaultAdminUser(scope);
+                await SeedAllUsersAsUserRole(scope);
+            }
+        }
 
-                foreach (var role in roles)
+        private static async Task SeedRoles(IServiceScope scope)
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            string[] roles = { "Admin", "User" };
+
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
                 {
-                    if (!await roleManager.RoleExistsAsync(role))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(role));
-                    }
+                    await roleManager.CreateAsync(new IdentityRole(role));
                 }
+            }
+        }
 
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                var user = await userManager.FindByEmailAsync("admin@admin.se");
+        private static async Task SeedDefaultAdminUser(IServiceScope scope)
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var user = await userManager.FindByEmailAsync("admin@admin.se");
 
-                if (user != null && !(await userManager.IsInRoleAsync(user, "Admin")))
-                {
-                    await userManager.AddToRoleAsync(user, "Admin");
-                }
+            if (user != null && !(await userManager.IsInRoleAsync(user, "Admin")))
+            {
+                await userManager.AddToRoleAsync(user, "Admin");
+            }
+        }
+
+        private static async Task SeedAllUsersAsUserRole(IServiceScope scope)
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            List<IdentityUser> allUsers = await userManager.Users.ToListAsync();
+
+            foreach (var user in allUsers)
+            {
+                await userManager.AddToRoleAsync(user, "User");
             }
         }
     }
