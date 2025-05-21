@@ -3,12 +3,6 @@
 @inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">
-    @if (User.IsInRole("Admin"))
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">[Signed in as admin]</a>
-        </li>
-    }
     @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
