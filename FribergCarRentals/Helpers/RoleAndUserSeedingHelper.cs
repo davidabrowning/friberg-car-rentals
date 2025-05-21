@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FribergCarRentals.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Helpers
@@ -31,7 +32,7 @@ namespace FribergCarRentals.Helpers
 
         private static async Task SeedDefaultAdminUser(IServiceScope scope)
         {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var user = await userManager.FindByEmailAsync("admin@admin.se");
 
             if (user != null && !(await userManager.IsInRoleAsync(user, "Admin")))
@@ -42,8 +43,8 @@ namespace FribergCarRentals.Helpers
 
         private static async Task SeedAllUsersAsUserRole(IServiceScope scope)
         {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            List<IdentityUser> allUsers = await userManager.Users.ToListAsync();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            List<ApplicationUser> allUsers = await userManager.Users.ToListAsync();
 
             foreach (var user in allUsers)
             {
