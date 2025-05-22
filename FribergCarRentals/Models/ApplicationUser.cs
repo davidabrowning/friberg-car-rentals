@@ -4,6 +4,5 @@ namespace FribergCarRentals.Models
 {
     public class ApplicationUser : IdentityUser
     {
-
     }
 }
