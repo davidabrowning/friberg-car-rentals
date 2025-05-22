@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using FribergCarRentals.Models;
+using FribergCarRentals.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Controllers
