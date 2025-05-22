@@ -24,7 +24,7 @@ namespace FribergCarRentals.Controllers
         // GET: Customer
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            return View(await _context.Customers.Include(c => c.ApplicationUser).ToListAsync());
         }
 
         // GET: Customer/Details/5
