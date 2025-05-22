@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
+using FribergCarRentals.ViewModels;
 
 namespace FribergCarRentals.Controllers
 {
@@ -24,7 +25,17 @@ namespace FribergCarRentals.Controllers
         // GET: Customer
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.Include(c => c.ApplicationUser).ToListAsync());
+            List<CustomerViewModel> customerViewModels = new();
+            List<Customer> customers = await _context.Customers.Include(c => c.ApplicationUser).ToListAsync();
+            foreach (Customer customer in customers)
+            {
+                CustomerViewModel customerViewModel = new();
+                customerViewModel.Id = customer.Id;
+                customerViewModel.FirstName = customer.FirstName;
+                customerViewModel.LastName = customer.LastName;
+                customerViewModels.Add(customerViewModel);
+            }
+            return View(customerViewModels);
         }
 
         // GET: Customer/Details/5
@@ -35,14 +46,17 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Customer customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return View(customer);
+            CustomerViewModel customerViewModel = new();
+            customerViewModel.Id = customer.Id;
+            customerViewModel.FirstName = customer.FirstName;
+            customerViewModel.LastName = customer.LastName;
+            return View(customerViewModel);
         }
 
         // GET: Customer/Create
@@ -56,15 +70,18 @@ namespace FribergCarRentals.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] Customer customer)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName")] CustomerViewModel customerViewModel)
         {
             if (ModelState.IsValid)
             {
+                Customer customer = new();
+                customer.FirstName = customerViewModel.FirstName;
+                customer.LastName = customerViewModel.LastName;
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(customer);
+            return View(customerViewModel);
         }
 
         // GET: Customer/Edit/5
@@ -80,7 +97,12 @@ namespace FribergCarRentals.Controllers
             {
                 return NotFound();
             }
-            return View(customer);
+
+            CustomerViewModel customerViewModel = new();
+            customerViewModel.Id = customer.Id;
+            customerViewModel.FirstName = customer.FirstName;
+            customerViewModel.LastName = customer.LastName;
+            return View(customerViewModel);
         }
 
         // POST: Customer/Edit/5
@@ -88,9 +110,9 @@ namespace FribergCarRentals.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id")] Customer customer)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName")] CustomerViewModel customerViewModel)
         {
-            if (id != customer.Id)
+            if (id != customerViewModel.Id)
             {
                 return NotFound();
             }
@@ -99,12 +121,15 @@ namespace FribergCarRentals.Controllers
             {
                 try
                 {
+                    Customer customer = await _context.Customers.Where(c => c.Id == customerViewModel.Id).FirstOrDefaultAsync();
+                    customer.FirstName = customerViewModel.FirstName;
+                    customer.LastName = customerViewModel.LastName;
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customer.Id))
+                    if (!CustomerExists(customerViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -115,7 +140,7 @@ namespace FribergCarRentals.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(customer);
+            return View(customerViewModel);
         }
 
         // GET: Customer/Delete/5
@@ -126,14 +151,17 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Customer? customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return View(customer);
+            CustomerViewModel customerViewModel = new();
+            customerViewModel.Id = customer.Id;
+            customerViewModel.FirstName = customer.FirstName;
+            customerViewModel.LastName = customer.LastName;
+            return View(customerViewModel);
         }
 
         // POST: Customer/Delete/5
