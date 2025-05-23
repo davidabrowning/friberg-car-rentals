@@ -16,7 +16,7 @@
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="ApplicationUser" class="control-label"></label>
-                <select asp-for="ApplicationUser" class="form-control" asp-items="Model.ApplicationUsers"></select>
+                <select asp-for="ApplicationUser" class="form-control" asp-items="Model.ApplicationUsersSelectList"></select>
                 <span asp-validation-for="ApplicationUser" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -100,7 +100,7 @@ namespace FribergCarRentals.Controllers
             CustomerViewModel customerViewModel = new();
             ViewModelMappingHelper.MapAToB(customer, customerViewModel);
             List<ApplicationUser> applicationUsers = await _userManager.Users.ToListAsync();
-            customerViewModel.ApplicationUsers = applicationUsers.Select(au => new SelectListItem()
+            customerViewModel.ApplicationUsersSelectList = applicationUsers.Select(au => new SelectListItem()
             {
                 Value = au.Id,
                 Text = au.UserName
