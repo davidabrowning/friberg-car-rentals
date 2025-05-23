@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FribergCarRentals.ViewModels
 {
@@ -12,6 +13,6 @@ namespace FribergCarRentals.ViewModels
         public string HomeCity { get; set; } = "";
         public string HomeCountry { get; set; } = "";
         public List<Reservation> Reservations { get; set; } = new();
-        public List<ApplicationUser> ApplicationUsers { get; set; } = new();
+        public List<SelectListItem> ApplicationUsers { get; set; } = new();
     }
 }

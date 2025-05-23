@@ -4,6 +4,7 @@ using FribergCarRentals.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FribergCarRentals.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250523133437_AddApplicationUserAdminAndCustomerProperties")]
+    partial class AddApplicationUserAdminAndCustomerProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +37,9 @@ namespace FribergCarRentals.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ApplicationUserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -46,6 +52,10 @@ namespace FribergCarRentals.Data.Migrations
 
                     b.HasIndex("ApplicationUserId")
                         .IsUnique();
+
+                    b.HasIndex("ApplicationUserId1")
+                        .IsUnique()
+                        .HasFilter("[ApplicationUserId1] IS NOT NULL");
 
                     b.ToTable("Admins");
                 });
@@ -155,6 +165,9 @@ namespace FribergCarRentals.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ApplicationUserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -175,6 +188,10 @@ namespace FribergCarRentals.Data.Migrations
 
                     b.HasIndex("ApplicationUserId")
                         .IsUnique();
+
+                    b.HasIndex("ApplicationUserId1")
+                        .IsUnique()
+                        .HasFilter("[ApplicationUserId1] IS NOT NULL");
 
                     b.ToTable("Customers");
                 });
@@ -348,10 +365,14 @@ namespace FribergCarRentals.Data.Migrations
             modelBuilder.Entity("FribergCarRentals.Models.Admin", b =>
                 {
                     b.HasOne("FribergCarRentals.Models.ApplicationUser", "ApplicationUser")
-                        .WithOne("Admin")
+                        .WithOne()
                         .HasForeignKey("FribergCarRentals.Models.Admin", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FribergCarRentals.Models.ApplicationUser", null)
+                        .WithOne("Admin")
+                        .HasForeignKey("FribergCarRentals.Models.Admin", "ApplicationUserId1");
 
                     b.Navigation("ApplicationUser");
                 });
@@ -359,10 +380,14 @@ namespace FribergCarRentals.Data.Migrations
             modelBuilder.Entity("FribergCarRentals.Models.Customer", b =>
                 {
                     b.HasOne("FribergCarRentals.Models.ApplicationUser", "ApplicationUser")
-                        .WithOne("Customer")
+                        .WithOne()
                         .HasForeignKey("FribergCarRentals.Models.Customer", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FribergCarRentals.Models.ApplicationUser", null)
+                        .WithOne("Customer")
+                        .HasForeignKey("FribergCarRentals.Models.Customer", "ApplicationUserId1");
 
                     b.Navigation("ApplicationUser");
                 });
