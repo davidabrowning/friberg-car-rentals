@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
+using FribergCarRentals.ViewModels;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Controllers
 {
@@ -24,7 +26,15 @@ namespace FribergCarRentals.Controllers
         // GET: Car
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cars.ToListAsync());
+            List<CarViewModel> carViewModels = new();
+            List<Car> cars = await _context.Cars.ToListAsync();
+            foreach (Car car in cars)
+            {
+                CarViewModel carViewModel = new();
+                ViewModelMappingHelper.MapAToB(car, carViewModel);
+                carViewModels.Add(carViewModel);
+            }
+            return View(carViewModels);
         }
 
         // GET: Car/Details/5
@@ -42,7 +52,9 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            return View(car);
+            CarViewModel carViewModel = new();
+            ViewModelMappingHelper.MapAToB(car, carViewModel);
+            return View(carViewModel);
         }
 
         // GET: Car/Create
@@ -56,15 +68,17 @@ namespace FribergCarRentals.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Make,Model,Year,Description")] Car car)
+        public async Task<IActionResult> Create([Bind("Id,Make,Model,Year,Description")] CarViewModel carViewModel)
         {
             if (ModelState.IsValid)
             {
+                Car car = new();
+                ViewModelMappingHelper.MapAToB(carViewModel, car);
                 _context.Add(car);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(car);
+            return View(carViewModel);
         }
 
         // GET: Car/Edit/5
@@ -80,7 +94,10 @@ namespace FribergCarRentals.Controllers
             {
                 return NotFound();
             }
-            return View(car);
+
+            CarViewModel carViewModel = new();
+            ViewModelMappingHelper.MapAToB(car, carViewModel);
+            return View(carViewModel);
         }
 
         // POST: Car/Edit/5
@@ -88,9 +105,9 @@ namespace FribergCarRentals.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Make,Model,Year,Description")] Car car)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Make,Model,Year,Description")] CarViewModel carViewModel)
         {
-            if (id != car.Id)
+            if (id != carViewModel.Id)
             {
                 return NotFound();
             }
@@ -99,12 +116,14 @@ namespace FribergCarRentals.Controllers
             {
                 try
                 {
+                    Car car = new();
+                    ViewModelMappingHelper.MapAToB(carViewModel, car);
                     _context.Update(car);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarExists(car.Id))
+                    if (!CarExists(carViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -115,7 +134,7 @@ namespace FribergCarRentals.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(car);
+            return View(carViewModel);
         }
 
         // GET: Car/Delete/5
@@ -133,7 +152,9 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            return View(car);
+            CarViewModel carViewModel = new();
+            ViewModelMappingHelper.MapAToB(car, carViewModel);
+            return View(carViewModel);
         }
 
         // POST: Car/Delete/5

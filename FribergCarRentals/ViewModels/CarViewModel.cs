@@ -9,6 +9,6 @@ namespace FribergCarRentals.ViewModels
         public string Model { get; set; } = "";
         public int Year { get; set; } = 0;
         public string Description { get; set; } = "";
-        List<Reservation> Reservations { get; set; } = new();
+        public List<Reservation> Reservations { get; set; } = new();
     }
 }

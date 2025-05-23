@@ -21,5 +21,23 @@ namespace FribergCarRentals.Helpers
             b.HomeCity = a.HomeCity;
             b.HomeCountry = a.HomeCountry;
         }
+        public static void MapAToB(Car a, CarViewModel b)
+        {
+            b.Id = a.Id;
+            b.Make = a.Make;
+            b.Model = a.Model;
+            b.Year = a.Year;
+            b.Description = a.Description;
+            b.Reservations = a.Reservations;
+        }
+        public static void MapAToB(CarViewModel a, Car b)
+        { 
+            b.Id = a.Id;
+            b.Make = a.Make;
+            b.Model = a.Model;
+            b.Year = a.Year;
+            b.Description = a.Description;
+            b.Reservations = a.Reservations;
+        }
     }
 }
