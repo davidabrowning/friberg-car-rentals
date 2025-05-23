@@ -19,6 +19,9 @@
 				@Html.DisplayNameFor(Model => Model.Id)
 			</th>
 			<th>
+				@Html.DisplayNameFor(Model => Model.ApplicationUser)
+			</th>
+			<th>
 				@Html.DisplayNameFor(Model => Model.FirstName)
 			</th>
 			<th>
@@ -41,6 +44,9 @@
 			<tr>
 				<td>
 					@customerViewModel.Id
+				</td>
+				<td>
+					@customerViewModel.ApplicationUser
 				</td>
 				<td>
 					@customerViewModel.FirstName

@@ -10,6 +10,7 @@ using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.ViewModels;
 using FribergCarRentals.Helpers;
+using Microsoft.AspNetCore.Identity;
 
 namespace FribergCarRentals.Controllers
 {
@@ -17,10 +18,12 @@ namespace FribergCarRentals.Controllers
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CustomerController(ApplicationDbContext context)
+        public CustomerController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Customer
@@ -88,7 +91,7 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers.Include(c => c.ApplicationUser).FirstOrDefaultAsync(c => c.Id == id);
             if (customer == null)
             {
                 return NotFound();
@@ -96,6 +99,8 @@ namespace FribergCarRentals.Controllers
 
             CustomerViewModel customerViewModel = new();
             ViewModelMappingHelper.MapAToB(customer, customerViewModel);
+            List<ApplicationUser> applicationUsers = await _userManager.Users.ToListAsync();
+            customerViewModel.ApplicationUsers = applicationUsers;
             return View(customerViewModel);
         }
 
