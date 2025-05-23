@@ -8,7 +8,6 @@ namespace FribergCarRentals.Helpers
         public static void MapAToB(Customer a, CustomerViewModel b)
         {
             b.Id = a.Id;
-            b.ApplicationUserId = a.ApplicationUserId;
             b.ApplicationUser = a.ApplicationUser;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
@@ -19,7 +18,6 @@ namespace FribergCarRentals.Helpers
         public static void MapAToB(CustomerViewModel a, Customer b)
         {
             b.Id = a.Id;
-            b.ApplicationUserId = a.ApplicationUserId;
             b.ApplicationUser = a.ApplicationUser;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
