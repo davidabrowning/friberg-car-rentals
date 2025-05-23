@@ -10,7 +10,7 @@ namespace FribergCarRentals.Helpers
         public static void MapAToB(Customer a, CustomerViewModel b)
         {
             b.Id = a.Id;
-            b.ApplicationUser = a.ApplicationUser;
+            b.IdentityUser = a.IdentityUser;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
             b.HomeCity = a.HomeCity;
@@ -20,7 +20,7 @@ namespace FribergCarRentals.Helpers
         public static void MapAToB(CustomerViewModel a, Customer b)
         {
             b.Id = a.Id;
-            b.ApplicationUser = a.ApplicationUser;
+            b.IdentityUser = a.IdentityUser;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
             b.HomeCity = a.HomeCity;
@@ -45,14 +45,14 @@ namespace FribergCarRentals.Helpers
             b.Description = a.Description;
             b.Reservations = a.Reservations;
         }
-        public static async Task MapAToB(ApplicationUser a, ApplicationUserViewModel b, UserManager<ApplicationUser> userManager)
+        public static async Task MapAToB(IdentityUser a, IdentityUserViewModel b, UserManager<IdentityUser> userManager)
         {
             b.Id = a.Id;
             b.Username = a.UserName;
             b.IsAdmin = await userManager.IsInRoleAsync(a, "Admin");
             b.IsUser = await userManager.IsInRoleAsync(a, "User");
         }
-        public static async Task MapAToB(ApplicationUserViewModel a, ApplicationUser b, UserManager<ApplicationUser> userManager)
+        public static async Task MapAToB(IdentityUserViewModel a, IdentityUser b, UserManager<IdentityUser> userManager)
         {
             b.Id = a.Id;
             b.UserName = a.Username;

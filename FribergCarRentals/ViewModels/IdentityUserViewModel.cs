@@ -1,6 +1,6 @@
 ﻿namespace FribergCarRentals.ViewModels
 {
-    public class ApplicationUserViewModel
+    public class IdentityUserViewModel
     {
         public string Id { get; set; } = "";
         public string Username { get; set; } = "";

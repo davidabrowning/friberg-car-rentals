@@ -1,18 +1,18 @@
 ﻿using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace FribergCarRentals.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
         public DbSet<Admin> Admins { get; set; }
-        // Note that DbSet<ApplicationUser> is already included by default and doesn't need to be declared here.
+        // Note that DbSet<IdentityUser> is already included by default and doesn't need to be declared here.
         public DbSet<Car> Cars { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Reservation> Reservations { get; set; }

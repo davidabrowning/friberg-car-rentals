@@ -18,9 +18,9 @@ namespace FribergCarRentals.Controllers
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CustomerController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public CustomerController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -30,7 +30,7 @@ namespace FribergCarRentals.Controllers
         public async Task<IActionResult> Index()
         {
             List<CustomerViewModel> customerViewModels = new();
-            List<Customer> customers = await _context.Customers.Include(c => c.ApplicationUser).ToListAsync();
+            List<Customer> customers = await _context.Customers.Include(c => c.IdentityUser).ToListAsync();
             foreach (Customer customer in customers)
             {
                 CustomerViewModel customerViewModel = new();
@@ -91,7 +91,7 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.Include(c => c.ApplicationUser).FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _context.Customers.Include(c => c.IdentityUser).FirstOrDefaultAsync(c => c.Id == id);
             if (customer == null)
             {
                 return NotFound();
