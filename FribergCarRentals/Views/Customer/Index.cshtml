@@ -24,6 +24,12 @@
 			<th>
 				@Html.DisplayNameFor(Model => Model.LastName)
 			</th>
+						<th>
+				@Html.DisplayNameFor(Model => Model.HomeCity)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.HomeCountry)
+			</th>
 			<th>
 				Modify
 			</th>
@@ -41,6 +47,12 @@
 				</td>
 				<td>
 					@customerViewModel.LastName
+				</td>
+				<td>
+					@customerViewModel.HomeCity
+				</td>
+				<td>
+					@customerViewModel.HomeCountry
 				</td>
 				<td>
 					<a asp-action="Edit" asp-route-id="@customerViewModel.Id">Edit</a> |

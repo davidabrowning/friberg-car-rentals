@@ -33,6 +33,8 @@ namespace FribergCarRentals.Controllers
                 customerViewModel.Id = customer.Id;
                 customerViewModel.FirstName = customer.FirstName;
                 customerViewModel.LastName = customer.LastName;
+                customerViewModel.HomeCity = customer.HomeCity;
+                customerViewModel.HomeCountry = customer.HomeCountry;
                 customerViewModels.Add(customerViewModel);
             }
             return View(customerViewModels);
@@ -56,6 +58,8 @@ namespace FribergCarRentals.Controllers
             customerViewModel.Id = customer.Id;
             customerViewModel.FirstName = customer.FirstName;
             customerViewModel.LastName = customer.LastName;
+            customerViewModel.HomeCity = customer.HomeCity;
+            customerViewModel.HomeCountry = customer.HomeCountry;
             return View(customerViewModel);
         }
 
@@ -70,13 +74,15 @@ namespace FribergCarRentals.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
         {
             if (ModelState.IsValid)
             {
                 Customer customer = new();
                 customer.FirstName = customerViewModel.FirstName;
                 customer.LastName = customerViewModel.LastName;
+                customer.HomeCity = customerViewModel.HomeCity;
+                customer.HomeCountry = customerViewModel.HomeCountry;
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,6 +108,8 @@ namespace FribergCarRentals.Controllers
             customerViewModel.Id = customer.Id;
             customerViewModel.FirstName = customer.FirstName;
             customerViewModel.LastName = customer.LastName;
+            customer.HomeCity = customerViewModel.HomeCity;
+            customer.HomeCountry = customerViewModel.HomeCountry;
             return View(customerViewModel);
         }
 
@@ -124,6 +132,8 @@ namespace FribergCarRentals.Controllers
                     Customer customer = await _context.Customers.Where(c => c.Id == customerViewModel.Id).FirstOrDefaultAsync();
                     customer.FirstName = customerViewModel.FirstName;
                     customer.LastName = customerViewModel.LastName;
+                    customer.HomeCity = customerViewModel.HomeCity;
+                    customer.HomeCountry = customerViewModel.HomeCountry;
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
@@ -161,6 +171,8 @@ namespace FribergCarRentals.Controllers
             customerViewModel.Id = customer.Id;
             customerViewModel.FirstName = customer.FirstName;
             customerViewModel.LastName = customer.LastName;
+            customerViewModel.HomeCity = customer.HomeCity;
+            customerViewModel.HomeCountry = customer.HomeCountry;
             return View(customerViewModel);
         }
 
