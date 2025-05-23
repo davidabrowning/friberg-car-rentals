@@ -1,5 +1,7 @@
 ﻿using FribergCarRentals.Models;
 using FribergCarRentals.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace FribergCarRentals.Helpers
 {
@@ -42,6 +44,34 @@ namespace FribergCarRentals.Helpers
             b.Year = a.Year;
             b.Description = a.Description;
             b.Reservations = a.Reservations;
+        }
+        public static async Task MapAToB(ApplicationUser a, ApplicationUserViewModel b, UserManager<ApplicationUser> userManager)
+        {
+            b.Id = a.Id;
+            b.Username = a.UserName;
+            b.IsAdmin = await userManager.IsInRoleAsync(a, "Admin");
+            b.IsUser = await userManager.IsInRoleAsync(a, "User");
+        }
+        public static async Task MapAToB(ApplicationUserViewModel a, ApplicationUser b, UserManager<ApplicationUser> userManager)
+        {
+            b.Id = a.Id;
+            b.UserName = a.Username;
+            if (a.IsAdmin)
+            {
+                await userManager.AddToRoleAsync(b, "Admin");
+            }
+            else
+            {
+                await userManager.RemoveFromRoleAsync(b, "Admin");
+            }
+            if (a.IsUser)
+            {
+                await userManager.AddToRoleAsync(b, "User");
+            }
+            else
+            {
+                await userManager.RemoveFromRoleAsync(b, "User");
+            }
         }
     }
 }
