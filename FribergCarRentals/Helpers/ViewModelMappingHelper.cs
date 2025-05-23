@@ -8,18 +8,22 @@ namespace FribergCarRentals.Helpers
         public static void MapAToB(Customer a, CustomerViewModel b)
         {
             b.Id = a.Id;
+            b.ApplicationUser = a.ApplicationUser;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
             b.HomeCity = a.HomeCity;
             b.HomeCountry = a.HomeCountry;
+            b.Reservations = a.Reservations;
         }
         public static void MapAToB(CustomerViewModel a, Customer b)
         {
             b.Id = a.Id;
+            b.ApplicationUser = a.ApplicationUser;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
             b.HomeCity = a.HomeCity;
             b.HomeCountry = a.HomeCountry;
+            b.Reservations = a.Reservations;
         }
         public static void MapAToB(Car a, CarViewModel b)
         {

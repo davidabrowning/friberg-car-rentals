@@ -8,6 +8,6 @@
         public string LastName { get; set; } = "";
         public string HomeCity { get; set; } = "";
         public string HomeCountry { get; set; } = "";
-        List<Reservation> Reservations { get; set; } = new();
+        public List<Reservation> Reservations { get; set; } = new();
     }
 }
