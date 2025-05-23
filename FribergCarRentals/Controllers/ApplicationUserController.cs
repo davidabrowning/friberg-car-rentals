@@ -43,24 +43,6 @@ namespace FribergCarRentals.Controllers
             return View(applicationUserViewModels);
         }
 
-        // GET: ApplicationUserViewModels/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var applicationUserViewModel = await _context.ApplicationUserViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (applicationUserViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(applicationUserViewModel);
-        }
-
         // GET: ApplicationUserViewModels/Create
         public IActionResult Create()
         {
@@ -125,56 +107,11 @@ namespace FribergCarRentals.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ApplicationUserViewModelExists(applicationUserViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(applicationUserViewModel);
-        }
-
-        // GET: ApplicationUserViewModels/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var applicationUserViewModel = await _context.ApplicationUserViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (applicationUserViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(applicationUserViewModel);
-        }
-
-        // POST: ApplicationUserViewModels/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var applicationUserViewModel = await _context.ApplicationUserViewModel.FindAsync(id);
-            if (applicationUserViewModel != null)
-            {
-                _context.ApplicationUserViewModel.Remove(applicationUserViewModel);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ApplicationUserViewModelExists(string id)
-        {
-            return _context.ApplicationUserViewModel.Any(e => e.Id == id);
         }
     }
 }
