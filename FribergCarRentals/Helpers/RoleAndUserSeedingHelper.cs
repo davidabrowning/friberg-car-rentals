@@ -19,7 +19,7 @@ namespace FribergCarRentals.Helpers
         private static async Task SeedRoles(IServiceScope scope)
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            string[] roles = { "Admin", "User" };
+            string[] roles = { "Admin", "Customer", "User" };
 
             foreach (var role in roles)
             {
