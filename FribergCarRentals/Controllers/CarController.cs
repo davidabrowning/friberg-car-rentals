@@ -73,7 +73,8 @@ namespace FribergCarRentals.Controllers
             if (ModelState.IsValid)
             {
                 Car car = new();
-                ViewModelMappingHelper.MapAToB(carViewModel, car);
+                List<Reservation> reservations = await _context.Reservations.ToListAsync();
+                ViewModelMappingHelper.MapAToB(carViewModel, car, reservations);
                 _context.Add(car);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -117,7 +118,8 @@ namespace FribergCarRentals.Controllers
                 try
                 {
                     Car car = new();
-                    ViewModelMappingHelper.MapAToB(carViewModel, car);
+                    List<Reservation> reservations = await _context.Reservations.ToListAsync();
+                    ViewModelMappingHelper.MapAToB(carViewModel, car, reservations);
                     _context.Update(car);
                     await _context.SaveChangesAsync();
                 }

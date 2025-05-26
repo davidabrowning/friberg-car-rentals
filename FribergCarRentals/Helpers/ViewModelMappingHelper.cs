@@ -48,16 +48,16 @@ namespace FribergCarRentals.Helpers
             b.Model = a.Model;
             b.Year = a.Year;
             b.Description = a.Description;
-            b.Reservations = a.Reservations;
+            b.ReservationIds = a.Reservations.Select(r => r.Id).ToList();
         }
-        public static void MapAToB(CarViewModel a, Car b)
+        public static void MapAToB(CarViewModel a, Car b, List<Reservation> reservations)
         { 
             b.Id = a.Id;
             b.Make = a.Make;
             b.Model = a.Model;
             b.Year = a.Year;
             b.Description = a.Description;
-            b.Reservations = a.Reservations;
+            b.Reservations = reservations.Where(r => a.ReservationIds.Contains(r.Id)).ToList();
         }
         public static async Task MapAToB(IdentityUser a, IdentityUserViewModel b, UserManager<IdentityUser> userManager)
         {
