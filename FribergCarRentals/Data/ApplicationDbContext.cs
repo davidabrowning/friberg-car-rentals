@@ -11,7 +11,7 @@ namespace FribergCarRentals.Data
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        // Note that DbSet<IdentityUser> is already included by default and doesn't need to be declared here.
+        // Note that DbSet<IdentityUserId> is already included by default and doesn't need to be declared here.
         public DbSet<Reservation> Reservations { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

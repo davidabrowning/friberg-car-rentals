@@ -75,7 +75,9 @@ namespace FribergCarRentals.Controllers
             if (ModelState.IsValid)
             {
                 Customer customer = new();
-                ViewModelMappingHelper.MapAToB(customerViewModel, customer);
+                IdentityUser identityUser = null;
+                List<Reservation> reservations = new();
+                ViewModelMappingHelper.MapAToB(customerViewModel, customer, identityUser, reservations);
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -109,7 +111,7 @@ namespace FribergCarRentals.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
         {
-            if (id != customerViewModel.Id)
+            if (id != customerViewModel.CustomerId)
             {
                 return NotFound();
             }
@@ -118,14 +120,18 @@ namespace FribergCarRentals.Controllers
             {
                 try
                 {
-                    Customer customer = await _context.Customers.Where(c => c.Id == customerViewModel.Id).FirstOrDefaultAsync();
-                    ViewModelMappingHelper.MapAToB(customerViewModel, customer);
+                    Customer customer = await _context.Customers
+                        .Where(c => c.Id == customerViewModel.CustomerId)
+                        .Include(c => c.IdentityUser)
+                        .Include(c => c.Reservations)
+                        .FirstOrDefaultAsync();
+                    ViewModelMappingHelper.MapAToB(customerViewModel, customer, customer.IdentityUser, customer.Reservations);
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customerViewModel.Id))
+                    if (!CustomerExists(customerViewModel.CustomerId))
                     {
                         return NotFound();
                     }

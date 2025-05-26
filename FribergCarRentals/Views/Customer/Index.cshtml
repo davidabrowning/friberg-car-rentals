@@ -16,10 +16,10 @@
 	<thead>
 		<tr>
 			<th>
-				@Html.DisplayNameFor(Model => Model.Id)
+				@Html.DisplayNameFor(Model => Model.CustomerId)
 			</th>
 			<th>
-				@Html.DisplayNameFor(Model => Model.IdentityUser)
+				@Html.DisplayNameFor(Model => Model.IdentityUserId)
 			</th>
 			<th>
 				@Html.DisplayNameFor(Model => Model.FirstName)
@@ -43,10 +43,10 @@
 		{
 			<tr>
 				<td>
-					@customerViewModel.Id
+					@customerViewModel.CustomerId
 				</td>
 				<td>
-					@customerViewModel.IdentityUser
+					@customerViewModel.IdentityUserId
 				</td>
 				<td>
 					@customerViewModel.FirstName
@@ -61,9 +61,9 @@
 					@customerViewModel.HomeCountry
 				</td>
 				<td>
-					<a asp-action="Edit" asp-route-id="@customerViewModel.Id">Edit</a> |
-					<a asp-action="Details" asp-route-id="@customerViewModel.Id">Details</a> |
-					<a asp-action="Delete" asp-route-id="@customerViewModel.Id">Delete</a>
+					<a asp-action="Edit" asp-route-id="@customerViewModel.CustomerId">Edit</a> |
+					<a asp-action="Details" asp-route-id="@customerViewModel.CustomerId">Details</a> |
+					<a asp-action="Delete" asp-route-id="@customerViewModel.CustomerId">Delete</a>
 				</td>
 			</tr>
 		}

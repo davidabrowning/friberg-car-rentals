@@ -41,7 +41,7 @@ namespace FribergCarRentals.Controllers
         //    }
 
         //    var carViewModel = await _context.CarViewModel
-        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //        .FirstOrDefaultAsync(m => m.CustomerId == id);
         //    if (carViewModel == null)
         //    {
         //        return NotFound();
@@ -61,7 +61,7 @@ namespace FribergCarRentals.Controllers
         //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,Make,Model,Year,Description")] CarViewModel carViewModel)
+        //public async Task<IActionResult> Create([Bind("CustomerId,Make,Model,Year,Description")] CarViewModel carViewModel)
         //{
         //    if (ModelState.IsValid)
         //    {
@@ -93,9 +93,9 @@ namespace FribergCarRentals.Controllers
         //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,Make,Model,Year,Description")] CarViewModel carViewModel)
+        //public async Task<IActionResult> Edit(int id, [Bind("CustomerId,Make,Model,Year,Description")] CarViewModel carViewModel)
         //{
-        //    if (id != carViewModel.Id)
+        //    if (id != carViewModel.CustomerId)
         //    {
         //        return NotFound();
         //    }
@@ -109,7 +109,7 @@ namespace FribergCarRentals.Controllers
         //        }
         //        catch (DbUpdateConcurrencyException)
         //        {
-        //            if (!CarViewModelExists(carViewModel.Id))
+        //            if (!CarViewModelExists(carViewModel.CustomerId))
         //            {
         //                return NotFound();
         //            }
@@ -132,7 +132,7 @@ namespace FribergCarRentals.Controllers
         //    }
 
         //    var carViewModel = await _context.CarViewModel
-        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //        .FirstOrDefaultAsync(m => m.CustomerId == id);
         //    if (carViewModel == null)
         //    {
         //        return NotFound();
@@ -158,7 +158,7 @@ namespace FribergCarRentals.Controllers
 
         //private bool CarViewModelExists(int id)
         //{
-        //    return _context.CarViewModel.Any(e => e.Id == id);
+        //    return _context.CarViewModel.Any(e => e.CustomerId == id);
         //}
     }
 }

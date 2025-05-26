@@ -23,23 +23,24 @@ namespace FribergCarRentals.Helpers
         }
         public static void MapAToB(Customer a, CustomerViewModel b)
         {
-            b.Id = a.Id;
-            b.IdentityUser = a.IdentityUser;
+            b.CustomerId = a.Id;
+            if (a.IdentityUser != null)
+                b.IdentityUserId = a.IdentityUser.Id;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
             b.HomeCity = a.HomeCity;
             b.HomeCountry = a.HomeCountry;
-            b.Reservations = a.Reservations;
+            b.ReservationIds = a.Reservations.Select(r => r.Id).ToList();
         }
-        public static void MapAToB(CustomerViewModel a, Customer b)
+        public static void MapAToB(CustomerViewModel a, Customer b, IdentityUser identityUser, List<Reservation> reservations)
         {
-            b.Id = a.Id;
-            b.IdentityUser = a.IdentityUser;
+            b.Id = a.CustomerId;
+            b.IdentityUser = identityUser;
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
             b.HomeCity = a.HomeCity;
             b.HomeCountry = a.HomeCountry;
-            b.Reservations = a.Reservations;
+            b.Reservations = reservations;
         }
         public static void MapAToB(Car a, CarViewModel b)
         {
