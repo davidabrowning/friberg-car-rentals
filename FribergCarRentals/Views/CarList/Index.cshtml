@@ -1,0 +1,55 @@
+﻿@model FribergCarRentals.ViewModels.CarListViewModel
+
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+	<a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				Make
+			</th>
+			<th>
+				Model
+			</th>
+			<th>
+				Year
+			</th>
+			<th>
+				Description
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (Car car in Model.Cars)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => car.Make)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => car.Model)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => car.Year)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => car.Description)
+				</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@car.Id">Edit</a> |
+					<a asp-action="Details" asp-route-id="@car.Id">Details</a> |
+					<a asp-action="Delete" asp-route-id="@car.Id">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

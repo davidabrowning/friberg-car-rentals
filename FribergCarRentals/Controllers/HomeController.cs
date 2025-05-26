@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using FribergCarRentals.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Controllers
@@ -14,11 +16,6 @@ namespace FribergCarRentals.Controllers
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }
