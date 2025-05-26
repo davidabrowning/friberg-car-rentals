@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
+using FribergCarRentals.ViewModels;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Controllers
 {
@@ -24,7 +26,15 @@ namespace FribergCarRentals.Controllers
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Reservations.ToListAsync());
+            List<ReservationViewModel> reservationViewModels = new();
+            List<Reservation> reservations = await _context.Reservations.ToListAsync();
+            foreach (Reservation reservation in reservations)
+            {
+                ReservationViewModel reservationViewModel = new();
+                ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+                reservationViewModels.Add(reservationViewModel);
+            }
+            return View(reservationViewModels);
         }
 
         // GET: Reservation/Details/5
@@ -35,19 +45,23 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            var reservation = await _context.Reservations
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Reservation reservation = await _context.Reservations.FirstOrDefaultAsync(m => m.Id == id);
             if (reservation == null)
             {
                 return NotFound();
             }
 
-            return View(reservation);
+            ReservationViewModel reservationViewModel = new();
+            ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+            return View(reservationViewModel);
         }
 
         // GET: Reservation/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ReservationViewModel reservationViewModel = new();
+            reservationViewModel.AllCars = await _context.Cars.ToListAsync();
+            reservationViewModel.AllCustomers = await _context.Customers.ToListAsync();
             return View();
         }
 
@@ -56,15 +70,17 @@ namespace FribergCarRentals.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StartDate,EndDate")] Reservation reservation)
+        public async Task<IActionResult> Create([Bind("Id,StartDate,EndDate,Car,Customer")] ReservationViewModel reservationViewModel)
         {
             if (ModelState.IsValid)
             {
+                Reservation reservation = new Reservation();
+                ViewModelMappingHelper.MapAToB(reservationViewModel, reservation);
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(reservation);
+            return View(reservationViewModel);
         }
 
         // GET: Reservation/Edit/5
@@ -80,7 +96,10 @@ namespace FribergCarRentals.Controllers
             {
                 return NotFound();
             }
-            return View(reservation);
+
+            ReservationViewModel reservationViewModel = new();
+            ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+            return View(reservationViewModel);
         }
 
         // POST: Reservation/Edit/5
@@ -88,9 +107,9 @@ namespace FribergCarRentals.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StartDate,EndDate")] Reservation reservation)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,StartDate,EndDate")] ReservationViewModel reservationViewModel)
         {
-            if (id != reservation.Id)
+            if (id != reservationViewModel.Id)
             {
                 return NotFound();
             }
@@ -99,12 +118,14 @@ namespace FribergCarRentals.Controllers
             {
                 try
                 {
+                    Reservation reservation = new();
+                    ViewModelMappingHelper.MapAToB(reservationViewModel, reservation);
                     _context.Update(reservation);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ReservationExists(reservation.Id))
+                    if (!ReservationExists(reservationViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -115,7 +136,7 @@ namespace FribergCarRentals.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(reservation);
+            return View(reservationViewModel);
         }
 
         // GET: Reservation/Delete/5
@@ -133,7 +154,9 @@ namespace FribergCarRentals.Controllers
                 return NotFound();
             }
 
-            return View(reservation);
+            ReservationViewModel reservationViewModel = new();
+            ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+            return View(reservationViewModel);
         }
 
         // POST: Reservation/Delete/5

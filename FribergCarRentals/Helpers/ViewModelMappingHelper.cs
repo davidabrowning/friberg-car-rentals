@@ -87,5 +87,21 @@ namespace FribergCarRentals.Helpers
                 await userManager.RemoveFromRoleAsync(b, "User");
             }
         }
+        public static void MapAToB(Reservation a, ReservationViewModel b)
+        {
+            b.Id = a.Id;
+            b.StartDate = a.StartDate;
+            b.EndDate = a.EndDate;
+            b.Car = a.Car;
+            b.Customer = a.Customer;
+        }
+        public static void MapAToB(ReservationViewModel a, Reservation b)
+        {
+            b.Id = a.Id;
+            b.StartDate = a.StartDate;
+            b.EndDate = a.EndDate;
+            b.Car = a.Car;
+            b.Customer = a.Customer;
+        }
     }
 }
