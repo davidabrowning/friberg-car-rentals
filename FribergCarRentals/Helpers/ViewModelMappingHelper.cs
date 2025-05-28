@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Models;
+﻿using FribergCarRentals.Areas.Administration.ViewModels;
+using FribergCarRentals.Models;
 using FribergCarRentals.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;

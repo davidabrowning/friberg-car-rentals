@@ -1,0 +1,72 @@
+﻿@using FribergCarRentals.Areas.Administration.ViewModels
+@using FribergCarRentals.ViewModels
+
+@model IEnumerable<CustomerViewModel>
+
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+	<a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(Model => Model.CustomerId)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.IdentityUserId)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.FirstName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.LastName)
+			</th>
+						<th>
+				@Html.DisplayNameFor(Model => Model.HomeCity)
+			</th>
+			<th>
+				@Html.DisplayNameFor(Model => Model.HomeCountry)
+			</th>
+			<th>
+				Modify
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (CustomerViewModel customerViewModel in Model)
+		{
+			<tr>
+				<td>
+					@customerViewModel.CustomerId
+				</td>
+				<td>
+					@customerViewModel.IdentityUserId
+				</td>
+				<td>
+					@customerViewModel.FirstName
+				</td>
+				<td>
+					@customerViewModel.LastName
+				</td>
+				<td>
+					@customerViewModel.HomeCity
+				</td>
+				<td>
+					@customerViewModel.HomeCountry
+				</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@customerViewModel.CustomerId">Edit</a> |
+					<a asp-action="Details" asp-route-id="@customerViewModel.CustomerId">Details</a> |
+					<a asp-action="Delete" asp-route-id="@customerViewModel.CustomerId">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
