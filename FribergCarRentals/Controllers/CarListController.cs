@@ -27,7 +27,7 @@ namespace FribergCarRentals.Controllers
             List<Car> cars = await _context.Cars.ToListAsync();
             foreach (Car car in cars)
             {
-                carListViewModel.CarIds.Add(car);
+                carListViewModel.CarIds.Add(car.Id);
             }
             return View(carListViewModel);
         }
