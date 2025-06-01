@@ -8,14 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Helpers;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Areas.Administration.ViewModels;
 
-namespace FribergCarRentals.Areas.Administration.Controllers
+namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    [Area("Administration")]
+    [Authorize(Roles = "User")]
+    [Area("CustomerCenter")]
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,21 +25,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             _userManager = userManager;
         }
 
-        // GET: Customer
+        // GET: CustomerCenter/Customer
         public async Task<IActionResult> Index()
         {
-            List<CustomerViewModel> customerViewModels = new();
-            List<Customer> customers = await _context.Customers.Include(c => c.IdentityUser).ToListAsync();
-            foreach (Customer customer in customers)
-            {
-                CustomerViewModel customerViewModel = new();
-                ViewModelMappingHelper.MapAToB(customer, customerViewModel);
-                customerViewModels.Add(customerViewModel);
-            }
-            return View(customerViewModels);
+            return View(await _context.Customers.Where(c => c.IdentityUser.Id == _userManager.GetUserId(User)).ToListAsync());
         }
 
-        // GET: Customer/Details/5
+        // GET: CustomerCenter/Customer/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -49,51 +39,39 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = new();
-            ViewModelMappingHelper.MapAToB(customer, customerViewModel);
-            return View(customerViewModel);
+            return View(customer);
         }
 
-        // GET: Customer/Create
+        // GET: CustomerCenter/Customer/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Customer/Create
+        // POST: CustomerCenter/Customer/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,HomeCity,HomeCountry")] Customer customer)
         {
-            if (RoleValidationHelper.EmailAlreadyClaimed(customerViewModel.Email, _userManager))
-            {
-                return View(customerViewModel);
-            }
             if (ModelState.IsValid)
             {
-                Customer customer = new();
-                IdentityUser identityUser = new IdentityUser(){ UserName = customerViewModel.Email, Email = customerViewModel.Email };
-                string initialPassword = "Abc123!";
-                List<Reservation> reservations = new();
-                ViewModelMappingHelper.MapAToB(customerViewModel, customer, identityUser, reservations);
-                await _userManager.CreateAsync(identityUser, initialPassword);
-                await _userManager.AddToRoleAsync(identityUser, "User");
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(customerViewModel);
+            return View(customer);
         }
 
-        // GET: Customer/Edit/5
+        // GET: CustomerCenter/Customer/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -101,25 +79,22 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.Include(c => c.IdentityUser).FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
             }
-
-            CustomerViewModel customerViewModel = new();
-            ViewModelMappingHelper.MapAToB(customer, customerViewModel);
-            return View(customerViewModel);
+            return View(customer);
         }
 
-        // POST: Customer/Edit/5
+        // POST: CustomerCenter/Customer/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,HomeCity,HomeCountry")] Customer customer)
         {
-            if (id != customerViewModel.CustomerId)
+            if (id != customer.Id)
             {
                 return NotFound();
             }
@@ -128,18 +103,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 try
                 {
-                    Customer customer = await _context.Customers
-                        .Where(c => c.Id == customerViewModel.CustomerId)
-                        .Include(c => c.IdentityUser)
-                        .Include(c => c.Reservations)
-                        .FirstOrDefaultAsync();
-                    ViewModelMappingHelper.MapAToB(customerViewModel, customer, customer.IdentityUser, customer.Reservations);
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customerViewModel.CustomerId))
+                    if (!CustomerExists(customer.Id))
                     {
                         return NotFound();
                     }
@@ -150,10 +119,10 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(customerViewModel);
+            return View(customer);
         }
 
-        // GET: Customer/Delete/5
+        // GET: CustomerCenter/Customer/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -161,18 +130,17 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = new();
-            ViewModelMappingHelper.MapAToB(customer, customerViewModel);
-            return View(customerViewModel);
+            return View(customer);
         }
 
-        // POST: Customer/Delete/5
+        // POST: CustomerCenter/Customer/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -180,7 +148,6 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             var customer = await _context.Customers.FindAsync(id);
             if (customer != null)
             {
-                await _userManager.DeleteAsync(customer.IdentityUser);
                 _context.Customers.Remove(customer);
             }
 
