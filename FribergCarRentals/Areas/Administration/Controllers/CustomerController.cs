@@ -71,12 +71,23 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
         {
+            if (EmailAlreadyClaimed(customerViewModel.Email))
+            {
+                return View(customerViewModel);
+            }
             if (ModelState.IsValid)
             {
                 Customer customer = new();
-                IdentityUser identityUser = null;
+                IdentityUser identityUser = new IdentityUser()
+                {
+                    UserName = customerViewModel.Email,
+                    Email = customerViewModel.Email
+                };
+                string initialPassword = "Abc123!";
+                await _userManager.CreateAsync(identityUser, initialPassword);
+                await _userManager.AddToRoleAsync(identityUser, "User");
                 List<Reservation> reservations = new();
                 ViewModelMappingHelper.MapAToB(customerViewModel, customer, identityUser, reservations);
                 _context.Add(customer);
@@ -84,6 +95,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(customerViewModel);
+        }
+
+        private bool EmailAlreadyClaimed(string email)
+        {
+            return _userManager.Users.Where(u => Equals(u.Email, email)).Any();
         }
 
         // GET: Customer/Edit/5
