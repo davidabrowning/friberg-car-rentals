@@ -13,15 +13,11 @@ namespace FribergCarRentals.Helpers
         {
             b.Id = a.Id;
             b.IdentityUser = a.IdentityUser;
-            b.FirstName = a.FirstName;
-            b.LastName = a.LastName;
         }
         public static void MapAToB(AdminViewModel a, Admin b)
         {
             b.Id = a.Id;
             b.IdentityUser = a.IdentityUser;
-            b.FirstName = a.FirstName;
-            b.LastName = a.LastName;
         }
         public static void MapAToB(Customer a, Areas.Administration.ViewModels.CustomerViewModel b)
         {

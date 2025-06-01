@@ -18,19 +18,10 @@
 				IdentityUser
 			</th>
 			<th>
-				
-			</th>
-			<th>
 				Admin
 			</th>
 			<th>
-				
-			</th>
-			<th>
 				Customer
-			</th>
-			<th>
-				
 			</th>
 		</tr>
 	</thead>
@@ -39,57 +30,46 @@
 		{
 			<tr>
 				<td>
-					@Html.DisplayFor(modelItem => item.Username)
+					<a asp-action="Edit" asp-route-id="@item.Id">@item.Username</a>
 					@if (item.IsAdmin)
 					{
-						<span>IsAdmin</span>;
+						<span class="badge text-bg-dark">IsAdmin</span>
+					}
+					@if (item.IsCustomer)
+					{
+						<span class="badge text-bg-success">IsCustomer</span>
 					}
 					@if (item.IsUser)
 					{
-						<span>IsUser</span>
+						<span class="badge text-bg-secondary">IsUser</span>
 					}
-				</td>
-				<td>
-					<a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
 				</td>
 				@if (item.AdminId != -1)
 				{
 					<td>
-						@item.AdminId
-					</td>
-					<td>
-						<a asp-controller="Admin" asp-action="Edit" asp-route-id="@item.AdminId">Edit</a> |
-						<a asp-controller="Admin" asp-action="Details" asp-route-id="@item.AdminId">Details</a> |
-						<a asp-controller="Admin" asp-action="Delete" asp-route-id="@item.AdminId">Delete</a>
+						<a asp-controller="Admin" asp-action="Details" asp-route-id="@item.AdminId">
+							@item.AdminId
+						</a>
 					</td>
 				}
 				else
 				{
 					<td>
-						@Html.DisplayFor(modelItem => item.CustomerId)
-					</td>
-					<td>
-						Create new
+						<a asp-controller="Admin" asp-action="Create" asp-route-id="@item.Id" class="btn btn-outline-primary">Make admin</a>
 					</td>
 				}
 				@if (item.CustomerId != -1)
 				{
 					<td>
-						@item.CustomerFirstName @item.CustomerLastName
-					</td>
-					<td>
-						<a asp-controller="Customer" asp-action="Edit" asp-route-id="@item.CustomerId">Edit</a> |
-						<a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId">Details</a> |
-						<a asp-controller="Customer" asp-action="Delete" asp-route-id="@item.CustomerId">Delete</a>
+						<a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId">
+							@item.CustomerFirstName @item.CustomerLastName
+						</a>
 					</td>
 				}
 				else
 				{
 					<td>
-						@Html.DisplayFor(modelItem => item.CustomerId)
-					</td>
-					<td>
-						<a asp-controller="Customer" asp-action="Create" asp-route-id="@item.Id">Create New</a>
+						<a asp-controller="Customer" asp-action="Create" asp-route-id="@item.Id" class="btn btn-outline-primary">Create</a>
 					</td>
 				}
 

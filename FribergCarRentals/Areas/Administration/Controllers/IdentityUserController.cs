@@ -54,6 +54,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                     Id = user.Id,
                     Username = user.UserName,
                     IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
+                    IsCustomer = await _userManager.IsInRoleAsync(user, "Customer"),
                     IsUser = await _userManager.IsInRoleAsync(user, "User"),
                     AdminId = adminId,
                     CustomerId = customerId,
@@ -76,7 +77,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,IsAdmin,IsUser")] IdentityUserViewModel identityUserViewModel)
+        public async Task<IActionResult> Create([Bind("Username")] IdentityUserViewModel identityUserViewModel)
         {
             if (RoleValidationHelper.EmailAlreadyClaimed(identityUserViewModel.Username, _userManager))
             {
@@ -87,10 +88,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 IdentityUser identityUser = new IdentityUser() { UserName = identityUserViewModel.Username, Email = identityUserViewModel.Username };
                 string initialPassword = "Abc123!";
                 await _userManager.CreateAsync(identityUser, initialPassword);
-                if (identityUserViewModel.IsAdmin)
-                    await _userManager.AddToRoleAsync(identityUser, "Admin");
-                if (identityUserViewModel.IsUser)
-                    await _userManager.AddToRoleAsync(identityUser, "User");
+                await _userManager.AddToRoleAsync(identityUser, "User");
                 return RedirectToAction(nameof(Index));
             }
             return View(identityUserViewModel);
@@ -120,7 +118,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Username,IsAdmin,IsUser")] IdentityUserViewModel identityUserViewModel)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Username")] IdentityUserViewModel identityUserViewModel)
         {
             if (id != identityUserViewModel.Id)
             {
