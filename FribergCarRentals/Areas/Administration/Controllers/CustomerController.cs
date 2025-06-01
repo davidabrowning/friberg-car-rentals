@@ -189,6 +189,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             var customer = await _context.Customers.FindAsync(id);
             if (customer != null)
             {
+                await _userManager.DeleteAsync(customer.IdentityUser);
                 _context.Customers.Remove(customer);
             }
 
