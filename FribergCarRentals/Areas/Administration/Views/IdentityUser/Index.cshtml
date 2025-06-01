@@ -15,18 +15,23 @@
 	<thead>
 		<tr>
 			<th>
-				@Html.DisplayNameFor(model => model.Id)
+				IdentityUser
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Username)
+				
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.IsAdmin)
+				Admin
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.IsUser)
+				
 			</th>
-			<th></th>
+			<th>
+				Customer
+			</th>
+			<th>
+				
+			</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -34,20 +39,60 @@
 		{
 			<tr>
 				<td>
-					@Html.DisplayFor(modelItem => item.Id)
-				</td>
-				<td>
 					@Html.DisplayFor(modelItem => item.Username)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.IsAdmin)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.IsUser)
+					@if (item.IsAdmin)
+					{
+						<span>IsAdmin</span>;
+					}
+					@if (item.IsUser)
+					{
+						<span>IsUser</span>
+					}
 				</td>
 				<td>
 					<a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
 				</td>
+				@if (item.AdminId != -1)
+				{
+					<td>
+						@item.AdminId
+					</td>
+					<td>
+						<a asp-controller="Admin" asp-action="Edit" asp-route-id="@item.AdminId">Edit</a> |
+						<a asp-controller="Admin" asp-action="Details" asp-route-id="@item.AdminId">Details</a> |
+						<a asp-controller="Admin" asp-action="Delete" asp-route-id="@item.AdminId">Delete</a>
+					</td>
+				}
+				else
+				{
+					<td>
+						@Html.DisplayFor(modelItem => item.CustomerId)
+					</td>
+					<td>
+						Create new
+					</td>
+				}
+				@if (item.CustomerId != -1)
+				{
+					<td>
+						@item.CustomerFirstName @item.CustomerLastName
+					</td>
+					<td>
+						<a asp-controller="Customer" asp-action="Edit" asp-route-id="@item.CustomerId">Edit</a> |
+						<a asp-controller="Customer" asp-action="Details" asp-route-id="@item.CustomerId">Details</a> |
+						<a asp-controller="Customer" asp-action="Delete" asp-route-id="@item.CustomerId">Delete</a>
+					</td>
+				}
+				else
+				{
+					<td>
+						@Html.DisplayFor(modelItem => item.CustomerId)
+					</td>
+					<td>
+						<a asp-controller="Customer" asp-action="Create" asp-route-id="@item.Id">Create New</a>
+					</td>
+				}
+
 			</tr>
 		}
 	</tbody>

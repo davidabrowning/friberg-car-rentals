@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Areas.Administration.ViewModels;
+using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 using FribergCarRentals.Models;
 using FribergCarRentals.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -22,7 +23,7 @@ namespace FribergCarRentals.Helpers
             b.FirstName = a.FirstName;
             b.LastName = a.LastName;
         }
-        public static void MapAToB(Customer a, CustomerViewModel b)
+        public static void MapAToB(Customer a, Areas.Administration.ViewModels.CustomerViewModel b)
         {
             b.CustomerId = a.Id;
             if (a.IdentityUser != null)
@@ -33,7 +34,7 @@ namespace FribergCarRentals.Helpers
             b.HomeCountry = a.HomeCountry;
             b.ReservationIds = a.Reservations.Select(r => r.Id).ToList();
         }
-        public static void MapAToB(CustomerViewModel a, Customer b, IdentityUser identityUser, List<Reservation> reservations)
+        public static void MapAToB(Areas.Administration.ViewModels.CustomerViewModel a, Customer b, IdentityUser identityUser, List<Reservation> reservations)
         {
             b.Id = a.CustomerId;
             b.IdentityUser = identityUser;

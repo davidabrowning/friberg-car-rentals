@@ -11,6 +11,7 @@ using FribergCarRentals.Models;
 using FribergCarRentals.Helpers;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -34,12 +35,30 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             List<IdentityUser> users = _userManager.Users.ToList();
             foreach (IdentityUser user in users)
             {
+                int adminId = -1;
+                Admin admin = _context.Admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
+                if (admin != null)
+                    adminId = admin.Id;
+                int customerId = -1;
+                string customerFirstName = "";
+                string customerLastName = "";
+                Customer customer = _context.Customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
+                if (customer != null)
+                {
+                    customerId = customer.Id;
+                    customerFirstName = customer.FirstName;
+                    customerLastName = customer.LastName;
+                }
                 IdentityUserViewModel identityUserViewModel = new()
                 {
                     Id = user.Id,
                     Username = user.UserName,
                     IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
                     IsUser = await _userManager.IsInRoleAsync(user, "User"),
+                    AdminId = adminId,
+                    CustomerId = customerId,
+                    CustomerFirstName = customerFirstName,
+                    CustomerLastName = customerLastName,
                 };
                 identityUserViewModels.Add(identityUserViewModel);
             }
@@ -57,12 +76,21 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,IsAdmin,IsUser")] IdentityUserViewModel identityUserViewModel)
+        public async Task<IActionResult> Create([Bind("Username,IsAdmin,IsUser")] IdentityUserViewModel identityUserViewModel)
         {
+            if (RoleValidationHelper.EmailAlreadyClaimed(identityUserViewModel.Username, _userManager))
+            {
+                return View(identityUserViewModel);
+            }
             if (ModelState.IsValid)
             {
-                _context.Add(identityUserViewModel);
-                await _context.SaveChangesAsync();
+                IdentityUser identityUser = new IdentityUser() { UserName = identityUserViewModel.Username, Email = identityUserViewModel.Username };
+                string initialPassword = "Abc123!";
+                await _userManager.CreateAsync(identityUser, initialPassword);
+                if (identityUserViewModel.IsAdmin)
+                    await _userManager.AddToRoleAsync(identityUser, "Admin");
+                if (identityUserViewModel.IsUser)
+                    await _userManager.AddToRoleAsync(identityUser, "User");
                 return RedirectToAction(nameof(Index));
             }
             return View(identityUserViewModel);

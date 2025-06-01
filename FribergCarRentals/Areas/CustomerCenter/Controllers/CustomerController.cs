@@ -28,7 +28,9 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.Where(c => c.IdentityUser.Id == _userManager.GetUserId(User)).ToListAsync());
+            List<Customer> customers = await _context.Customers.Where(c => c.IdentityUser.Id == _userManager.GetUserId(User)).ToListAsync();
+
+            return View(customers);
         }
 
         // GET: CustomerCenter/Customer/Details/5

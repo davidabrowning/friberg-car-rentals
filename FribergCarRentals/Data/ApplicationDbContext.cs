@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.ViewModels;
+using FribergCarRentals.Areas.Administration.ViewModels;
 
 namespace FribergCarRentals.Data
 {
@@ -17,5 +18,6 @@ namespace FribergCarRentals.Data
             : base(options)
         {
         }
+        public DbSet<FribergCarRentals.Areas.Administration.ViewModels.IdentityUserViewModel> IdentityUserViewModel { get; set; } = default!;
     }
 }
