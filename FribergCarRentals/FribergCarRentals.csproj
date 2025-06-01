@@ -19,10 +19,10 @@
   <ItemGroup>
     <Folder Include="Areas\Administration\Data\" />
     <Folder Include="Areas\Administration\Models\" />
-    <Folder Include="Areas\Membership\Controllers\" />
-    <Folder Include="Areas\Membership\Data\" />
-    <Folder Include="Areas\Membership\Models\" />
-    <Folder Include="Areas\Membership\Views\" />
+    <Folder Include="Areas\CustomerCenter\Controllers\" />
+    <Folder Include="Areas\CustomerCenter\Data\" />
+    <Folder Include="Areas\CustomerCenter\Models\" />
+    <Folder Include="Areas\CustomerCenter\Views\" />
     <Folder Include="Areas\Public\Controllers\" />
     <Folder Include="Areas\Public\Data\" />
     <Folder Include="Areas\Public\Models\" />
