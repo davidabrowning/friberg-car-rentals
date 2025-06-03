@@ -31,9 +31,10 @@ namespace FribergCarRentals.Data
             return _applicationDbContext.Cars.Any(c => c.Id == id);
         }
 
-        public void Remove(Car car)
+        public void Delete(int id)
         {
-            _applicationDbContext.Cars.Remove(car);
+            Car car = GetById(id);
+            _applicationDbContext.Remove(car);
             _applicationDbContext.SaveChanges();
         }
 

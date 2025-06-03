@@ -19,12 +19,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class CustomerController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICustomer _customerRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public CustomerController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public CustomerController(ICustomer customerRepository, UserManager<IdentityUser> userManager)
         {
-            _context = context;
+            _customerRepository = customerRepository;
             _userManager = userManager;
         }
 
@@ -32,7 +32,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> Index()
         {
             List<CustomerViewModel> customerViewModels = new();
-            List<Customer> customers = await _context.Customers.Include(c => c.IdentityUser).ToListAsync();
+            IEnumerable<Customer> customers = _customerRepository.GetAll();
             foreach (Customer customer in customers)
             {
                 CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
@@ -49,7 +49,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
+            Customer customer = _customerRepository.GetById((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -84,8 +84,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Customer customer = ViewModelMappingHelper.GetCustomer(customerViewModel, identityUser, reservations);
                 await _userManager.CreateAsync(identityUser, initialPassword);
                 await _userManager.AddToRoleAsync(identityUser, "User");
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
+                _customerRepository.Add(customer);
                 return RedirectToAction(nameof(Index));
             }
             return View(customerViewModel);
@@ -99,7 +98,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.Include(c => c.IdentityUser).FirstOrDefaultAsync(c => c.Id == id);
+            Customer customer = _customerRepository.GetById((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -125,14 +124,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 try
                 {
-                    Customer customer = await _context.Customers
-                        .Where(c => c.Id == customerViewModel.CustomerId)
-                        .Include(c => c.IdentityUser)
-                        .Include(c => c.Reservations)
-                        .FirstOrDefaultAsync();
+                    Customer customer = _customerRepository.GetById(customerViewModel.CustomerId);
                     customer = ViewModelMappingHelper.GetCustomer(customerViewModel, customer.IdentityUser, customer.Reservations);
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    _customerRepository.Update(customer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -158,7 +152,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
+            Customer customer = _customerRepository.GetById((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -173,20 +167,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                await _userManager.DeleteAsync(customer.IdentityUser);
-                _context.Customers.Remove(customer);
-            }
-
-            await _context.SaveChangesAsync();
+            _customerRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(int id)
         {
-            return _context.Customers.Any(e => e.Id == id);
+            return _customerRepository.IdExists(id);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace FribergCarRentals.Data
         bool IdExists(int id);
         IEnumerable<Car> GetAll();
         Car GetById(int id);
-        void Remove(Car car);
+        void Delete(int id);
         void Update(Car car);
     }
 }

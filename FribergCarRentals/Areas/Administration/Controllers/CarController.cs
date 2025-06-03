@@ -158,7 +158,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             Car car = _carRepository.GetById(id);
             if (car != null)
             {
-                _carRepository.Remove(car);
+                _carRepository.Delete(car.Id);
             }
             return RedirectToAction(nameof(Index));
         }

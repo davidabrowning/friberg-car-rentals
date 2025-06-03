@@ -149,7 +149,7 @@ namespace FribergCarRentals.Controllers
         //    var carViewModel = await _carRepository.CarViewModel.FindAsync(id);
         //    if (carViewModel != null)
         //    {
-        //        _carRepository.CarViewModel.Remove(carViewModel);
+        //        _carRepository.CarViewModel.Delete(carViewModel);
         //    }
 
         //    await _carRepository.SaveChangesAsync();
