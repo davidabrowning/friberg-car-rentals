@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
-using FribergCarRentals.Helpers;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FribergCarRentals.Areas.Administration.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -55,9 +55,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (ModelState.IsValid)
             {
-                Admin admin = new();
                 IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
-                ViewModelMappingHelper.MapAToB(adminViewModel, admin, identityUser);
+                Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
                 _context.Add(admin);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -79,8 +78,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminViewModel adminViewModel = new();
-            ViewModelMappingHelper.MapAToB(admin, adminViewModel);
+            AdminViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
             return View(adminViewModel);
         }
 
@@ -100,9 +98,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 try
                 {
-                    Admin admin = await _context.Admins.Where(a => a.Id == id).FirstOrDefaultAsync();
                     IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
-                    ViewModelMappingHelper.MapAToB(adminViewModel, admin, identityUser);
+                    Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
                     _context.Update(admin);
                     await _context.SaveChangesAsync();
                 }
@@ -136,8 +133,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminViewModel adminViewModel = new();
-            ViewModelMappingHelper.MapAToB(admin, adminViewModel);
+            AdminViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
             return View(adminViewModel);
         }
 

@@ -12,6 +12,7 @@ using FribergCarRentals.Helpers;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.CustomerCenter.ViewModels;
+using FribergCarRentals.Areas.Administration.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -108,8 +109,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUserViewModel identityUserViewModel = new();
-            await ViewModelMappingHelper.MapAToB(user, identityUserViewModel, _userManager);
+            IdentityUserViewModel identityUserViewModel = await ViewModelMappingHelper.GetIdentityUserViewModel(user, _userManager);
             return View(identityUserViewModel);
         }
 
@@ -129,8 +129,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 try
                 {
-                    IdentityUser user = await _userManager.Users.Where(u => u.Id == identityUserViewModel.Id).FirstOrDefaultAsync();
-                    await ViewModelMappingHelper.MapAToB(identityUserViewModel, user, _userManager);
+                    IdentityUser user = await ViewModelMappingHelper.GetIdentityUser(identityUserViewModel, _userManager);
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }

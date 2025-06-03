@@ -40,7 +40,7 @@ namespace FribergCarRentals.Controllers
         //        return NotFound();
         //    }
 
-        //    var carViewModel = await _context.CarViewModel
+        //    var carViewModel = await _carRepository.CarViewModel
         //        .FirstOrDefaultAsync(m => m.CustomerId == id);
         //    if (carViewModel == null)
         //    {
@@ -65,8 +65,8 @@ namespace FribergCarRentals.Controllers
         //{
         //    if (ModelState.IsValid)
         //    {
-        //        _context.Add(carViewModel);
-        //        await _context.SaveChangesAsync();
+        //        _carRepository.Add(carViewModel);
+        //        await _carRepository.SaveChangesAsync();
         //        return RedirectToAction(nameof(Index));
         //    }
         //    return View(carViewModel);
@@ -80,7 +80,7 @@ namespace FribergCarRentals.Controllers
         //        return NotFound();
         //    }
 
-        //    var carViewModel = await _context.CarViewModel.FindAsync(id);
+        //    var carViewModel = await _carRepository.CarViewModel.FindAsync(id);
         //    if (carViewModel == null)
         //    {
         //        return NotFound();
@@ -104,8 +104,8 @@ namespace FribergCarRentals.Controllers
         //    {
         //        try
         //        {
-        //            _context.Update(carViewModel);
-        //            await _context.SaveChangesAsync();
+        //            _carRepository.Update(carViewModel);
+        //            await _carRepository.SaveChangesAsync();
         //        }
         //        catch (DbUpdateConcurrencyException)
         //        {
@@ -131,7 +131,7 @@ namespace FribergCarRentals.Controllers
         //        return NotFound();
         //    }
 
-        //    var carViewModel = await _context.CarViewModel
+        //    var carViewModel = await _carRepository.CarViewModel
         //        .FirstOrDefaultAsync(m => m.CustomerId == id);
         //    if (carViewModel == null)
         //    {
@@ -146,19 +146,19 @@ namespace FribergCarRentals.Controllers
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> DeleteConfirmed(int id)
         //{
-        //    var carViewModel = await _context.CarViewModel.FindAsync(id);
+        //    var carViewModel = await _carRepository.CarViewModel.FindAsync(id);
         //    if (carViewModel != null)
         //    {
-        //        _context.CarViewModel.Remove(carViewModel);
+        //        _carRepository.CarViewModel.Remove(carViewModel);
         //    }
 
-        //    await _context.SaveChangesAsync();
+        //    await _carRepository.SaveChangesAsync();
         //    return RedirectToAction(nameof(Index));
         //}
 
         //private bool CarViewModelExists(int id)
         //{
-        //    return _context.CarViewModel.Any(e => e.CustomerId == id);
+        //    return _carRepository.CarViewModel.Any(e => e.CustomerId == id);
         //}
     }
 }

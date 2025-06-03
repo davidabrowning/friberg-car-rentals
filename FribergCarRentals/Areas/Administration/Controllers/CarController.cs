@@ -9,7 +9,7 @@ using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.ViewModels;
-using FribergCarRentals.Helpers;
+using FribergCarRentals.Areas.Administration.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -17,22 +17,21 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class CarController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICar _carRepository;
 
-        public CarController(ApplicationDbContext context)
+        public CarController(ICar carRepository)
         {
-            _context = context;
+            _carRepository = carRepository;
         }
 
         // GET: Car
         public async Task<IActionResult> Index()
         {
             List<CarViewModel> carViewModels = new();
-            List<Car> cars = await _context.Cars.ToListAsync();
+            IEnumerable<Car> cars = _carRepository.GetAll();
             foreach (Car car in cars)
             {
-                CarViewModel carViewModel = new();
-                ViewModelMappingHelper.MapAToB(car, carViewModel);
+                CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
                 carViewModels.Add(carViewModel);
             }
             return View(carViewModels);
@@ -46,15 +45,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var car = _carRepository.GetById((int)id);
             if (car == null)
             {
                 return NotFound();
             }
 
-            CarViewModel carViewModel = new();
-            ViewModelMappingHelper.MapAToB(car, carViewModel);
+            CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
             return View(carViewModel);
         }
 
@@ -73,11 +70,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (ModelState.IsValid)
             {
-                Car car = new();
-                List<Reservation> reservations = await _context.Reservations.ToListAsync();
-                ViewModelMappingHelper.MapAToB(carViewModel, car, reservations);
-                _context.Add(car);
-                await _context.SaveChangesAsync();
+                List<Reservation> reservations = null;
+                Car car = ViewModelMappingHelper.GetCar(carViewModel, reservations);
+                _carRepository.Add(car);
                 return RedirectToAction(nameof(Index));
             }
             return View(carViewModel);
@@ -91,14 +86,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars.FindAsync(id);
+            Car car = _carRepository.GetById((int)id);
             if (car == null)
             {
                 return NotFound();
             }
 
-            CarViewModel carViewModel = new();
-            ViewModelMappingHelper.MapAToB(car, carViewModel);
+            CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
             return View(carViewModel);
         }
 
@@ -118,11 +112,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 try
                 {
-                    Car car = new();
-                    List<Reservation> reservations = await _context.Reservations.ToListAsync();
-                    ViewModelMappingHelper.MapAToB(carViewModel, car, reservations);
-                    _context.Update(car);
-                    await _context.SaveChangesAsync();
+                    List<Reservation> reservations = null;
+                    Car car = ViewModelMappingHelper.GetCar(carViewModel, reservations);
+                    _carRepository.Update(car);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -148,15 +140,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Car car = _carRepository.GetById((int)id);
             if (car == null)
             {
                 return NotFound();
             }
 
-            CarViewModel carViewModel = new();
-            ViewModelMappingHelper.MapAToB(car, carViewModel);
+            CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
             return View(carViewModel);
         }
 
@@ -165,19 +155,17 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
+            Car car = _carRepository.GetById(id);
             if (car != null)
             {
-                _context.Cars.Remove(car);
+                _carRepository.Remove(car);
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CarExists(int id)
         {
-            return _context.Cars.Any(e => e.Id == id);
+            return _carRepository.IdExists(id);
         }
     }
 }

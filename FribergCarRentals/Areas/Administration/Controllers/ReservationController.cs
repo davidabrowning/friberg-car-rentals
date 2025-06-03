@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Helpers;
 using FribergCarRentals.Areas.Administration.ViewModels;
+using FribergCarRentals.Areas.Administration.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -31,8 +31,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             List<Reservation> reservations = await _context.Reservations.ToListAsync();
             foreach (Reservation reservation in reservations)
             {
-                ReservationViewModel reservationViewModel = new();
-                ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+                ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
                 reservationViewModels.Add(reservationViewModel);
             }
             return View(reservationViewModels);
@@ -52,8 +51,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationViewModel reservationViewModel = new();
-            ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+            ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
             return View(reservationViewModel);
         }
 
@@ -75,8 +73,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (ModelState.IsValid)
             {
-                Reservation reservation = new Reservation();
-                ViewModelMappingHelper.MapAToB(reservationViewModel, reservation);
+                Reservation reservation = ViewModelMappingHelper.GetReservation(reservationViewModel);
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -98,8 +95,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationViewModel reservationViewModel = new();
-            ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+            ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
             return View(reservationViewModel);
         }
 
@@ -119,8 +115,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 try
                 {
-                    Reservation reservation = new();
-                    ViewModelMappingHelper.MapAToB(reservationViewModel, reservation);
+                    Reservation reservation = ViewModelMappingHelper.GetReservation(reservationViewModel);
                     _context.Update(reservation);
                     await _context.SaveChangesAsync();
                 }
@@ -155,8 +150,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationViewModel reservationViewModel = new();
-            ViewModelMappingHelper.MapAToB(reservation, reservationViewModel);
+            ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
             return View(reservationViewModel);
         }
 

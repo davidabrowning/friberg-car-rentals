@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Helpers;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Administration.ViewModels;
+using FribergCarRentals.Areas.Administration.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -34,8 +35,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             List<Customer> customers = await _context.Customers.Include(c => c.IdentityUser).ToListAsync();
             foreach (Customer customer in customers)
             {
-                CustomerViewModel customerViewModel = new();
-                ViewModelMappingHelper.MapAToB(customer, customerViewModel);
+                CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
                 customerViewModels.Add(customerViewModel);
             }
             return View(customerViewModels);
@@ -55,8 +55,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = new();
-            ViewModelMappingHelper.MapAToB(customer, customerViewModel);
+            CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
             return View(customerViewModel);
         }
 
@@ -79,11 +78,10 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             if (ModelState.IsValid)
             {
-                Customer customer = new();
                 IdentityUser identityUser = new IdentityUser(){ UserName = customerViewModel.Email, Email = customerViewModel.Email };
                 string initialPassword = "Abc123!";
                 List<Reservation> reservations = new();
-                ViewModelMappingHelper.MapAToB(customerViewModel, customer, identityUser, reservations);
+                Customer customer = ViewModelMappingHelper.GetCustomer(customerViewModel, identityUser, reservations);
                 await _userManager.CreateAsync(identityUser, initialPassword);
                 await _userManager.AddToRoleAsync(identityUser, "User");
                 _context.Add(customer);
@@ -107,8 +105,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = new();
-            ViewModelMappingHelper.MapAToB(customer, customerViewModel);
+            CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
             return View(customerViewModel);
         }
 
@@ -133,7 +130,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                         .Include(c => c.IdentityUser)
                         .Include(c => c.Reservations)
                         .FirstOrDefaultAsync();
-                    ViewModelMappingHelper.MapAToB(customerViewModel, customer, customer.IdentityUser, customer.Reservations);
+                    customer = ViewModelMappingHelper.GetCustomer(customerViewModel, customer.IdentityUser, customer.Reservations);
                     _context.Update(customer);
                     await _context.SaveChangesAsync();
                 }
@@ -167,8 +164,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = new();
-            ViewModelMappingHelper.MapAToB(customer, customerViewModel);
+            CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
             return View(customerViewModel);
         }
 
