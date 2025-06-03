@@ -12,12 +12,12 @@ namespace FribergCarRentals.Helpers
         public static void MapAToB(Admin a, AdminViewModel b)
         {
             b.Id = a.Id;
-            b.IdentityUser = a.IdentityUser;
+            b.IdentityUserId = a.IdentityUser.Id;
         }
-        public static void MapAToB(AdminViewModel a, Admin b)
+        public static void MapAToB(AdminViewModel a, Admin b, IdentityUser identityUser)
         {
             b.Id = a.Id;
-            b.IdentityUser = a.IdentityUser;
+            b.IdentityUser = identityUser;
         }
         public static void MapAToB(Customer a, Areas.Administration.ViewModels.CustomerViewModel b)
         {

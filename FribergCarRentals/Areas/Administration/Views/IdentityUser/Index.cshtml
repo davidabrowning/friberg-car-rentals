@@ -47,8 +47,8 @@
 				@if (item.AdminId != -1)
 				{
 					<td>
-						<a asp-controller="Admin" asp-action="Details" asp-route-id="@item.AdminId">
-							@item.AdminId
+						<a asp-controller="Admin" asp-action="Edit" asp-route-id="@item.AdminId">
+							Admin id #@item.AdminId
 						</a>
 					</td>
 				}

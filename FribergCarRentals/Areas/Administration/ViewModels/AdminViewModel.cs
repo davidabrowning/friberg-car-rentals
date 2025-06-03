@@ -5,6 +5,6 @@ namespace FribergCarRentals.Areas.Administration.ViewModels
     public class AdminViewModel
     {
         public int Id { get; set; }
-        public IdentityUser? IdentityUser { get; set; } = null;
+        public string IdentityUserId { get; set; } = "";
     }
 }

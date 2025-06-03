@@ -30,39 +30,19 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // GET: Admin
         public async Task<IActionResult> Index()
         {
-            List<AdminViewModel> adminViewModels = new();
-            List<Admin> admins = await _context.Admins.ToListAsync();
-            foreach (Admin admin in admins)
-            {
-                AdminViewModel adminViewModel = new();
-                ViewModelMappingHelper.MapAToB(admin, adminViewModel);
-                adminViewModels.Add(adminViewModel);
-            }
-            return View(adminViewModels);
+            return RedirectToAction("Index", "IdentityUser");
         }
 
-        // GET: Admin/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Admin/Create/abcd-1234
+        [HttpGet("Administration/Admin/Create/{identityUserId}")]
+        public IActionResult Create(string? identityUserId)
         {
-            if (id == null)
+            if (identityUserId == null)
             {
                 return NotFound();
             }
 
-            Admin admin = await _context.Admins.Where(a => a.Id == id).FirstOrDefaultAsync();
-            if (admin == null)
-            {
-                return NotFound();
-            }
-
-            AdminViewModel adminViewModel = new();
-            ViewModelMappingHelper.MapAToB(admin, adminViewModel);
-            return View(adminViewModel);
-        }
-
-        // GET: Admin/Create
-        public IActionResult Create()
-        {
+            ViewBag.IdentityUserId = identityUserId;
             return View();
         }
 
@@ -71,12 +51,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName")] AdminViewModel adminViewModel)
+        public async Task<IActionResult> Create([Bind("IdentityUserId")] AdminViewModel adminViewModel)
         {
             if (ModelState.IsValid)
             {
                 Admin admin = new();
-                ViewModelMappingHelper.MapAToB(adminViewModel, admin);
+                IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
+                ViewModelMappingHelper.MapAToB(adminViewModel, admin, identityUser);
                 _context.Add(admin);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -92,7 +73,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin admin = await _context.Admins.Where(a => a.Id == id).FirstOrDefaultAsync();
+            Admin admin = await _context.Admins.Where(a => a.Id == id).Include(a => a.IdentityUser).FirstOrDefaultAsync();
             if (admin == null)
             {
                 return NotFound();
@@ -108,7 +89,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName")] AdminViewModel adminViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id")] AdminViewModel adminViewModel)
         {
             if (id != adminViewModel.Id)
             {
@@ -120,7 +101,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 try
                 {
                     Admin admin = await _context.Admins.Where(a => a.Id == id).FirstOrDefaultAsync();
-                    ViewModelMappingHelper.MapAToB(adminViewModel, admin);
+                    IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
+                    ViewModelMappingHelper.MapAToB(adminViewModel, admin, identityUser);
                     _context.Update(admin);
                     await _context.SaveChangesAsync();
                 }
@@ -148,7 +130,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin admin = await _context.Admins.FirstOrDefaultAsync(m => m.Id == id);
+            Admin admin = await _context.Admins.Where(a => a.Id == id).Include(a => a.IdentityUser).FirstOrDefaultAsync();
             if (admin == null)
             {
                 return NotFound();
