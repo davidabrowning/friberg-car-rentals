@@ -13,18 +13,18 @@ namespace FribergCarRentals.Controllers
 {
     public class CarListController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Car> _carRepository;
 
-        public CarListController(ApplicationDbContext context)
+        public CarListController(IRepository<Car> carRepository)
         {
-            _context = context;
+            _carRepository = carRepository;
         }
 
         // GET: CarList
         public async Task<IActionResult> Index()
         {
             CarListViewModel carListViewModel  = new CarListViewModel();
-            List<Car> cars = await _context.Cars.ToListAsync();
+            IEnumerable<Car> cars = await _carRepository.GetAll();
             foreach (Car car in cars)
             {
                 carListViewModel.CarIds.Add(car.Id);

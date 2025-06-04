@@ -20,12 +20,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class IdentityUserController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Admin> _adminRepository;
+        private readonly IRepository<Customer> _customerRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public IdentityUserController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public IdentityUserController(IRepository<Admin> adminRepository, IRepository<Customer> customerRepository, UserManager<IdentityUser> userManager)
         {
-            _context = context;
+            _adminRepository = adminRepository;
+            _customerRepository = customerRepository;
             _userManager = userManager;
         }
 
@@ -34,16 +36,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             List<IdentityUserViewModel> identityUserViewModels = new();
             List<IdentityUser> users = _userManager.Users.ToList();
+            IEnumerable<Admin> admins = await _adminRepository.GetAll();
+            IEnumerable<Customer> customers = await _customerRepository.GetAll();
             foreach (IdentityUser user in users)
             {
                 int adminId = -1;
-                Admin admin = _context.Admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
+                Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
                 if (admin != null)
                     adminId = admin.Id;
                 int customerId = -1;
                 string customerFirstName = "";
                 string customerLastName = "";
-                Customer customer = _context.Customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
+                Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
                 if (customer != null)
                 {
                     customerId = customer.Id;
@@ -130,8 +134,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 try
                 {
                     IdentityUser user = await ViewModelMappingHelper.GetIdentityUser(identityUserViewModel, _userManager);
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    await _userManager.UpdateAsync(user);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

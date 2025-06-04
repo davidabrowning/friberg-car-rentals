@@ -16,20 +16,19 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
     [Area("CustomerCenter")]
     public class CustomerController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Customer> _customerRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public CustomerController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public CustomerController(IRepository<Customer> customerRepository, UserManager<IdentityUser> userManager)
         {
-            _context = context;
+            _customerRepository = customerRepository;
             _userManager = userManager;
         }
 
         // GET: CustomerCenter/Customer
         public async Task<IActionResult> Index()
         {
-            List<Customer> customers = await _context.Customers.Where(c => c.IdentityUser.Id == _userManager.GetUserId(User)).ToListAsync();
-
+            IEnumerable<Customer> customers = await _customerRepository.GetAll();
             return View(customers);
         }
 
@@ -41,8 +40,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var customer = await _customerRepository.GetById((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -66,8 +64,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
+                await _customerRepository.Add(customer);
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
@@ -81,7 +78,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _customerRepository.GetById((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -105,12 +102,11 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             {
                 try
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    await _customerRepository.Update(customer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customer.Id))
+                    if (!await CustomerExists(customer.Id))
                     {
                         return NotFound();
                     }
@@ -132,8 +128,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var customer = await _customerRepository.GetById((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -147,19 +142,13 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-            }
-
-            await _context.SaveChangesAsync();
+            await _customerRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CustomerExists(int id)
+        private async Task<bool> CustomerExists(int id)
         {
-            return _context.Customers.Any(e => e.Id == id);
+            return await _customerRepository.IdExists(id);
         }
     }
 }
