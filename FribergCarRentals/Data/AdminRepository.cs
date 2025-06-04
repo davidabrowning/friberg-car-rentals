@@ -1,46 +1,69 @@
 ﻿using FribergCarRentals.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
     public class AdminRepository : IRepository<Admin>
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        public AdminRepository(ApplicationDbContext applicationDbContext)
+        private readonly UserManager<IdentityUser> _userManager;
+        public AdminRepository(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
         {
             _applicationDbContext = applicationDbContext;
+            _userManager = userManager;
         }
-        public void Add(Admin admin)
+        public async Task Add(Admin admin)
         {
             _applicationDbContext.Admins.Add(admin);
-            _applicationDbContext.SaveChanges();
+            try
+            {
+                await _applicationDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.ToString());
+            }
+            IdentityUser identityUser = await _userManager.Users.Where(u => u.Id == admin.IdentityUser.Id).FirstOrDefaultAsync();
+            var result = await _userManager.AddToRoleAsync(identityUser, "Admin");
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine("ERROR: " + error.Description);
+                }
+            }
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            Admin admin = _applicationDbContext.Admins.Where(a  => a.Id == id).FirstOrDefault();
+            Admin? admin = await GetById(id);
+            if (admin == null)
+                return;
             _applicationDbContext.Remove(admin);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
+            await _userManager.RemoveFromRoleAsync(admin.IdentityUser, "Admin");
         }
 
-        public IEnumerable<Admin> GetAll()
+        public async Task<IEnumerable<Admin>> GetAll()
         {
-            return _applicationDbContext.Admins.ToList();
+            return await _applicationDbContext.Admins.Include(a => a.IdentityUser).ToListAsync();
         }
 
-        public Admin GetById(int id)
+        public async Task<Admin?> GetById(int id)
         {
-            return _applicationDbContext.Admins.Where(a => a.Id == id).FirstOrDefault();
+            return await _applicationDbContext.Admins.Include(a => a.IdentityUser).Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        public bool IdExists(int id)
+        public async Task<bool> IdExists(int id)
         {
-            return _applicationDbContext.Admins.Any(a => a.Id == id);
+            return await _applicationDbContext.Admins.AnyAsync(a => a.Id == id);
         }
 
-        public void Update(Admin admin)
+        public async Task Update(Admin admin)
         {
             _applicationDbContext.Update(admin);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }

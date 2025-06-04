@@ -28,7 +28,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> Index()
         {
             List<CarViewModel> carViewModels = new();
-            IEnumerable<Car> cars = _carRepository.GetAll();
+            IEnumerable<Car> cars = await _carRepository.GetAll();
             foreach (Car car in cars)
             {
                 CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
@@ -45,7 +45,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var car = _carRepository.GetById((int)id);
+            Car? car = await _carRepository.GetById((int)id);
             if (car == null)
             {
                 return NotFound();
@@ -72,7 +72,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 List<Reservation> reservations = null;
                 Car car = ViewModelMappingHelper.GetCar(carViewModel, reservations);
-                _carRepository.Add(car);
+                await _carRepository.Add(car);
                 return RedirectToAction(nameof(Index));
             }
             return View(carViewModel);
@@ -86,7 +86,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Car car = _carRepository.GetById((int)id);
+            Car? car = await _carRepository.GetById((int)id);
             if (car == null)
             {
                 return NotFound();
@@ -114,11 +114,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 {
                     List<Reservation> reservations = null;
                     Car car = ViewModelMappingHelper.GetCar(carViewModel, reservations);
-                    _carRepository.Update(car);
+                    await _carRepository.Update(car);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarExists(carViewModel.Id))
+                    if (!await CarExists(carViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -140,7 +140,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Car car = _carRepository.GetById((int)id);
+            Car? car = await _carRepository.GetById((int)id);
             if (car == null)
             {
                 return NotFound();
@@ -155,17 +155,17 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Car car = _carRepository.GetById(id);
+            Car? car = await _carRepository.GetById(id);
             if (car != null)
             {
-                _carRepository.Delete(car.Id);
+                await _carRepository.Delete(car.Id);
             }
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarExists(int id)
+        private async Task<bool> CarExists(int id)
         {
-            return _carRepository.IdExists(id);
+            return await _carRepository.IdExists(id);
         }
     }
 }

@@ -11,38 +11,40 @@ namespace FribergCarRentals.Data
             _applicationDbContext = applicationDbContext;
         }
 
-        public void Add(Customer customer)
+        public async Task Add(Customer customer)
         {
             _applicationDbContext.Customers.Add(customer);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            Customer customer = GetById(id);
+            Customer? customer = await GetById(id);
+            if (customer == null)
+                return;
             _applicationDbContext.Remove(customer);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<Customer> GetAll()
+        public async Task<IEnumerable<Customer>> GetAll()
         {
-            return _applicationDbContext.Customers.Include(c => c.IdentityUser).ToList();
+            return await _applicationDbContext.Customers.Include(c => c.IdentityUser).ToListAsync();
         }
 
-        public Customer GetById(int id)
+        public async Task<Customer?> GetById(int id)
         {
-            return _applicationDbContext.Customers.Where(c => c.Id == id).Include(c => c.IdentityUser).FirstOrDefault();
+            return await _applicationDbContext.Customers.Where(c => c.Id == id).Include(c => c.IdentityUser).FirstOrDefaultAsync();
         }
 
-        public bool IdExists(int id)
+        public async Task<bool> IdExists(int id)
         {
-            return _applicationDbContext.Customers.Where(c => c.Id == id).Any();
+            return await _applicationDbContext.Customers.Where(c => c.Id == id).AnyAsync();
         }
 
-        public void Update(Customer customer)
+        public async Task Update(Customer customer)
         {
             _applicationDbContext.Update(customer);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }

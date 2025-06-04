@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
@@ -10,38 +11,40 @@ namespace FribergCarRentals.Data
             _applicationDbContext = applicationDbContext;
         }
 
-        public void Add(Car car)
+        public async Task Add(Car car)
         {
-            _applicationDbContext.Cars.Add(car);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.Cars.AddAsync(car);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<Car> GetAll()
+        public async Task<IEnumerable<Car>> GetAll()
         {
-            return _applicationDbContext.Cars.ToList();
+            return await _applicationDbContext.Cars.ToListAsync();
         }
 
-        public Car GetById(int id)
+        public async Task<Car?> GetById(int id)
         {
-            return _applicationDbContext.Cars.Where(c => c.Id == id).FirstOrDefault();
+            return await _applicationDbContext.Cars.Where(c => c.Id == id).FirstOrDefaultAsync();
         }
 
-        public bool IdExists(int id)
+        public async Task<bool> IdExists(int id)
         {
-            return _applicationDbContext.Cars.Any(c => c.Id == id);
+            return await _applicationDbContext.Cars.AnyAsync(c => c.Id == id);
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            Car car = GetById(id);
+            Car? car = await GetById(id);
+            if (car == null)
+                return;
             _applicationDbContext.Remove(car);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public void Update(Car car)
+        public async Task Update(Car car)
         {
             _applicationDbContext.Update(car);
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }

@@ -18,12 +18,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class AdminController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepository<Admin> _adminRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public AdminController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public AdminController(IRepository<Admin> adminRepository, UserManager<IdentityUser> userManager)
         {
-            _context = context;
+            _adminRepository = adminRepository;
             _userManager = userManager;
         }
 
@@ -57,8 +57,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
                 Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
-                _context.Add(admin);
-                await _context.SaveChangesAsync();
+                await _adminRepository.Add(admin);
                 return RedirectToAction(nameof(Index));
             }
             return View(adminViewModel);
@@ -72,7 +71,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin admin = await _context.Admins.Where(a => a.Id == id).Include(a => a.IdentityUser).FirstOrDefaultAsync();
+            Admin? admin = await _adminRepository.GetById((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -100,12 +99,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 {
                     IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
                     Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
-                    _context.Update(admin);
-                    await _context.SaveChangesAsync();
+                    await _adminRepository.Update(admin);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AdminExists(adminViewModel.Id))
+                    if (!await AdminExists(adminViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -127,7 +125,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin admin = await _context.Admins.Where(a => a.Id == id).Include(a => a.IdentityUser).FirstOrDefaultAsync();
+            Admin? admin = await _adminRepository.GetById((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -142,19 +140,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Admin admin = await _context.Admins.FindAsync(id);
-            if (admin != null)
-            {
-                _context.Admins.Remove(admin);
-            }
-
-            await _context.SaveChangesAsync();
+            await _adminRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AdminExists(int id)
+        private async Task<bool> AdminExists(int id)
         {
-            return _context.Admins.Any(a => a.Id == id);
+            return await _adminRepository.IdExists(id);
         }
     }
 }

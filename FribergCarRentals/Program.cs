@@ -15,8 +15,9 @@ namespace FribergCarRentals
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-            builder.Services.AddTransient<IRepository<Car>, CarRepository>();
-            builder.Services.AddTransient<IRepository<Customer>, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
+            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
+            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
