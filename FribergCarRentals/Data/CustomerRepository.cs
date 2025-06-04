@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
-    public class CustomerRepository : ICustomer
+    public class CustomerRepository : IRepository<Customer>
     {
         private readonly ApplicationDbContext _applicationDbContext;
         public CustomerRepository(ApplicationDbContext applicationDbContext)

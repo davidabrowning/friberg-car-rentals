@@ -17,9 +17,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class CarController : Controller
     {
-        private readonly ICar _carRepository;
+        private readonly IRepository<Car> _carRepository;
 
-        public CarController(ICar carRepository)
+        public CarController(IRepository<Car> carRepository)
         {
             _carRepository = carRepository;
         }

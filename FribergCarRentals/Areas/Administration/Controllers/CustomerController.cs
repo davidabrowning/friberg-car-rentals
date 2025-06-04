@@ -19,10 +19,10 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class CustomerController : Controller
     {
-        private readonly ICustomer _customerRepository;
+        private readonly IRepository<Customer> _customerRepository;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public CustomerController(ICustomer customerRepository, UserManager<IdentityUser> userManager)
+        public CustomerController(IRepository<Customer> customerRepository, UserManager<IdentityUser> userManager)
         {
             _customerRepository = customerRepository;
             _userManager = userManager;

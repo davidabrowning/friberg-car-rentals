@@ -2,7 +2,7 @@
 
 namespace FribergCarRentals.Data
 {
-    public class CarRepository : ICar
+    public class CarRepository : IRepository<Car>
     {
         private readonly ApplicationDbContext _applicationDbContext;
         public CarRepository(ApplicationDbContext applicationDbContext)
