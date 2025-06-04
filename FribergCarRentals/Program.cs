@@ -18,6 +18,7 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+            builder.Services.AddScoped<DatabaseCleaningService, DatabaseCleaningService>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
@@ -28,6 +29,13 @@ namespace FribergCarRentals
 
             // Seed roles
             await RoleAndUserSeedingHelper.SeedRolesAndDefaultAdminUser(app);
+
+            // Run DB cleanup
+            using (var scope = app.Services.CreateScope())
+            {
+                var cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningService>();
+                await cleaningService.Go();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

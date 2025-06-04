@@ -16,23 +16,8 @@ namespace FribergCarRentals.Data
         public async Task Add(Admin admin)
         {
             _applicationDbContext.Admins.Add(admin);
-            try
-            {
-                await _applicationDbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex.ToString());
-            }
-            IdentityUser identityUser = await _userManager.Users.Where(u => u.Id == admin.IdentityUser.Id).FirstOrDefaultAsync();
-            var result = await _userManager.AddToRoleAsync(identityUser, "Admin");
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    Console.WriteLine("ERROR: " + error.Description);
-                }
-            }
+            await _applicationDbContext.SaveChangesAsync();
+            await AddToAdminRole(admin);
         }
 
         public async Task Delete(int id)
@@ -42,7 +27,7 @@ namespace FribergCarRentals.Data
                 return;
             _applicationDbContext.Remove(admin);
             await _applicationDbContext.SaveChangesAsync();
-            await _userManager.RemoveFromRoleAsync(admin.IdentityUser, "Admin");
+            await RemoveFromAdminRole(admin);
         }
 
         public async Task<IEnumerable<Admin>> GetAll()
@@ -64,6 +49,30 @@ namespace FribergCarRentals.Data
         {
             _applicationDbContext.Update(admin);
             await _applicationDbContext.SaveChangesAsync();
+        }
+
+        // ========================================== Private helper methods ==========================================
+        private async Task<IdentityUser?> GetIdentityUser(Admin admin)
+        {
+            if (admin.IdentityUser == null)
+                return null;
+            return await _userManager.FindByIdAsync(admin.IdentityUser.Id);
+        }
+
+        private async Task AddToAdminRole(Admin admin)
+        {
+            IdentityUser? identityUser = await GetIdentityUser(admin);
+            if (identityUser == null)
+                return;
+            await _userManager.AddToRoleAsync(identityUser, "Admin");
+        }
+
+        private async Task RemoveFromAdminRole(Admin admin)
+        {
+            IdentityUser? identityUser = await GetIdentityUser(admin);
+            if (identityUser == null)
+                return;
+            await _userManager.RemoveFromRoleAsync(identityUser, "Admin");
         }
     }
 }
