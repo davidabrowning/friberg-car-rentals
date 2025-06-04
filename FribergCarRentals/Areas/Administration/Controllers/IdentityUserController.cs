@@ -40,20 +40,6 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             IEnumerable<Customer> customers = await _customerRepository.GetAll();
             foreach (IdentityUser user in users)
             {
-                int adminId = -1;
-                Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
-                if (admin != null)
-                    adminId = admin.Id;
-                int customerId = -1;
-                string customerFirstName = "";
-                string customerLastName = "";
-                Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
-                if (customer != null)
-                {
-                    customerId = customer.Id;
-                    customerFirstName = customer.FirstName;
-                    customerLastName = customer.LastName;
-                }
                 IdentityUserViewModel identityUserViewModel = new()
                 {
                     Id = user.Id,
@@ -61,11 +47,21 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                     IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
                     IsCustomer = await _userManager.IsInRoleAsync(user, "Customer"),
                     IsUser = await _userManager.IsInRoleAsync(user, "User"),
-                    AdminId = adminId,
-                    CustomerId = customerId,
-                    CustomerFirstName = customerFirstName,
-                    CustomerLastName = customerLastName,
                 };
+                Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
+                if (admin != null)
+                {
+                    identityUserViewModel.AdminId = admin.Id;
+                    identityUserViewModel.AdminFirstName = admin.FirstName;
+                    identityUserViewModel.AdminLastName = admin.LastName;
+                }
+                Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
+                if (customer != null)
+                {
+                    identityUserViewModel.CustomerId = customer.Id;
+                    identityUserViewModel.CustomerFirstName = customer.FirstName;
+                    identityUserViewModel.CustomerLastName = customer.LastName;
+                }
                 identityUserViewModels.Add(identityUserViewModel);
             }
             return View(identityUserViewModels);

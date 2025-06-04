@@ -42,8 +42,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ViewBag.IdentityUserId = identityUserId;
-            return View();
+            AdminViewModel adminViewModel = new()
+            {
+                Id = 0,
+                IdentityUserId = identityUserId,
+            };
+            return View(adminViewModel);
         }
 
         // POST: Admin/Create
@@ -51,16 +55,16 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdentityUserId")] AdminViewModel adminViewModel)
+        public async Task<IActionResult> Create([Bind("IdentityUserId", "FirstName", "LastName")] AdminViewModel adminViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
-                Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
-                await _adminRepository.Add(admin);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(adminViewModel);
+            if (!ModelState.IsValid)
+                return View(adminViewModel);
+            IdentityUser? identityUser = await _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefaultAsync();
+            if (identityUser == null)
+                return NotFound();
+            Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
+            await _adminRepository.Add(admin);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Admin/Edit/5

@@ -8,6 +8,8 @@
         public bool IsCustomer { get; set; }
         public bool IsUser { get; set; }
         public int AdminId { get; set; }
+        public string AdminFirstName { get; set; } = "";
+        public string AdminLastName { get; set; } = "";
         public int CustomerId { get; set; }
         public string CustomerFirstName { get; set; } = "";
         public string CustomerLastName { get; set; } = "";

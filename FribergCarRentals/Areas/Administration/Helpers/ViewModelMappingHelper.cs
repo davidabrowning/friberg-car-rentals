@@ -7,33 +7,37 @@ namespace FribergCarRentals.Areas.Administration.Helpers
 {
     public static class ViewModelMappingHelper
     {
-        public static AdminViewModel GetAdminViewModel(Admin a)
+        public static AdminViewModel GetAdminViewModel(Admin admin)
         {
             return new AdminViewModel()
             {
-                Id = a.Id,
-                IdentityUserId = a.IdentityUser.Id
+                Id = admin.Id,
+                IdentityUserId = admin.IdentityUser.Id,
+                FirstName = admin.FirstName,
+                LastName = admin.LastName,
             };
         }
-        public static Admin GetAdmin(AdminViewModel a, IdentityUser identityUser)
+        public static Admin GetAdmin(AdminViewModel adminViewModel, IdentityUser identityUser)
         {
             return new Admin()
             {
-                Id = a.Id,
+                Id = adminViewModel.Id,
                 IdentityUser = identityUser,
+                FirstName = adminViewModel.FirstName,
+                LastName = adminViewModel.LastName,
             };
         }
-        public static CustomerViewModel GetCustomerViewModel(Customer a)
+        public static CustomerViewModel GetCustomerViewModel(Customer customer)
         {
             return new CustomerViewModel()
             {
-                CustomerId = a.Id,
-                IdentityUserId = a.IdentityUser.Id,
-                FirstName = a.FirstName,
-                LastName = a.LastName,
-                HomeCity = a.HomeCity,
-                HomeCountry = a.HomeCountry,
-                ReservationIds = a.Reservations.Select(a => a.Id).ToList()
+                CustomerId = customer.Id,
+                IdentityUserId = customer.IdentityUser.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                HomeCity = customer.HomeCity,
+                HomeCountry = customer.HomeCountry,
+                ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
             };
         }
         public static Customer GetCustomer(CustomerViewModel customerViewModel, IdentityUser identityUser, List<Reservation> reservations)

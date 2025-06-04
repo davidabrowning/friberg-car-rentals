@@ -76,18 +76,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 return View(customerViewModel);
             }
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                IdentityUser identityUser = new IdentityUser(){ UserName = customerViewModel.Email, Email = customerViewModel.Email };
-                string initialPassword = "Abc123!";
-                List<Reservation> reservations = new();
-                Customer customer = ViewModelMappingHelper.GetCustomer(customerViewModel, identityUser, reservations);
-                await _userManager.CreateAsync(identityUser, initialPassword);
-                await _userManager.AddToRoleAsync(identityUser, "User");
-                await _customerRepository.Add(customer);
-                return RedirectToAction(nameof(Index));
+                return View(customerViewModel);
             }
-            return View(customerViewModel);
+            IdentityUser identityUser = new IdentityUser() { UserName = customerViewModel.Email, Email = customerViewModel.Email };
+            string initialPassword = "Abc123!";
+            List<Reservation> reservations = new();
+            Customer customer = ViewModelMappingHelper.GetCustomer(customerViewModel, identityUser, reservations);
+            await _userManager.CreateAsync(identityUser, initialPassword);
+            await _userManager.AddToRoleAsync(identityUser, "User");
+            await _customerRepository.Add(customer);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Customer/Edit/5
