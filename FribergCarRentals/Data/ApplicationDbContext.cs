@@ -19,5 +19,6 @@ namespace FribergCarRentals.Data
         {
         }
         public DbSet<FribergCarRentals.Areas.Administration.ViewModels.IdentityUserViewModel> IdentityUserViewModel { get; set; } = default!;
+        public DbSet<FribergCarRentals.Areas.Administration.ViewModels.AdminViewModel> AdminViewModel { get; set; } = default!;
     }
 }

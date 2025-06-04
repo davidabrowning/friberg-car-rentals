@@ -103,7 +103,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser user = await _userManager.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+            IdentityUser? user = await _userManager.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
@@ -139,6 +139,52 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(identityUserViewModel);
+        }
+
+        // GET: Admin/Delete/5
+        public async Task<IActionResult> Delete(string? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            IdentityUser? identityUser = await _userManager.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+            if (identityUser == null)
+            {
+                return NotFound();
+            }
+
+            IdentityUserViewModel identityUserViewModel = await ViewModelMappingHelper.GetIdentityUserViewModel(identityUser, _userManager);
+            return View(identityUserViewModel);
+        }
+
+        // POST: Admin/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            IEnumerable<Admin> admins = await _adminRepository.GetAll();
+            Admin? admin = admins.Where(a => a.IdentityUser.Id == id).FirstOrDefault();
+            if (admin != null)
+            {
+                await _adminRepository.Delete(admin.Id);
+            }
+
+            IEnumerable<Customer> customers = await _customerRepository.GetAll();
+            Customer? customer = customers.Where(c => c.IdentityUser.Id == id).FirstOrDefault();
+            if (customer != null)
+            {
+                await _customerRepository.Delete(customer.Id);
+            }
+
+            IdentityUser? identityUser = await _userManager.Users.Where(iu => iu.Id == id).FirstOrDefaultAsync();
+            if (identityUser != null)
+            {
+                await _userManager.DeleteAsync(identityUser);
+            }
+            
+            return RedirectToAction(nameof(Index));
         }
     }
 }
