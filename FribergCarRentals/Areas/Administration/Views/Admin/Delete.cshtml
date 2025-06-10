@@ -22,11 +22,6 @@
 	</dl>
 
 	<form asp-action="Delete">
-		<div class="form-group">
-			<label asp-for="AdminId" class="control-label"></label>
-			<input asp-for="AdminId" class="form-control" readonly />
-			<span asp-validation-for="AdminId" class="text-danger"></span>
-		</div>
 		<input type="submit" value="Delete" class="btn btn-danger" /> |
 		<a asp-action="Index">Back to List</a>
 	</form>

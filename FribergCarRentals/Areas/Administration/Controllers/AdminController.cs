@@ -98,16 +98,16 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AdminId")] AdminEditViewModel adminViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("AdminId")] AdminEditViewModel adminEditViewModel)
         {
-            if (id != adminViewModel.AdminId)
+            if (id != adminEditViewModel.AdminId)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(adminViewModel);
+                return View(adminEditViewModel);
             }
 
             try
@@ -117,7 +117,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await AdminExists(adminViewModel.AdminId))
+                if (!await AdminExists(adminEditViewModel.AdminId))
                 {
                     return NotFound();
                 }

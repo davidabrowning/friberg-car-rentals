@@ -13,7 +13,6 @@ namespace FribergCarRentals.Areas.Administration.Helpers
             return new AdminEditViewModel()
             {
                 AdminId = admin.Id,
-                IdentityUserUsername = admin.IdentityUser.UserName,
             };
         }
         public static Admin GetAdmin(AdminCreateViewModel adminCreateViewModel, IdentityUser identityUser)
