@@ -1,5 +1,4 @@
 using FribergCarRentals.Data;
-using FribergCarRentals.Helpers;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +17,7 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+            builder.Services.AddScoped<DatabaseSeedingService, DatabaseSeedingService>();
             builder.Services.AddScoped<DatabaseCleaningService, DatabaseCleaningService>();
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -28,12 +28,16 @@ namespace FribergCarRentals
             var app = builder.Build();
 
             // Seed roles
-            await RoleAndUserSeedingHelper.SeedRolesAndDefaultAdminUser(app);
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                DatabaseSeedingService seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingService>();
+                await seedingService.Go();
+            }
 
             // Run DB cleanup
-            using (var scope = app.Services.CreateScope())
+            using (IServiceScope scope = app.Services.CreateScope())
             {
-                var cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningService>();
+                DatabaseCleaningService cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningService>();
                 await cleaningService.Go();
             }
 
