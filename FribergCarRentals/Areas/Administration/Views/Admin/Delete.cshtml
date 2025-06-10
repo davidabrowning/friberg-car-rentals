@@ -1,5 +1,5 @@
 ﻿@using FribergCarRentals.Areas.Administration.ViewModels
-@model AdminViewModel
+@model AdminEditViewModel
 
 @{
 	ViewData["Title"] = "Delete";
@@ -14,19 +14,18 @@
 	<hr />
 	<dl class="row">
 		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Id)
+			@Html.DisplayNameFor(model => model.AdminId)
 		</dt>
 		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Id)
+			@Html.DisplayFor(model => model.AdminId)
 		</dd>
 	</dl>
 
 	<form asp-action="Delete">
-		<input type="hidden" asp-for="Id" />
 		<div class="form-group">
-			<label asp-for="IdentityUserId" class="control-label"></label>
-			<input asp-for="IdentityUserId" class="form-control" readonly placeholder="@ViewBag.IdentityUserId" />
-			<span asp-validation-for="IdentityUserId" class="text-danger"></span>
+			<label asp-for="AdminId" class="control-label"></label>
+			<input asp-for="AdminId" class="form-control" readonly />
+			<span asp-validation-for="AdminId" class="text-danger"></span>
 		</div>
 		<input type="submit" value="Delete" class="btn btn-danger" /> |
 		<a asp-action="Index">Back to List</a>

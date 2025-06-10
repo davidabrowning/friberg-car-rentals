@@ -1,5 +1,5 @@
 ﻿@using FribergCarRentals.Areas.Administration.ViewModels
-@model AdminViewModel
+@model AdminCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -18,16 +18,6 @@
                 <label asp-for="IdentityUserId" class="control-label"></label>
                 <input asp-for="IdentityUserId" class="form-control" readonly placeholder="@Model.IdentityUserId" />
                 <span asp-validation-for="IdentityUserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Make admin" class="btn btn-primary" />

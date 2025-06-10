@@ -42,12 +42,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminViewModel adminViewModel = new()
+            AdminCreateViewModel adminCreateViewModel = new()
             {
-                Id = 0,
                 IdentityUserId = identityUserId,
             };
-            return View(adminViewModel);
+            return View(adminCreateViewModel);
         }
 
         // POST: Admin/Create
@@ -55,14 +54,23 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdentityUserId", "FirstName", "LastName")] AdminViewModel adminViewModel)
+        public async Task<IActionResult> Create([Bind("IdentityUserId")] AdminCreateViewModel adminCreateViewModel)
         {
             if (!ModelState.IsValid)
-                return View(adminViewModel);
-            IdentityUser? identityUser = await _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefaultAsync();
+            {
+                return View(adminCreateViewModel);
+            }
+                
+            if (!ModelState.IsValid)
+            {
+                return View(adminCreateViewModel);
+            }
+
+            IdentityUser? identityUser = await _userManager.Users.Where(u => u.Id == adminCreateViewModel.IdentityUserId).FirstOrDefaultAsync();
             if (identityUser == null)
                 return NotFound();
-            Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
+
+            Admin admin = ViewModelMappingHelper.GetAdmin(adminCreateViewModel, identityUser);
             await _adminRepository.Add(admin);
             return RedirectToAction(nameof(Index));
         }
@@ -81,7 +89,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
+            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
             return View(adminViewModel);
         }
 
@@ -90,35 +98,35 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id")] AdminViewModel adminViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("AdminId")] AdminEditViewModel adminViewModel)
         {
-            if (id != adminViewModel.Id)
+            if (id != adminViewModel.AdminId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    IdentityUser identityUser = _userManager.Users.Where(u => u.Id == adminViewModel.IdentityUserId).FirstOrDefault();
-                    Admin admin = ViewModelMappingHelper.GetAdmin(adminViewModel, identityUser);
-                    await _adminRepository.Update(admin);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await AdminExists(adminViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(adminViewModel);
             }
-            return View(adminViewModel);
+
+            try
+            {
+                Admin admin = await _adminRepository.GetById((int)id);
+                await _adminRepository.Update(admin);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await AdminExists(adminViewModel.AdminId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Admin/Delete/5
@@ -135,7 +143,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
+            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
             return View(adminViewModel);
         }
 

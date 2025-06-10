@@ -1,5 +1,5 @@
 ﻿@using FribergCarRentals.Areas.Administration.ViewModels
-@model AdminViewModel
+@model AdminEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -14,9 +14,9 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="AdminId" />
             <div class="form-group">
-                <a asp-area="Administration" asp-controller="Admin" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Delete</a>
+                <a asp-area="Administration" asp-controller="Admin" asp-action="Delete" asp-route-id="@Model.AdminId" class="btn btn-danger">Delete</a>
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

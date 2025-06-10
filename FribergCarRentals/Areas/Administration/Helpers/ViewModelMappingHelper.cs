@@ -8,19 +8,18 @@ namespace FribergCarRentals.Areas.Administration.Helpers
 {
     public static class ViewModelMappingHelper
     {
-        public static AdminViewModel GetAdminViewModel(Admin admin)
+        public static AdminEditViewModel GetAdminViewModel(Admin admin)
         {
-            return new AdminViewModel()
+            return new AdminEditViewModel()
             {
-                Id = admin.Id,
-                IdentityUserId = admin.IdentityUser.Id,
+                AdminId = admin.Id,
+                IdentityUserUsername = admin.IdentityUser.UserName,
             };
         }
-        public static Admin GetAdmin(AdminViewModel adminViewModel, IdentityUser identityUser)
+        public static Admin GetAdmin(AdminCreateViewModel adminCreateViewModel, IdentityUser identityUser)
         {
             return new Admin()
             {
-                Id = adminViewModel.Id,
                 IdentityUser = identityUser,
             };
         }
