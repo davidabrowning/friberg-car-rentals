@@ -1,5 +1,5 @@
 ﻿@using FribergCarRentals.Areas.Administration.ViewModels
-@model IEnumerable<IdentityUserViewModel>
+@model IEnumerable<IdentityUserIndexViewModel>
 
 @{
 	ViewData["Title"] = "Index";
@@ -15,51 +15,53 @@
 	<thead>
 		<tr>
 			<th>
-				IdentityUserName (IdentityUserId)
+				IdentityUser
 			</th>
 			<th>
-				AdminFirst AdminLast (AdminId)
+				Admin Account
 			</th>
 			<th>
-				CustomerFirst CustomerLast (CustomerId)
+				Customer Account
 			</th>
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (IdentityUserViewModel identityUserViewModel in Model)
+		@foreach (IdentityUserIndexViewModel identityUserIndexViewModel in Model)
 		{
 			<tr>
 				<td>
-					<a asp-action="Edit" asp-route-id="@identityUserViewModel.Id" class="btn btn-outline-primary">
-						@identityUserViewModel.Username (@identityUserViewModel.Id)
-						</a>
+					<a asp-action="Edit" asp-route-id="@identityUserIndexViewModel.IdentityUserId" class="btn btn-outline-primary">
+						@identityUserIndexViewModel.IdentityUserUsername
+					</a>
 				</td>
-				@if (identityUserViewModel.AdminId > 0)
+				@if (identityUserIndexViewModel.IsAdmin)
 				{
 					<td>
-						<a asp-controller="Admin" asp-action="Edit" asp-route-id="@identityUserViewModel.AdminId" class="btn btn-outline-primary">
-							@identityUserViewModel.AdminFirstName @identityUserViewModel.AdminLastName (@identityUserViewModel.AdminId)
+						<a asp-controller="Admin" asp-action="Edit" asp-route-id="@identityUserIndexViewModel.AdminId" class="btn btn-outline-primary">
+							@identityUserIndexViewModel.AdminName
 						</a>
 					</td>
 				}
 				else
 				{
 					<td>
-						<a asp-controller="Admin" asp-action="Create" asp-route-id="@identityUserViewModel.Id" class="btn btn-outline-secondary">Make admin</a>
+						<a asp-controller="Admin" asp-action="Create" asp-route-id="@identityUserIndexViewModel.IdentityUserId" class="btn btn-outline-secondary">
+							Make admin
+						</a>
 					</td>
 				}
-				@if (identityUserViewModel.CustomerId > 0)
+				@if (identityUserIndexViewModel.IsCustomer)
 				{
 					<td>
-						<a asp-controller="Customer" asp-action="Details" asp-route-id="@identityUserViewModel.CustomerId" class="btn btn-outline-primary">
-							@identityUserViewModel.CustomerFirstName @identityUserViewModel.CustomerLastName (@identityUserViewModel.CustomerId)
+						<a asp-controller="Customer" asp-action="Details" asp-route-id="@identityUserIndexViewModel.CustomerId" class="btn btn-outline-primary">
+							@identityUserIndexViewModel.CustomerName
 						</a>
 					</td>
 				}
 				else
 				{
 					<td>
-						<a asp-controller="Customer" asp-action="Create" asp-route-id="@identityUserViewModel.Id" class="btn btn-outline-secondary">Make customer</a>
+						<a asp-controller="Customer" asp-action="Create" asp-route-id="@identityUserIndexViewModel.IdentityUserId" class="btn btn-outline-secondary">Make customer</a>
 					</td>
 				}
 

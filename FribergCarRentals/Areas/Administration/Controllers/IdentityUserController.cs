@@ -31,40 +31,37 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             _userManager = userManager;
         }
 
-        // GET: IdentityUserViewModels
+        // GET: IdentityUserIndexViewModels
         public async Task<IActionResult> Index()
         {
-            List<IdentityUserViewModel> identityUserViewModels = new();
-            List<IdentityUser> users = _userManager.Users.ToList();
+            List<IdentityUserIndexViewModel> identityUserIndexViewModels = new();
+            IEnumerable<IdentityUser> users = await _userManager.Users.ToListAsync();
             IEnumerable<Admin> admins = await _adminRepository.GetAll();
             IEnumerable<Customer> customers = await _customerRepository.GetAll();
             foreach (IdentityUser user in users)
             {
-                IdentityUserViewModel identityUserViewModel = new()
+                IdentityUserIndexViewModel identityUserIndexViewModel = new()
                 {
-                    Id = user.Id,
-                    Username = user.UserName,
+                    IdentityUserId = user.Id,
+                    IdentityUserUsername = user.UserName,
                     IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
                     IsCustomer = await _userManager.IsInRoleAsync(user, "Customer"),
-                    IsUser = await _userManager.IsInRoleAsync(user, "User"),
                 };
-                Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
-                if (admin != null)
+                if (identityUserIndexViewModel.IsAdmin)
                 {
-                    identityUserViewModel.AdminId = admin.Id;
-                    identityUserViewModel.AdminFirstName = admin.FirstName;
-                    identityUserViewModel.AdminLastName = admin.LastName;
+                    Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
+                    identityUserIndexViewModel.AdminId = admin.Id;
+                    identityUserIndexViewModel.AdminName = admin.Id.ToString();
                 }
-                Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
-                if (customer != null)
+                if (identityUserIndexViewModel.IsCustomer)
                 {
-                    identityUserViewModel.CustomerId = customer.Id;
-                    identityUserViewModel.CustomerFirstName = customer.FirstName;
-                    identityUserViewModel.CustomerLastName = customer.LastName;
+                    Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
+                    identityUserIndexViewModel.CustomerId = customer.Id;
+                    identityUserIndexViewModel.CustomerName = $"{customer.FirstName} {customer.LastName}";
                 }
-                identityUserViewModels.Add(identityUserViewModel);
+                identityUserIndexViewModels.Add(identityUserIndexViewModel);
             }
-            return View(identityUserViewModels);
+            return View(identityUserIndexViewModels);
         }
 
         // GET: IdentityUserViewModels/Create
