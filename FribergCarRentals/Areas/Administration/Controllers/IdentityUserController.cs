@@ -155,8 +155,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUserViewModel identityUserViewModel = await ViewModelMappingHelper.GetIdentityUserViewModel(identityUser, _userManager);
-            return View(identityUserViewModel);
+            IdentityUserDeleteViewModel identityUserDeleteViewModel = ViewModelMappingHelper.GetIdentityUserDeleteViewModel(identityUser);
+            return View(identityUserDeleteViewModel);
         }
 
         // POST: Admin/Delete/5

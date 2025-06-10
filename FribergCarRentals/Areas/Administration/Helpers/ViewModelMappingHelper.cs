@@ -91,6 +91,14 @@ namespace FribergCarRentals.Areas.Administration.Helpers
                 IsUser = await userManager.IsInRoleAsync(identityUser, "User"),
             };
         }
+        public static IdentityUserDeleteViewModel GetIdentityUserDeleteViewModel(IdentityUser identityUser)
+        {
+            return new IdentityUserDeleteViewModel()
+            {
+                IdentityUserId = identityUser.Id,
+                IdentityUserUsername = identityUser.UserName ?? "",
+            };
+        }
         public static async Task<IdentityUser> GetIdentityUser(IdentityUserEditViewModel identityUserEditViewModel, UserManager<IdentityUser> userManager)
         {
             return await userManager.Users.Where(u => u.Id == identityUserEditViewModel.IdentityUserId).FirstOrDefaultAsync();
