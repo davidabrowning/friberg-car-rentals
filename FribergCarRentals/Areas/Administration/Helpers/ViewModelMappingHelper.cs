@@ -2,6 +2,7 @@
 using FribergCarRentals.Models;
 using FribergCarRentals.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Areas.Administration.Helpers
 {
@@ -13,8 +14,6 @@ namespace FribergCarRentals.Areas.Administration.Helpers
             {
                 Id = admin.Id,
                 IdentityUserId = admin.IdentityUser.Id,
-                FirstName = admin.FirstName,
-                LastName = admin.LastName,
             };
         }
         public static Admin GetAdmin(AdminViewModel adminViewModel, IdentityUser identityUser)
@@ -23,8 +22,6 @@ namespace FribergCarRentals.Areas.Administration.Helpers
             {
                 Id = adminViewModel.Id,
                 IdentityUser = identityUser,
-                FirstName = adminViewModel.FirstName,
-                LastName = adminViewModel.LastName,
             };
         }
         public static CustomerViewModel GetCustomerViewModel(Customer customer)
@@ -77,6 +74,14 @@ namespace FribergCarRentals.Areas.Administration.Helpers
                 Reservations = reservations,
             };
         }
+        public static IdentityUserEditViewModel GetIdentityUserEditViewModel(IdentityUser user)
+        {
+            return new IdentityUserEditViewModel()
+            {
+                IdentityUserId = user.Id,
+                IdentityUserUsername = user.UserName,
+            };
+        }
         public static async Task<IdentityUserViewModel> GetIdentityUserViewModel(IdentityUser identityUser, UserManager<IdentityUser> userManager)
         {
             return new IdentityUserViewModel()
@@ -88,34 +93,9 @@ namespace FribergCarRentals.Areas.Administration.Helpers
                 IsUser = await userManager.IsInRoleAsync(identityUser, "User"),
             };
         }
-        public static async Task<IdentityUser> GetIdentityUser(IdentityUserViewModel identityUserViewModel, UserManager<IdentityUser> userManager)
+        public static async Task<IdentityUser> GetIdentityUser(IdentityUserEditViewModel identityUserEditViewModel, UserManager<IdentityUser> userManager)
         {
-            IdentityUser identityUser = userManager.Users.Where(u => u.Id == identityUserViewModel.Id).FirstOrDefault();
-            if (identityUserViewModel.IsAdmin)
-            {
-                await userManager.AddToRoleAsync(identityUser, "Admin");
-            }
-            else
-            {
-                await userManager.RemoveFromRoleAsync(identityUser, "Admin");
-            }
-            if (identityUserViewModel.IsCustomer)
-            {
-                await userManager.AddToRoleAsync(identityUser, "Customer");
-            }
-            else
-            {
-                await userManager.RemoveFromRoleAsync(identityUser, "Customer");
-            }
-            if (identityUserViewModel.IsUser)
-            {
-                await userManager.AddToRoleAsync(identityUser, "User");
-            }
-            else
-            {
-                await userManager.RemoveFromRoleAsync(identityUser, "User");
-            }
-            return identityUser;
+            return await userManager.Users.Where(u => u.Id == identityUserEditViewModel.IdentityUserId).FirstOrDefaultAsync();
         }
         public static ReservationViewModel GetReservationViewModel(Reservation reservation)
         {

@@ -50,6 +50,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 if (identityUserIndexViewModel.IsAdmin)
                 {
                     Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
+
                     identityUserIndexViewModel.AdminId = admin.Id;
                     identityUserIndexViewModel.AdminName = admin.Id.ToString();
                 }
@@ -106,8 +107,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUserViewModel identityUserViewModel = await ViewModelMappingHelper.GetIdentityUserViewModel(user, _userManager);
-            return View(identityUserViewModel);
+            IdentityUserEditViewModel identityUserEditViewModel = ViewModelMappingHelper.GetIdentityUserEditViewModel(user);
+            return View(identityUserEditViewModel);
         }
 
         // POST: IdentityUserViewModels/Edit/5
@@ -115,27 +116,29 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Username")] IdentityUserViewModel identityUserViewModel)
+        public async Task<IActionResult> Edit(string id, [Bind("IdentityUserId,IdentityUserUsername")] IdentityUserEditViewModel identityUserEditViewModel)
         {
-            if (id != identityUserViewModel.Id)
+            if (id != identityUserEditViewModel.IdentityUserId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    IdentityUser user = await ViewModelMappingHelper.GetIdentityUser(identityUserViewModel, _userManager);
-                    await _userManager.UpdateAsync(user);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
+                return View(identityUserEditViewModel);
             }
-            return View(identityUserViewModel);
+
+            try
+            {
+                IdentityUser user = await ViewModelMappingHelper.GetIdentityUser(identityUserEditViewModel, _userManager);
+                await _userManager.SetUserNameAsync(user, identityUserEditViewModel.IdentityUserUsername);
+                // await _userManager.UpdateAsync(user);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Admin/Delete/5
@@ -180,7 +183,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 await _userManager.DeleteAsync(identityUser);
             }
-            
+
             return RedirectToAction(nameof(Index));
         }
     }
