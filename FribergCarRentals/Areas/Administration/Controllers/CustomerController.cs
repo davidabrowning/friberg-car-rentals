@@ -48,14 +48,31 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
+            CustomerEditViewModel customerViewModel = ViewModelMappingHelper.GetCustomerEditViewModel(customer);
             return View(customerViewModel);
         }
 
-        // GET: Customer/Create
-        public IActionResult Create()
+        // GET: Customer/Create/abcd-1234
+        [HttpGet("Administration/Customer/Create/{identityUserId}")]
+        public async Task<IActionResult> Create(string? identityUserId)
         {
-            return View();
+            if (identityUserId == null)
+            {
+                return NotFound();
+            }
+
+            IdentityUser? identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == identityUserId);
+            if (identityUser == null)
+            {
+                return NotFound();
+            }
+
+            CustomerCreateViewModel customerCreateViewModel = new()
+            {
+                IdentityUserId = identityUser.Id,
+                IdentityUserUsername = identityUser.UserName,
+            };
+            return View(customerCreateViewModel);
         }
 
         // POST: Customer/Create
@@ -63,22 +80,21 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Create(CustomerCreateViewModel customerCreateViewModel)
         {
-            if (RoleValidationHelper.EmailAlreadyClaimed(customerViewModel.Email, _userManager))
-            {
-                return View(customerViewModel);
-            }
             if (!ModelState.IsValid)
             {
-                return View(customerViewModel);
+                return View(customerCreateViewModel);
             }
-            IdentityUser identityUser = new IdentityUser() { UserName = customerViewModel.Email, Email = customerViewModel.Email };
-            string initialPassword = "Abc123!";
+
+            IdentityUser? identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == customerCreateViewModel.IdentityUserId);
+            if (identityUser == null)
+            {
+                return NotFound();
+            }
+
             List<Reservation> reservations = new();
-            Customer customer = ViewModelMappingHelper.GetCustomer(customerViewModel, identityUser, reservations);
-            await _userManager.CreateAsync(identityUser, initialPassword);
-            await _userManager.AddToRoleAsync(identityUser, "User");
+            Customer customer = ViewModelMappingHelper.GetCustomer(customerCreateViewModel, identityUser, reservations);
             await _customerRepository.Add(customer);
             return RedirectToAction(nameof(Index));
         }
@@ -97,8 +113,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
-            return View(customerViewModel);
+            CustomerEditViewModel customerEditViewModel = ViewModelMappingHelper.GetCustomerEditViewModel(customer);
+            return View(customerEditViewModel);
         }
 
         // POST: Customer/Edit/5
@@ -106,35 +122,36 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,HomeCity,HomeCountry")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Edit(int id, CustomerEditViewModel customerEditViewModel)
         {
-            if (id != customerViewModel.CustomerId)
+            if (id != customerEditViewModel.CustomerId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    Customer? customer = await _customerRepository.GetById(customerViewModel.CustomerId);
-                    customer = ViewModelMappingHelper.GetCustomer(customerViewModel, customer.IdentityUser, customer.Reservations);
-                    await _customerRepository.Update(customer);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await CustomerExists(customerViewModel.CustomerId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(customerEditViewModel);
             }
-            return View(customerViewModel);
+
+            try
+            {
+                Customer? customer = await _customerRepository.GetById(customerEditViewModel.CustomerId);
+                customer = ViewModelMappingHelper.GetCustomer(customerEditViewModel, customer.IdentityUser, customer.Reservations);
+                await _customerRepository.Update(customer);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await CustomerExists(customerEditViewModel.CustomerId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Customer/Delete/5
@@ -151,7 +168,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
+            CustomerEditViewModel customerViewModel = ViewModelMappingHelper.GetCustomerEditViewModel(customer);
             return View(customerViewModel);
         }
 

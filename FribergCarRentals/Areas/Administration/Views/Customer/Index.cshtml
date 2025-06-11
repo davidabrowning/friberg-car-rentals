@@ -1,7 +1,7 @@
 ﻿@using FribergCarRentals.Areas.Administration.ViewModels
 @using FribergCarRentals.ViewModels
 
-@model IEnumerable<CustomerViewModel>
+@model IEnumerable<CustomerEditViewModel>
 
 @{
 	ViewData["Title"] = "Index";
@@ -40,7 +40,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (CustomerViewModel customerViewModel in Model)
+		@foreach (CustomerEditViewModel customerViewModel in Model)
 		{
 			<tr>
 				<td>

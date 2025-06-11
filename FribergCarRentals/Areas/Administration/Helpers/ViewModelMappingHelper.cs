@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Areas.Administration.ViewModels;
+using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 using FribergCarRentals.Models;
 using FribergCarRentals.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -22,12 +23,13 @@ namespace FribergCarRentals.Areas.Administration.Helpers
                 IdentityUser = identityUser,
             };
         }
-        public static CustomerViewModel GetCustomerViewModel(Customer customer)
+        public static CustomerEditViewModel GetCustomerEditViewModel(Customer customer)
         {
-            return new CustomerViewModel()
+            return new CustomerEditViewModel()
             {
                 CustomerId = customer.Id,
                 IdentityUserId = customer.IdentityUser.Id,
+                IdentityUserUsername = customer.IdentityUser.UserName,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 HomeCity = customer.HomeCity,
@@ -35,16 +37,28 @@ namespace FribergCarRentals.Areas.Administration.Helpers
                 ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
             };
         }
-        public static Customer GetCustomer(CustomerViewModel customerViewModel, IdentityUser identityUser, List<Reservation> reservations)
+        public static Customer GetCustomer(CustomerCreateViewModel customerCreateViewModel, IdentityUser identityUser, List<Reservation> reservations)
         {
             return new Customer()
             {
-                Id = customerViewModel.CustomerId,
                 IdentityUser = identityUser,
-                FirstName = customerViewModel.FirstName,
-                LastName = customerViewModel.LastName,
-                HomeCity = customerViewModel.HomeCity,
-                HomeCountry = customerViewModel.HomeCountry,
+                FirstName = customerCreateViewModel.FirstName,
+                LastName = customerCreateViewModel.LastName,
+                HomeCity = customerCreateViewModel.HomeCity,
+                HomeCountry = customerCreateViewModel.HomeCountry,
+                Reservations = reservations,
+            };
+        }
+        public static Customer GetCustomer(CustomerEditViewModel customerEditViewModel, IdentityUser identityUser, List<Reservation> reservations)
+        {
+            return new Customer()
+            {
+                Id = customerEditViewModel.CustomerId,
+                IdentityUser = identityUser,
+                FirstName = customerEditViewModel.FirstName,
+                LastName = customerEditViewModel.LastName,
+                HomeCity = customerEditViewModel.HomeCity,
+                HomeCountry = customerEditViewModel.HomeCountry,
                 Reservations = reservations
             };
         }
