@@ -94,7 +94,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
 
             List<Reservation> reservations = new();
-            Customer customer = ViewModelMappingHelper.GetCustomer(customerCreateViewModel, identityUser, reservations);
+            Customer customer = ViewModelMappingHelper.CreateNewCustomer(customerCreateViewModel, identityUser, reservations);
             await _customerRepository.Add(customer);
             return RedirectToAction(nameof(Index));
         }
@@ -137,7 +137,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             try
             {
                 Customer? customer = await _customerRepository.GetById(customerEditViewModel.CustomerId);
-                customer = ViewModelMappingHelper.GetCustomer(customerEditViewModel, customer.IdentityUser, customer.Reservations);
+                ViewModelMappingHelper.UpdatedExistingCustomer(customer, customerEditViewModel);
                 await _customerRepository.Update(customer);
             }
             catch (DbUpdateConcurrencyException)

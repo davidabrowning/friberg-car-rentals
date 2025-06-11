@@ -70,7 +70,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             if (identityUser == null)
                 return NotFound();
 
-            Admin admin = ViewModelMappingHelper.GetAdmin(adminCreateViewModel, identityUser);
+            Admin admin = ViewModelMappingHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
             await _adminRepository.Add(admin);
             return RedirectToAction(nameof(Index));
         }
@@ -89,7 +89,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
+            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminEditViewModel(admin);
             return View(adminViewModel);
         }
 
@@ -143,7 +143,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminViewModel(admin);
+            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminEditViewModel(admin);
             return View(adminViewModel);
         }
 

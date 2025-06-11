@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Models;
-using FribergCarRentals.Helpers;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.CustomerCenter.ViewModels;
@@ -78,19 +77,21 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Username")] IdentityUserViewModel identityUserViewModel)
         {
-            if (RoleValidationHelper.EmailAlreadyClaimed(identityUserViewModel.Username, _userManager))
+            if (await _userManager.Users.AnyAsync(u => u.UserName == identityUserViewModel.Username))
             {
                 return View(identityUserViewModel);
             }
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid)
             {
-                IdentityUser identityUser = new IdentityUser() { UserName = identityUserViewModel.Username, Email = identityUserViewModel.Username };
-                string initialPassword = "Abc123!";
-                await _userManager.CreateAsync(identityUser, initialPassword);
-                await _userManager.AddToRoleAsync(identityUser, "User");
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            return View(identityUserViewModel);
+
+            IdentityUser identityUser = new IdentityUser() { UserName = identityUserViewModel.Username, Email = identityUserViewModel.Username };
+            string initialPassword = "Abc123!";
+            await _userManager.CreateAsync(identityUser, initialPassword);
+            await _userManager.AddToRoleAsync(identityUser, "User");
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: IdentityUserViewModels/Edit/5

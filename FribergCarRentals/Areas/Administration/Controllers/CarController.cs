@@ -71,7 +71,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             if (ModelState.IsValid)
             {
                 List<Reservation> reservations = null;
-                Car car = ViewModelMappingHelper.GetCar(carViewModel, reservations);
+                Car car = ViewModelMappingHelper.CreateNewCar(carViewModel, reservations);
                 await _carRepository.Add(car);
                 return RedirectToAction(nameof(Index));
             }
@@ -113,7 +113,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 try
                 {
                     List<Reservation> reservations = null;
-                    Car car = ViewModelMappingHelper.GetCar(carViewModel, reservations);
+                    Car car = ViewModelMappingHelper.CreateNewCar(carViewModel, reservations);
                     await _carRepository.Update(car);
                 }
                 catch (DbUpdateConcurrencyException)

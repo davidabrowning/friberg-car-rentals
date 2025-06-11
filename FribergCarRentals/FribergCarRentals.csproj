@@ -25,6 +25,7 @@
     <Folder Include="Areas\Public\Data\" />
     <Folder Include="Areas\Public\Models\" />
     <Folder Include="Areas\Public\Views\" />
+    <Folder Include="Helpers\" />
     <Folder Include="Views\View\" />
   </ItemGroup>
 
