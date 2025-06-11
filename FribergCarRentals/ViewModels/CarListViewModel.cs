@@ -1,6 +1,6 @@
 ﻿using FribergCarRentals.Models;
 
-namespace FribergCarRentals.Areas.Administration.ViewModels
+namespace FribergCarRentals.ViewModels
 {
     public class CarListViewModel
     {

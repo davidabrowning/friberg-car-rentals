@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.ViewModels;
 using FribergCarRentals.Areas.Administration.Helpers;
+using FribergCarRentals.Areas.Administration.ViewModels;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
