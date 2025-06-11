@@ -9,6 +9,7 @@ using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
@@ -60,14 +61,24 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,HomeCity,HomeCountry")] Customer customer)
+        public async Task<IActionResult> Create(CustomerCreateViewModel customerCreateViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _customerRepository.AddAsync(customer);
-                return RedirectToAction(nameof(Index));
+                return View(customerCreateViewModel);
             }
-            return View(customer);
+
+            IdentityUser identityUser = await _userManager.GetUserAsync(User);
+            Customer customer = new Customer()
+            {
+                IdentityUser = identityUser,
+                FirstName = customerCreateViewModel.FirstName,
+                LastName = customerCreateViewModel.LastName,
+                HomeCity = customerCreateViewModel.HomeCity,
+                HomeCountry = customerCreateViewModel.HomeCountry,
+            };
+            await _customerRepository.AddAsync(customer);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: CustomerCenter/Customer/Edit/5
