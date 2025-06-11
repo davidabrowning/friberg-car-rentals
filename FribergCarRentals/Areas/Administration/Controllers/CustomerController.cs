@@ -29,16 +29,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         }
 
         // GET: Customer
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            List<CustomerViewModel> customerViewModels = new();
-            IEnumerable<Customer> customers = await _customerRepository.GetAll();
-            foreach (Customer customer in customers)
-            {
-                CustomerViewModel customerViewModel = ViewModelMappingHelper.GetCustomerViewModel(customer);
-                customerViewModels.Add(customerViewModel);
-            }
-            return View(customerViewModels);
+            return RedirectToAction("Index", "IdentityUser");
         }
 
         // GET: Customer/Details/5

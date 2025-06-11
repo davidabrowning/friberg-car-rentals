@@ -28,7 +28,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         }
 
         // GET: Admin
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return RedirectToAction("Index", "IdentityUser");
         }
