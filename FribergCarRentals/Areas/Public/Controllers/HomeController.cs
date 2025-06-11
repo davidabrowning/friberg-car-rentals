@@ -9,6 +9,8 @@ using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Public.ViewModels;
+using FribergCarRentals.ViewModels;
+using System.Diagnostics;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {
@@ -41,6 +43,12 @@ namespace FribergCarRentals.Areas.Public.Controllers
                 homeIndexViewModel.HasCustomerAccount = customers.Any(c => c.IdentityUser == identityUser);
             }
             return View(homeIndexViewModel);
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
