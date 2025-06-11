@@ -7,152 +7,40 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
+using Microsoft.AspNetCore.Identity;
+using FribergCarRentals.Areas.Public.ViewModels;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {
     [Area("Public")]
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public HomeController(ApplicationDbContext context)
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IRepository<Customer> _customerRepository;
+        public HomeController(UserManager<IdentityUser> userManager, IRepository<Customer> customerRepository)
         {
-            _context = context;
+            _userManager = userManager;
+            _customerRepository = customerRepository;
         }
 
         // GET: Public/Home
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cars.ToListAsync());
-        }
+            HomeIndexViewModel homeIndexViewModel = new();
 
-        // GET: Public/Home/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            IdentityUser? identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
             {
-                return NotFound();
+                homeIndexViewModel.IsSignedIn = false;
+                homeIndexViewModel.HasCustomerAccount = false;
             }
-
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (car == null)
+            else
             {
-                return NotFound();
+                IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
+                homeIndexViewModel.IsSignedIn = true;
+                homeIndexViewModel.HasCustomerAccount = customers.Any(c => c.IdentityUser == identityUser);
             }
-
-            return View(car);
-        }
-
-        // GET: Public/Home/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Public/Home/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Make,Model,Year,Description")] Car car)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(car);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(car);
-        }
-
-        // GET: Public/Home/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var car = await _context.Cars.FindAsync(id);
-            if (car == null)
-            {
-                return NotFound();
-            }
-            return View(car);
-        }
-
-        // POST: Public/Home/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Make,Model,Year,Description")] Car car)
-        {
-            if (id != car.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(car);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CarExists(car.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(car);
-        }
-
-        // GET: Public/Home/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (car == null)
-            {
-                return NotFound();
-            }
-
-            return View(car);
-        }
-
-        // POST: Public/Home/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var car = await _context.Cars.FindAsync(id);
-            if (car != null)
-            {
-                _context.Cars.Remove(car);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool CarExists(int id)
-        {
-            return _context.Cars.Any(e => e.Id == id);
+            return View(homeIndexViewModel);
         }
     }
 }
