@@ -55,9 +55,19 @@ namespace FribergCarRentals.Areas.Administration.Helpers
             customer.HomeCity = customerEditViewModel.HomeCity;
             customer.HomeCountry = customerEditViewModel.HomeCountry;
         }
-        public static CarViewModel GetCarViewModel(Car car)
+        public static Car CreateNewCar(CarCreateViewModel carCreateViewModel)
         {
-            return new CarViewModel()
+            return new Car()
+            {
+                Make = carCreateViewModel.Make,
+                Model = carCreateViewModel.Model,
+                Year = carCreateViewModel.Year,
+                Description = carCreateViewModel.Description,
+            };
+        }
+        public static CarIndexViewModel GetCarIndexViewModel(Car car)
+        {
+            return new CarIndexViewModel()
             {
                 Id = car.Id,
                 Make = car.Make,
@@ -67,16 +77,12 @@ namespace FribergCarRentals.Areas.Administration.Helpers
                 ReservationIds = car.Reservations.Select(r => r.Id).ToList(),
             };
         }
-        public static Car CreateNewCar(CarViewModel carViewModel, List<Reservation> reservations)
+        public static void UpdateExistingCar(Car car, CarEditViewModel carEditViewModel)
         {
-            return new Car()
-            {
-                Make = carViewModel.Make,
-                Model = carViewModel.Model,
-                Year = carViewModel.Year,
-                Description = carViewModel.Description,
-                Reservations = reservations,
-            };
+            car.Make = carEditViewModel.Make;
+            car.Model = carEditViewModel.Model;
+            car.Year = carEditViewModel.Year;
+            car.Description = carEditViewModel.Description;
         }
         public static IdentityUserEditViewModel GetIdentityUserEditViewModel(IdentityUser user)
         {

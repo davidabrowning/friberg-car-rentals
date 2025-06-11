@@ -2,7 +2,7 @@
 
 namespace FribergCarRentals.Areas.Administration.ViewModels
 {
-    public class CarViewModel
+    public class CarIndexViewModel
     {
         public int Id { get; set; }
         public string Make { get; set; } = "";

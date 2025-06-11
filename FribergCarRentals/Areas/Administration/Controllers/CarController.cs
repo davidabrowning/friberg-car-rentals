@@ -27,14 +27,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // GET: Car
         public async Task<IActionResult> Index()
         {
-            List<CarViewModel> carViewModels = new();
+            List<CarIndexViewModel> carIndexViewModels = new();
             IEnumerable<Car> cars = await _carRepository.GetAll();
             foreach (Car car in cars)
             {
-                CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
-                carViewModels.Add(carViewModel);
+                CarIndexViewModel carIndexViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
+                carIndexViewModels.Add(carIndexViewModel);
             }
-            return View(carViewModels);
+            return View(carIndexViewModels);
         }
 
         // GET: Car/Details/5
@@ -51,8 +51,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
-            return View(carViewModel);
+            CarIndexViewModel carIndexViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
+            return View(carIndexViewModel);
         }
 
         // GET: Car/Create
@@ -66,16 +66,16 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Make,Model,Year,Description")] CarViewModel carViewModel)
+        public async Task<IActionResult> Create(CarCreateViewModel carCreateViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                List<Reservation> reservations = null;
-                Car car = ViewModelMappingHelper.CreateNewCar(carViewModel, reservations);
-                await _carRepository.Add(car);
-                return RedirectToAction(nameof(Index));
+                return View(carCreateViewModel);
             }
-            return View(carViewModel);
+
+            Car car = ViewModelMappingHelper.CreateNewCar(carCreateViewModel);
+            await _carRepository.Add(car);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Car/Edit/5
@@ -92,7 +92,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
+            CarIndexViewModel carViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
             return View(carViewModel);
         }
 
@@ -101,35 +101,36 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Make,Model,Year,Description")] CarViewModel carViewModel)
+        public async Task<IActionResult> Edit(int id, CarEditViewModel carEditViewModel)
         {
-            if (id != carViewModel.Id)
+            if (id != carEditViewModel.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    List<Reservation> reservations = null;
-                    Car car = ViewModelMappingHelper.CreateNewCar(carViewModel, reservations);
-                    await _carRepository.Update(car);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await CarExists(carViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(carEditViewModel);
             }
-            return View(carViewModel);
+
+            try
+            {
+                Car car = await _carRepository.GetById(carEditViewModel.Id);
+                ViewModelMappingHelper.UpdateExistingCar(car, carEditViewModel);
+                await _carRepository.Update(car);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await CarExists(carEditViewModel.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Car/Delete/5
@@ -146,7 +147,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarViewModel carViewModel = ViewModelMappingHelper.GetCarViewModel(car);
+            CarIndexViewModel carViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
             return View(carViewModel);
         }
 

@@ -40,7 +40,7 @@ namespace FribergCarRentals.Controllers
         //        return NotFound();
         //    }
 
-        //    var carViewModel = await _carRepository.CarViewModel
+        //    var carViewModel = await _carRepository.CarIndexViewModel
         //        .FirstOrDefaultAsync(m => m.CustomerId == id);
         //    if (carViewModel == null)
         //    {
@@ -61,7 +61,7 @@ namespace FribergCarRentals.Controllers
         //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("CustomerId,Make,Model,Year,Description")] CarViewModel carViewModel)
+        //public async Task<IActionResult> Create([Bind("CustomerId,Make,Model,Year,Description")] CarIndexViewModel carViewModel)
         //{
         //    if (ModelState.IsValid)
         //    {
@@ -80,7 +80,7 @@ namespace FribergCarRentals.Controllers
         //        return NotFound();
         //    }
 
-        //    var carViewModel = await _carRepository.CarViewModel.FindAsync(id);
+        //    var carViewModel = await _carRepository.CarIndexViewModel.FindAsync(id);
         //    if (carViewModel == null)
         //    {
         //        return NotFound();
@@ -93,7 +93,7 @@ namespace FribergCarRentals.Controllers
         //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("CustomerId,Make,Model,Year,Description")] CarViewModel carViewModel)
+        //public async Task<IActionResult> Edit(int id, [Bind("CustomerId,Make,Model,Year,Description")] CarIndexViewModel carViewModel)
         //{
         //    if (id != carViewModel.CustomerId)
         //    {
@@ -131,7 +131,7 @@ namespace FribergCarRentals.Controllers
         //        return NotFound();
         //    }
 
-        //    var carViewModel = await _carRepository.CarViewModel
+        //    var carViewModel = await _carRepository.CarIndexViewModel
         //        .FirstOrDefaultAsync(m => m.CustomerId == id);
         //    if (carViewModel == null)
         //    {
@@ -146,10 +146,10 @@ namespace FribergCarRentals.Controllers
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> DeleteConfirmed(int id)
         //{
-        //    var carViewModel = await _carRepository.CarViewModel.FindAsync(id);
+        //    var carViewModel = await _carRepository.CarIndexViewModel.FindAsync(id);
         //    if (carViewModel != null)
         //    {
-        //        _carRepository.CarViewModel.Delete(carViewModel);
+        //        _carRepository.CarIndexViewModel.Delete(carViewModel);
         //    }
 
         //    await _carRepository.SaveChangesAsync();
@@ -158,7 +158,7 @@ namespace FribergCarRentals.Controllers
 
         //private bool CarViewModelExists(int id)
         //{
-        //    return _carRepository.CarViewModel.Any(e => e.CustomerId == id);
+        //    return _carRepository.CarIndexViewModel.Any(e => e.CustomerId == id);
         //}
     }
 }
