@@ -1,28 +1,31 @@
-﻿@using FribergCarRentals.Areas.Public.ViewModels
-@model HomeIndexViewModel
+﻿@model HomeIndexViewModel
 
 @{
-    ViewData["Title"] = "Home";
+	ViewData["Title"] = "Home";
 }
 
 @if (!Model.IsSignedIn)
 {
-    <div class="text-center">
-        <h1 class="display-4">Welcome</h1>
-        <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">Register</a>
-    </div>
+	<div class="text-center">
+		<h1 class="display-4">Welcome</h1>
+		<a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">
+			Register
+		</a>
+	</div>
 }
-else if(!Model.HasCustomerAccount)
+else if (!Model.HasCustomerAccount)
 {
-    <div class="text-center">
-        <h1 class="display-4">Welcome</h1>
-        <a asp-action="SelfRegister" asp-controller="Customer" class="btn btn-primary">Create customer account</a>
-    </div>
+	<div class="text-center">
+		<h1 class="display-4">Welcome</h1>
+		<a class="btn btn-primary" asp-area="Public" asp-controller="Customer" asp-action="Create">
+			Fill out new customer information
+		</a>
+	</div>
 }
 else
 {
-    <div class="text-center">
-        <h1 class="display-4">Welcome</h1>
-        <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    </div>
+	<div class="text-center">
+		<h1 class="display-4">Welcome</h1>
+		<p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+	</div>
 }

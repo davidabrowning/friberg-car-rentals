@@ -17,8 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Public\Data\" />
-    <Folder Include="Areas\Public\Models\" />
     <Folder Include="Helpers\" />
     <Folder Include="Services\" />
     <Folder Include="Views\View\" />
