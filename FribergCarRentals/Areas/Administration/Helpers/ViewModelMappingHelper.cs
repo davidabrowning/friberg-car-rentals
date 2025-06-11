@@ -77,6 +77,17 @@ namespace FribergCarRentals.Areas.Administration.Helpers
                 ReservationIds = car.Reservations.Select(r => r.Id).ToList(),
             };
         }
+        public static CarEditViewModel GetCarEditViewModel(Car car)
+        {
+            return new CarEditViewModel()
+            {
+                Id = car.Id,
+                Make = car.Make,
+                Model = car.Model,
+                Year = car.Year,
+                Description = car.Description,
+            };
+        }
         public static void UpdateExistingCar(Car car, CarEditViewModel carEditViewModel)
         {
             car.Make = carEditViewModel.Make;

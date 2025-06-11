@@ -92,8 +92,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarIndexViewModel carViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
-            return View(carViewModel);
+            CarEditViewModel carEditViewModel = ViewModelMappingHelper.GetCarEditViewModel(car);
+            return View(carEditViewModel);
         }
 
         // POST: Car/Edit/5
@@ -147,8 +147,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarIndexViewModel carViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
-            return View(carViewModel);
+            CarEditViewModel carEditViewModel = ViewModelMappingHelper.GetCarEditViewModel(car);
+            return View(carEditViewModel);
         }
 
         // POST: Car/Delete/5
