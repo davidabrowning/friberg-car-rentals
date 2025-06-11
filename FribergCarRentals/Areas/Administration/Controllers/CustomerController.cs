@@ -47,7 +47,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerViewModel = ViewModelMappingHelper.GetCustomerEditViewModel(customer);
+            CustomerEditViewModel customerViewModel = ViewModelMakerHelper.MakeCustomerEditViewModel(customer);
             return View(customerViewModel);
         }
 
@@ -93,7 +93,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
 
             List<Reservation> reservations = new();
-            Customer customer = ViewModelMappingHelper.CreateNewCustomer(customerCreateViewModel, identityUser, reservations);
+            Customer customer = ViewModelToCreateHelper.CreateNewCustomer(customerCreateViewModel, identityUser, reservations);
             await _customerRepository.AddAsync(customer);
             return RedirectToAction(nameof(Index));
         }
@@ -112,7 +112,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerEditViewModel = ViewModelMappingHelper.GetCustomerEditViewModel(customer);
+            CustomerEditViewModel customerEditViewModel = ViewModelMakerHelper.MakeCustomerEditViewModel(customer);
             return View(customerEditViewModel);
         }
 
@@ -136,7 +136,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             try
             {
                 Customer? customer = await _customerRepository.GetByIdAsync(customerEditViewModel.CustomerId);
-                ViewModelMappingHelper.UpdatedExistingCustomer(customer, customerEditViewModel);
+                ViewModelToUpdateHelper.UpdatedExistingCustomer(customer, customerEditViewModel);
                 await _customerRepository.UpdateAsync(customer);
             }
             catch (DbUpdateConcurrencyException)
@@ -167,7 +167,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerViewModel = ViewModelMappingHelper.GetCustomerEditViewModel(customer);
+            CustomerEditViewModel customerViewModel = ViewModelMakerHelper.MakeCustomerEditViewModel(customer);
             return View(customerViewModel);
         }
 

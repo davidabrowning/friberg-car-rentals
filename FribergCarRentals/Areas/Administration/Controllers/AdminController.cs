@@ -54,7 +54,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdentityUserId")] AdminCreateViewModel adminCreateViewModel)
+        public async Task<IActionResult> Create(AdminCreateViewModel adminCreateViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             if (identityUser == null)
                 return NotFound();
 
-            Admin admin = ViewModelMappingHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
+            Admin admin = ViewModelToCreateHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
             await _adminRepository.AddAsync(admin);
             return RedirectToAction(nameof(Index));
         }
@@ -89,7 +89,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminEditViewModel(admin);
+            AdminEditViewModel adminViewModel = ViewModelMakerHelper.MakeAdminEditViewModel(admin);
             return View(adminViewModel);
         }
 
@@ -143,7 +143,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminViewModel = ViewModelMappingHelper.GetAdminEditViewModel(admin);
+            AdminEditViewModel adminViewModel = ViewModelMakerHelper.MakeAdminEditViewModel(admin);
             return View(adminViewModel);
         }
 

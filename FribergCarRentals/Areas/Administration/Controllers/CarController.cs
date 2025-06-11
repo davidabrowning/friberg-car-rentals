@@ -31,7 +31,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             IEnumerable<Car> cars = await _carRepository.GetAllAsync();
             foreach (Car car in cars)
             {
-                CarIndexViewModel carIndexViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
+                CarIndexViewModel carIndexViewModel = ViewModelMakerHelper.MakeCarIndexViewModel(car);
                 carIndexViewModels.Add(carIndexViewModel);
             }
             return View(carIndexViewModels);
@@ -51,7 +51,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarIndexViewModel carIndexViewModel = ViewModelMappingHelper.GetCarIndexViewModel(car);
+            CarIndexViewModel carIndexViewModel = ViewModelMakerHelper.MakeCarIndexViewModel(car);
             return View(carIndexViewModel);
         }
 
@@ -73,7 +73,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(carCreateViewModel);
             }
 
-            Car car = ViewModelMappingHelper.CreateNewCar(carCreateViewModel);
+            Car car = ViewModelToCreateHelper.CreateNewCar(carCreateViewModel);
             await _carRepository.AddAsync(car);
             return RedirectToAction(nameof(Index));
         }
@@ -92,7 +92,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarEditViewModel carEditViewModel = ViewModelMappingHelper.GetCarEditViewModel(car);
+            CarEditViewModel carEditViewModel = ViewModelMakerHelper.MakeCarEditViewModel(car);
             return View(carEditViewModel);
         }
 
@@ -116,7 +116,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             try
             {
                 Car car = await _carRepository.GetByIdAsync(carEditViewModel.Id);
-                ViewModelMappingHelper.UpdateExistingCar(car, carEditViewModel);
+                ViewModelToUpdateHelper.UpdateExistingCar(car, carEditViewModel);
                 await _carRepository.UpdateAsync(car);
             }
             catch (DbUpdateConcurrencyException)
@@ -147,7 +147,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarEditViewModel carEditViewModel = ViewModelMappingHelper.GetCarEditViewModel(car);
+            CarEditViewModel carEditViewModel = ViewModelMakerHelper.MakeCarEditViewModel(car);
             return View(carEditViewModel);
         }
 

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Models;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 using FribergCarRentals.Areas.Administration.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
@@ -33,35 +32,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // GET: IdentityUserIndexViewModels
         public async Task<IActionResult> Index()
         {
-            List<IdentityUserIndexViewModel> identityUserIndexViewModels = new();
-            IEnumerable<IdentityUser> users = await _userManager.Users.ToListAsync();
-            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
-            foreach (IdentityUser user in users)
-            {
-                IdentityUserIndexViewModel identityUserIndexViewModel = new()
-                {
-                    IdentityUserId = user.Id,
-                    IdentityUserUsername = user.UserName,
-                    IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
-                    IsCustomer = await _userManager.IsInRoleAsync(user, "Customer"),
-                };
-                if (identityUserIndexViewModel.IsAdmin)
-                {
-                    Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
-
-                    identityUserIndexViewModel.AdminId = admin.Id;
-                    identityUserIndexViewModel.AdminName = admin.Id.ToString();
-                }
-                if (identityUserIndexViewModel.IsCustomer)
-                {
-                    Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
-                    identityUserIndexViewModel.CustomerId = customer.Id;
-                    identityUserIndexViewModel.CustomerName = $"{customer.FirstName} {customer.LastName}";
-                }
-                identityUserIndexViewModels.Add(identityUserIndexViewModel);
-            }
-            return View(identityUserIndexViewModels);
+            List<IdentityUserIndexViewModel> viewModelList = await CreateIdentityUserIndexViewModels();
+            return View(viewModelList);
         }
 
         // GET: IdentityUserViewModels/Create
@@ -75,22 +47,20 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username")] IdentityUserViewModel identityUserViewModel)
+        public async Task<IActionResult> Create(IdentityUserViewModel identityUserViewModel)
         {
-            if (await _userManager.Users.AnyAsync(u => u.UserName == identityUserViewModel.Username))
+            if (await IsAlreadyTaken(identityUserViewModel.Username))
             {
                 return View(identityUserViewModel);
             }
 
             if (!ModelState.IsValid)
             {
-                return NotFound();
+                return View(identityUserViewModel);
             }
 
-            IdentityUser identityUser = new IdentityUser() { UserName = identityUserViewModel.Username, Email = identityUserViewModel.Username };
-            string initialPassword = "Abc123!";
-            await _userManager.CreateAsync(identityUser, initialPassword);
-            await _userManager.AddToRoleAsync(identityUser, "User");
+            await CreateIdentityUser(identityUserViewModel.Username);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -108,8 +78,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUserEditViewModel identityUserEditViewModel = ViewModelMappingHelper.GetIdentityUserEditViewModel(user);
-            return View(identityUserEditViewModel);
+            IdentityUserEditViewModel viewModel = ViewModelMakerHelper.MakeIdentityUserEditViewModel(user);
+            return View(viewModel);
         }
 
         // POST: IdentityUserViewModels/Edit/5
@@ -117,7 +87,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("IdentityUserId,IdentityUserUsername")] IdentityUserEditViewModel identityUserEditViewModel)
+        public async Task<IActionResult> Edit(string id, IdentityUserEditViewModel identityUserEditViewModel)
         {
             if (id != identityUserEditViewModel.IdentityUserId)
             {
@@ -131,14 +101,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             try
             {
-                IdentityUser user = await ViewModelMappingHelper.GetIdentityUser(identityUserEditViewModel, _userManager);
-                await _userManager.SetUserNameAsync(user, identityUserEditViewModel.IdentityUserUsername);
-                // await _userManager.UpdateAsync(user);
+                IdentityUser identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == identityUserEditViewModel.IdentityUserId);
+                await _userManager.SetUserNameAsync(identityUser, identityUserEditViewModel.IdentityUserUsername);
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -156,7 +126,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUserDeleteViewModel identityUserDeleteViewModel = ViewModelMappingHelper.GetIdentityUserDeleteViewModel(identityUser);
+            IdentityUserDeleteViewModel identityUserDeleteViewModel = ViewModelMakerHelper.MakeIdentityUserDeleteViewModel(identityUser);
             return View(identityUserDeleteViewModel);
         }
 
@@ -186,6 +156,56 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<bool> IsAlreadyTaken(string identityUserUsername)
+        {
+            return await _userManager.Users.AnyAsync(u => u.UserName == identityUserUsername);
+        }
+
+        private async Task CreateIdentityUser(string identityUserUsername)
+        {
+            IdentityUser identityUser = new IdentityUser() { UserName = identityUserUsername, Email = identityUserUsername };
+            string initialPassword = "Abc123!";
+            await _userManager.CreateAsync(identityUser, initialPassword);
+            await _userManager.AddToRoleAsync(identityUser, "User");
+        }
+
+        private async Task<List<IdentityUserIndexViewModel>> CreateIdentityUserIndexViewModels()
+        {
+            List<IdentityUserIndexViewModel> identityUserIndexViewModels = new();
+            IEnumerable<IdentityUser> users = await _userManager.Users.ToListAsync();
+            foreach (IdentityUser user in users)
+            {
+                identityUserIndexViewModels.Add(await CreateIdentityUserIndexViewModel(user));
+            }
+            return identityUserIndexViewModels;
+        }
+
+        private async Task<IdentityUserIndexViewModel> CreateIdentityUserIndexViewModel(IdentityUser user)
+        {
+            IdentityUserIndexViewModel identityUserIndexViewModel = new()
+            {
+                IdentityUserId = user.Id,
+                IdentityUserUsername = user.UserName,
+                IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
+                IsCustomer = await _userManager.IsInRoleAsync(user, "Customer"),
+            };
+            if (identityUserIndexViewModel.IsAdmin)
+            {
+                IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
+                Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
+                identityUserIndexViewModel.AdminId = admin.Id;
+                identityUserIndexViewModel.AdminName = admin.Id.ToString();
+            }
+            if (identityUserIndexViewModel.IsCustomer)
+            {
+                IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
+                Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
+                identityUserIndexViewModel.CustomerId = customer.Id;
+                identityUserIndexViewModel.CustomerName = $"{customer.FirstName} {customer.LastName}";
+            }
+            return identityUserIndexViewModel;
         }
     }
 }

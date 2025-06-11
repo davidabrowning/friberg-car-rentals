@@ -27,11 +27,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
-            List<ReservationViewModel> reservationViewModels = new();
+            List<ReservationIndexViewModel> reservationViewModels = new();
             List<Reservation> reservations = await _context.Reservations.ToListAsync();
             foreach (Reservation reservation in reservations)
             {
-                ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
+                ReservationIndexViewModel reservationViewModel = ViewModelMakerHelper.MakeReservationIndexViewModel(reservation);
                 reservationViewModels.Add(reservationViewModel);
             }
             return View(reservationViewModels);
@@ -51,14 +51,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
+            ReservationIndexViewModel reservationViewModel = ViewModelMakerHelper.MakeReservationIndexViewModel(reservation);
             return View(reservationViewModel);
         }
 
         // GET: Reservation/Create
         public async Task<IActionResult> Create()
         {
-            ReservationViewModel reservationViewModel = new();
+            ReservationIndexViewModel reservationViewModel = new();
             reservationViewModel.AllCars = await _context.Cars.ToListAsync();
             reservationViewModel.AllCustomers = await _context.Customers.ToListAsync();
             return View();
@@ -69,16 +69,16 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StartDate,EndDate,Car,Customer")] ReservationViewModel reservationViewModel)
+        public async Task<IActionResult> Create([Bind("Id,StartDate,EndDate,Car,Customer")] ReservationIndexViewModel reservationIndexViewModel)
         {
             if (ModelState.IsValid)
             {
-                Reservation reservation = ViewModelMappingHelper.GetReservation(reservationViewModel);
+                Reservation reservation = ViewModelToCreateHelper.GetReservation(reservationIndexViewModel);
                 _context.Add(reservation);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(reservationViewModel);
+            return View(reservationIndexViewModel);
         }
 
         // GET: Reservation/Edit/5
@@ -95,7 +95,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
+            ReservationIndexViewModel reservationViewModel = ViewModelMakerHelper.MakeReservationIndexViewModel(reservation);
             return View(reservationViewModel);
         }
 
@@ -104,9 +104,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StartDate,EndDate")] ReservationViewModel reservationViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,StartDate,EndDate")] ReservationIndexViewModel reservationIndexViewModel)
         {
-            if (id != reservationViewModel.Id)
+            if (id != reservationIndexViewModel.Id)
             {
                 return NotFound();
             }
@@ -115,13 +115,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 try
                 {
-                    Reservation reservation = ViewModelMappingHelper.GetReservation(reservationViewModel);
+                    Reservation reservation = ViewModelToCreateHelper.GetReservation(reservationIndexViewModel);
                     _context.Update(reservation);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ReservationExists(reservationViewModel.Id))
+                    if (!ReservationExists(reservationIndexViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -132,7 +132,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(reservationViewModel);
+            return View(reservationIndexViewModel);
         }
 
         // GET: Reservation/Delete/5
@@ -150,7 +150,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationViewModel reservationViewModel = ViewModelMappingHelper.GetReservationViewModel(reservation);
+            ReservationIndexViewModel reservationViewModel = ViewModelMakerHelper.MakeReservationIndexViewModel(reservation);
             return View(reservationViewModel);
         }
 

@@ -2,7 +2,7 @@
 
 namespace FribergCarRentals.Areas.Administration.ViewModels
 {
-    public class ReservationViewModel
+    public class ReservationIndexViewModel
     {
         public int Id { get; set; }
         public DateOnly StartDate { get; set; }
