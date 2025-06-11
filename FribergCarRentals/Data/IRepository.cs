@@ -2,11 +2,11 @@
 {
     public interface IRepository<T>
     {
-        Task<T?> GetById(int id);
-        Task<IEnumerable<T>> GetAll();
-        Task Add(T t);
-        Task Update(T t);
-        Task Delete(int id);
-        Task<bool> IdExists(int id);
+        Task<T?> GetByIdAsync(int id);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task AddAsync(T t);
+        Task UpdateAsync(T t);
+        Task DeleteAsync(int id);
+        Task<bool> IdExistsAsync(int id);
     }
 }

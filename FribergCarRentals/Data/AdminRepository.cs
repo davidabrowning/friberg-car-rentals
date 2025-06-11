@@ -13,16 +13,16 @@ namespace FribergCarRentals.Data
             _applicationDbContext = applicationDbContext;
             _userManager = userManager;
         }
-        public async Task Add(Admin admin)
+        public async Task AddAsync(Admin admin)
         {
             _applicationDbContext.Admins.Add(admin);
             await _applicationDbContext.SaveChangesAsync();
             await AddToAdminRole(admin);
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            Admin? admin = await GetById(id);
+            Admin? admin = await GetByIdAsync(id);
             if (admin == null)
                 return;
             _applicationDbContext.Remove(admin);
@@ -30,22 +30,22 @@ namespace FribergCarRentals.Data
             await RemoveFromAdminRole(admin);
         }
 
-        public async Task<IEnumerable<Admin>> GetAll()
+        public async Task<IEnumerable<Admin>> GetAllAsync()
         {
             return await _applicationDbContext.Admins.Include(a => a.IdentityUser).ToListAsync();
         }
 
-        public async Task<Admin?> GetById(int id)
+        public async Task<Admin?> GetByIdAsync(int id)
         {
             return await _applicationDbContext.Admins.Include(a => a.IdentityUser).Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> IdExists(int id)
+        public async Task<bool> IdExistsAsync(int id)
         {
             return await _applicationDbContext.Admins.AnyAsync(a => a.Id == id);
         }
 
-        public async Task Update(Admin admin)
+        public async Task UpdateAsync(Admin admin)
         {
             _applicationDbContext.Update(admin);
             await _applicationDbContext.SaveChangesAsync();

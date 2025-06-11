@@ -41,7 +41,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerRepository.GetById((int)id);
+            Customer? customer = await _customerRepository.GetByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -94,7 +94,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             List<Reservation> reservations = new();
             Customer customer = ViewModelMappingHelper.CreateNewCustomer(customerCreateViewModel, identityUser, reservations);
-            await _customerRepository.Add(customer);
+            await _customerRepository.AddAsync(customer);
             return RedirectToAction(nameof(Index));
         }
 
@@ -106,7 +106,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerRepository.GetById((int)id);
+            Customer? customer = await _customerRepository.GetByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -135,9 +135,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             try
             {
-                Customer? customer = await _customerRepository.GetById(customerEditViewModel.CustomerId);
+                Customer? customer = await _customerRepository.GetByIdAsync(customerEditViewModel.CustomerId);
                 ViewModelMappingHelper.UpdatedExistingCustomer(customer, customerEditViewModel);
-                await _customerRepository.Update(customer);
+                await _customerRepository.UpdateAsync(customer);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -153,7 +153,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Customer/Delete/5
+        // GET: Customer/DeleteAsync/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -161,7 +161,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerRepository.GetById((int)id);
+            Customer? customer = await _customerRepository.GetByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -171,18 +171,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return View(customerViewModel);
         }
 
-        // POST: Customer/Delete/5
+        // POST: Customer/DeleteAsync/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _customerRepository.Delete(id);
+            await _customerRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         private async Task<bool> CustomerExists(int id)
         {
-            return await _customerRepository.IdExists(id);
+            return await _customerRepository.IdExistsAsync(id);
         }
     }
 }

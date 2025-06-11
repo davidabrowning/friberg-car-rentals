@@ -154,7 +154,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return View(reservationViewModel);
         }
 
-        // POST: Reservation/Delete/5
+        // POST: Reservation/DeleteAsync/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

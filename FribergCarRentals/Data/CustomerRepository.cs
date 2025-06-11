@@ -14,16 +14,16 @@ namespace FribergCarRentals.Data
             _userManager = userManager;
         }
 
-        public async Task Add(Customer customer)
+        public async Task AddAsync(Customer customer)
         {
             _applicationDbContext.Customers.Add(customer);
             await _applicationDbContext.SaveChangesAsync();
             await AddToCustomerRole(customer);
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            Customer? customer = await GetById(id);
+            Customer? customer = await GetByIdAsync(id);
             if (customer == null)
                 return;
             _applicationDbContext.Remove(customer);
@@ -31,22 +31,22 @@ namespace FribergCarRentals.Data
             await RemoveFromCustomerRole(customer);
         }
 
-        public async Task<IEnumerable<Customer>> GetAll()
+        public async Task<IEnumerable<Customer>> GetAllAsync()
         {
             return await _applicationDbContext.Customers.Include(c => c.IdentityUser).ToListAsync();
         }
 
-        public async Task<Customer?> GetById(int id)
+        public async Task<Customer?> GetByIdAsync(int id)
         {
             return await _applicationDbContext.Customers.Where(c => c.Id == id).Include(c => c.IdentityUser).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> IdExists(int id)
+        public async Task<bool> IdExistsAsync(int id)
         {
             return await _applicationDbContext.Customers.Where(c => c.Id == id).AnyAsync();
         }
 
-        public async Task Update(Customer customer)
+        public async Task UpdateAsync(Customer customer)
         {
             _applicationDbContext.Update(customer);
             await _applicationDbContext.SaveChangesAsync();

@@ -35,8 +35,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             List<IdentityUserIndexViewModel> identityUserIndexViewModels = new();
             IEnumerable<IdentityUser> users = await _userManager.Users.ToListAsync();
-            IEnumerable<Admin> admins = await _adminRepository.GetAll();
-            IEnumerable<Customer> customers = await _customerRepository.GetAll();
+            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
+            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
             foreach (IdentityUser user in users)
             {
                 IdentityUserIndexViewModel identityUserIndexViewModel = new()
@@ -160,23 +160,23 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return View(identityUserDeleteViewModel);
         }
 
-        // POST: Admin/Delete/5
+        // POST: Admin/DeleteAsync/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            IEnumerable<Admin> admins = await _adminRepository.GetAll();
+            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
             Admin? admin = admins.Where(a => a.IdentityUser.Id == id).FirstOrDefault();
             if (admin != null)
             {
-                await _adminRepository.Delete(admin.Id);
+                await _adminRepository.DeleteAsync(admin.Id);
             }
 
-            IEnumerable<Customer> customers = await _customerRepository.GetAll();
+            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
             Customer? customer = customers.Where(c => c.IdentityUser.Id == id).FirstOrDefault();
             if (customer != null)
             {
-                await _customerRepository.Delete(customer.Id);
+                await _customerRepository.DeleteAsync(customer.Id);
             }
 
             IdentityUser? identityUser = await _userManager.Users.Where(iu => iu.Id == id).FirstOrDefaultAsync();

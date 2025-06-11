@@ -41,7 +41,7 @@ namespace FribergCarRentals.Data
             {
                 await _userManager.AddToRoleAsync(user, "Admin");
                 Admin admin = new Admin() { IdentityUser = user };
-                await _adminRepository.Add(admin);
+                await _adminRepository.AddAsync(admin);
             }
         }
 

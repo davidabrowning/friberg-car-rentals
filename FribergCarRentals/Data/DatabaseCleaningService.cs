@@ -24,29 +24,29 @@ namespace FribergCarRentals.Data
         }
         private async Task RemoveAdminsWithoutIdentityUsers()
         {
-            IEnumerable<Admin> admins = await _adminRepository.GetAll();
+            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
             foreach (Admin admin in admins)
             {
                 if (admin.IdentityUser == null)
                 {
-                    await _adminRepository.Delete(admin.Id);
+                    await _adminRepository.DeleteAsync(admin.Id);
                 }
             }
         }
         private async Task RemoveCustomersWithoutIdentityUsers()
         {
-            IEnumerable<Customer> customers = await _customerRepository.GetAll();
+            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
             foreach (Customer customer in customers)
             {
                 if (customer.IdentityUser == null)
                 {
-                    await _customerRepository.Delete(customer.Id);
+                    await _customerRepository.DeleteAsync(customer.Id);
                 }
             }
         }
         private async Task RemoveAdminRoleFromUsersWithoutAdminAccount()
         {
-            IEnumerable<Admin> admins = await _adminRepository.GetAll();
+            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
             foreach (IdentityUser identityUser in await _userManager.Users.ToListAsync())
             {
                 if (!admins.Any(a => a.IdentityUser == identityUser))
@@ -57,7 +57,7 @@ namespace FribergCarRentals.Data
         }
         private async Task RemoveCustomerRoleFromUsersWithoutCustomerAccount()
         {
-            IEnumerable<Customer> customers = await _customerRepository.GetAll();
+            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
             foreach (IdentityUser identityUser in await _userManager.Users.ToListAsync())
             {
                 if (!customers.Any(a => a.IdentityUser == identityUser))

@@ -24,7 +24,7 @@ namespace FribergCarRentals.Controllers
         public async Task<IActionResult> Index()
         {
             CarListViewModel carListViewModel  = new CarListViewModel();
-            IEnumerable<Car> cars = await _carRepository.GetAll();
+            IEnumerable<Car> cars = await _carRepository.GetAllAsync();
             foreach (Car car in cars)
             {
                 carListViewModel.CarIds.Add(car.Id);
@@ -65,7 +65,7 @@ namespace FribergCarRentals.Controllers
         //{
         //    if (ModelState.IsValid)
         //    {
-        //        _carRepository.Add(carViewModel);
+        //        _carRepository.AddAsync(carViewModel);
         //        await _carRepository.SaveChangesAsync();
         //        return RedirectToAction(nameof(Index));
         //    }
@@ -123,8 +123,8 @@ namespace FribergCarRentals.Controllers
         //    return View(carViewModel);
         //}
 
-        //// GET: CarList/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
+        //// GET: CarList/DeleteAsync/5
+        //public async Task<IActionResult> DeleteAsync(int? id)
         //{
         //    if (id == null)
         //    {
@@ -141,15 +141,15 @@ namespace FribergCarRentals.Controllers
         //    return View(carViewModel);
         //}
 
-        //// POST: CarList/Delete/5
-        //[HttpPost, ActionName("Delete")]
+        //// POST: CarList/DeleteAsync/5
+        //[HttpPost, ActionName("DeleteAsync")]
         //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> DeleteConfirmed(int id)
         //{
         //    var carViewModel = await _carRepository.CarIndexViewModel.FindAsync(id);
         //    if (carViewModel != null)
         //    {
-        //        _carRepository.CarIndexViewModel.Delete(carViewModel);
+        //        _carRepository.CarIndexViewModel.DeleteAsync(carViewModel);
         //    }
 
         //    await _carRepository.SaveChangesAsync();

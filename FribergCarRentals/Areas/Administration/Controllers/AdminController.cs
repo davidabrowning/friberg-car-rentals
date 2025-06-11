@@ -71,7 +71,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
 
             Admin admin = ViewModelMappingHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
-            await _adminRepository.Add(admin);
+            await _adminRepository.AddAsync(admin);
             return RedirectToAction(nameof(Index));
         }
 
@@ -83,7 +83,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin? admin = await _adminRepository.GetById((int)id);
+            Admin? admin = await _adminRepository.GetByIdAsync((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -112,8 +112,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             try
             {
-                Admin admin = await _adminRepository.GetById((int)id);
-                await _adminRepository.Update(admin);
+                Admin admin = await _adminRepository.GetByIdAsync((int)id);
+                await _adminRepository.UpdateAsync(admin);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -129,7 +129,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Admin/Delete/5
+        // GET: Admin/DeleteAsync/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,7 +137,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin? admin = await _adminRepository.GetById((int)id);
+            Admin? admin = await _adminRepository.GetByIdAsync((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -147,18 +147,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return View(adminViewModel);
         }
 
-        // POST: Admin/Delete/5
+        // POST: Admin/DeleteAsync/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _adminRepository.Delete(id);
+            await _adminRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         private async Task<bool> AdminExists(int id)
         {
-            return await _adminRepository.IdExists(id);
+            return await _adminRepository.IdExistsAsync(id);
         }
     }
 }
