@@ -1,8 +1,13 @@
-﻿using FribergCarRentals.Interfaces;
+﻿using FribergCarRentals.Data;
+using FribergCarRentals.Interfaces;
+using FribergCarRentals.Models;
 
 namespace FribergCarRentals.Services
 {
-    public class ReservationService : IReservationService
+    public class ReservationService : BasicCRUDService<Reservation>, IReservationService
     {
+        public ReservationService(IRepository<Reservation> reservationRepository) : base(reservationRepository)
+        {
+        }
     }
 }

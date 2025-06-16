@@ -2,12 +2,7 @@
 
 namespace FribergCarRentals.Interfaces
 {
-    public interface IAdminService
+    public interface IAdminService : IBasicCRUDService<Admin>
     {
-        Task<Admin> AddAsync(Admin admin);
-        Task<Admin?> GetByIdAsync(int id);
-        Task<Admin> UpdateAsync(Admin admin);
-        Task<Admin?> DeleteAsync(int id);
-        Task<bool> IdExistsAsync(int id);
     }
 }

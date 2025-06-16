@@ -1,6 +1,8 @@
-﻿namespace FribergCarRentals.Interfaces
+﻿using FribergCarRentals.Models;
+
+namespace FribergCarRentals.Interfaces
 {
-    public interface ICarService
+    public interface ICarService : IBasicCRUDService<Car>
     {
     }
 }

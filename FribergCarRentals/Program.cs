@@ -17,6 +17,10 @@ namespace FribergCarRentals
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             builder.Services.AddScoped<IIdentityUserService, IdentityUserService>();
+            builder.Services.AddScoped<IAdminService, AdminService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<ICarService, CarService>();
+            // builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
