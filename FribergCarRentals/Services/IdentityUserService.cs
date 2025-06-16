@@ -130,5 +130,17 @@ namespace FribergCarRentals.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Admin?> GetAdminAccount(IdentityUser identityUser)
+        {
+            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
+            return admins.FirstOrDefault(a => a.IdentityUser.Id == identityUser.Id);
+        }
+
+        public async Task<Customer?> GetCustomerAccount(IdentityUser identityUser)
+        {
+            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
+            return customers.FirstOrDefault(c => c.IdentityUser.Id == identityUser.Id);
+        }
     }
 }

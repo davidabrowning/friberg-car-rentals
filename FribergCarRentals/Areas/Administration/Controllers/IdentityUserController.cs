@@ -19,14 +19,10 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class IdentityUserController : Controller
     {
-        private readonly IRepository<Admin> _adminRepository;
-        private readonly IRepository<Customer> _customerRepository;
         private readonly IIdentityUserService _identityUserService;
 
-        public IdentityUserController(IRepository<Admin> adminRepository, IRepository<Customer> customerRepository, IIdentityUserService identityUserService)
+        public IdentityUserController(IIdentityUserService identityUserService)
         {
-            _adminRepository = adminRepository;
-            _customerRepository = customerRepository;
             _identityUserService = identityUserService;
         }
 
@@ -160,15 +156,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             if (identityUserIndexViewModel.IsAdmin)
             {
-                IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
-                Admin? admin = admins.Where(a => a.IdentityUser.Id == user.Id).FirstOrDefault();
+                Admin admin = await _identityUserService.GetAdminAccount(user);
                 identityUserIndexViewModel.AdminId = admin.Id;
                 identityUserIndexViewModel.AdminName = admin.Id.ToString();
             }
             if (identityUserIndexViewModel.IsCustomer)
             {
-                IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
-                Customer? customer = customers.Where(c => c.IdentityUser.Id == user.Id).FirstOrDefault();
+                Customer customer = await _identityUserService.GetCustomerAccount(user);
                 identityUserIndexViewModel.CustomerId = customer.Id;
                 identityUserIndexViewModel.CustomerName = $"{customer.FirstName} {customer.LastName}";
             }

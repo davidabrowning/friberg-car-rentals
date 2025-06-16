@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FribergCarRentals.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace FribergCarRentals.Interfaces
 {
@@ -17,5 +18,7 @@ namespace FribergCarRentals.Interfaces
         Task<bool> IsCustomer(IdentityUser identityUser);
         Task<IdentityUser?> MakeAdmin(string username);
         Task<IdentityUser?> MakeCustomer(string username);
+        Task<Admin?> GetAdminAccount(IdentityUser identityUser);
+        Task<Customer?> GetCustomerAccount(IdentityUser identityUser);
     }
 }
