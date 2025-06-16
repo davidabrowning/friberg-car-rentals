@@ -13,7 +13,7 @@ using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "Customer")]
     [Area("CustomerCenter")]
     public class CustomerController : Controller
     {

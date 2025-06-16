@@ -1,5 +1,7 @@
 using FribergCarRentals.Data;
+using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
+using FribergCarRentals.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +16,7 @@ namespace FribergCarRentals
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddScoped<IIdentityUserService, IdentityUserService>();
             builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();

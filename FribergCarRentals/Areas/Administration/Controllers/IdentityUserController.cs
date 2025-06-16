@@ -11,6 +11,7 @@ using FribergCarRentals.Models;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.Administration.Helpers;
+using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -20,13 +21,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     {
         private readonly IRepository<Admin> _adminRepository;
         private readonly IRepository<Customer> _customerRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IIdentityUserService _identityUserService;
 
-        public IdentityUserController(IRepository<Admin> adminRepository, IRepository<Customer> customerRepository, UserManager<IdentityUser> userManager)
+        public IdentityUserController(IRepository<Admin> adminRepository, IRepository<Customer> customerRepository, IIdentityUserService identityUserService)
         {
             _adminRepository = adminRepository;
             _customerRepository = customerRepository;
-            _userManager = userManager;
+            _identityUserService = identityUserService;
         }
 
         // GET: IdentityUserIndexViewModels
@@ -59,7 +60,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(identityUserViewModel);
             }
 
-            await CreateIdentityUser(identityUserViewModel.Username);
+            await _identityUserService.AddIdentityUserAsync(identityUserViewModel.Username);
 
             return RedirectToAction(nameof(Index));
         }
@@ -72,13 +73,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser? user = await _userManager.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
-            if (user == null)
+            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(id);
+            if (identityUser is null)
             {
                 return NotFound();
             }
 
-            IdentityUserEditViewModel viewModel = ViewModelMakerHelper.MakeIdentityUserEditViewModel(user);
+            IdentityUserEditViewModel viewModel = ViewModelMakerHelper.MakeIdentityUserEditViewModel(identityUser);
             return View(viewModel);
         }
 
@@ -99,15 +100,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(identityUserEditViewModel);
             }
 
-            try
-            {
-                IdentityUser identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == identityUserEditViewModel.IdentityUserId);
-                await _userManager.SetUserNameAsync(identityUser, identityUserEditViewModel.IdentityUserUsername);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
+            await _identityUserService.UpdateUsernameAsync(id, identityUserEditViewModel.IdentityUserUsername);
 
             return RedirectToAction(nameof(Index));
         }
@@ -120,7 +113,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser? identityUser = await _userManager.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(id);
             if (identityUser == null)
             {
                 return NotFound();
@@ -135,46 +128,20 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
-            Admin? admin = admins.Where(a => a.IdentityUser.Id == id).FirstOrDefault();
-            if (admin != null)
-            {
-                await _adminRepository.DeleteAsync(admin.Id);
-            }
-
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
-            Customer? customer = customers.Where(c => c.IdentityUser.Id == id).FirstOrDefault();
-            if (customer != null)
-            {
-                await _customerRepository.DeleteAsync(customer.Id);
-            }
-
-            IdentityUser? identityUser = await _userManager.Users.Where(iu => iu.Id == id).FirstOrDefaultAsync();
-            if (identityUser != null)
-            {
-                await _userManager.DeleteAsync(identityUser);
-            }
+            await _identityUserService.DeleteAsync(id);
 
             return RedirectToAction(nameof(Index));
         }
 
         private async Task<bool> IsAlreadyTaken(string identityUserUsername)
         {
-            return await _userManager.Users.AnyAsync(u => u.UserName == identityUserUsername);
-        }
-
-        private async Task CreateIdentityUser(string identityUserUsername)
-        {
-            IdentityUser identityUser = new IdentityUser() { UserName = identityUserUsername, Email = identityUserUsername };
-            string initialPassword = "Abc123!";
-            await _userManager.CreateAsync(identityUser, initialPassword);
-            await _userManager.AddToRoleAsync(identityUser, "User");
+            return await _identityUserService.UsernameExistsAsync(identityUserUsername);
         }
 
         private async Task<List<IdentityUserIndexViewModel>> CreateIdentityUserIndexViewModels()
         {
             List<IdentityUserIndexViewModel> identityUserIndexViewModels = new();
-            IEnumerable<IdentityUser> users = await _userManager.Users.ToListAsync();
+            IEnumerable<IdentityUser> users = await _identityUserService.GetAllAsync();
             foreach (IdentityUser user in users)
             {
                 identityUserIndexViewModels.Add(await CreateIdentityUserIndexViewModel(user));
@@ -188,8 +155,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 IdentityUserId = user.Id,
                 IdentityUserUsername = user.UserName,
-                IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
-                IsCustomer = await _userManager.IsInRoleAsync(user, "Customer"),
+                IsAdmin = await _identityUserService.IsInRoleAsync(user, "Admin"),
+                IsCustomer = await _identityUserService.IsInRoleAsync(user, "Customer"),
             };
             if (identityUserIndexViewModel.IsAdmin)
             {

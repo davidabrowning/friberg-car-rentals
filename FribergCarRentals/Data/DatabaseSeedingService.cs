@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Models;
+﻿using FribergCarRentals.Interfaces;
+using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,19 +8,18 @@ namespace FribergCarRentals.Data
     public class DatabaseSeedingService
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IIdentityUserService _identityUserService;
         private readonly IRepository<Admin> _adminRepository;
-        public DatabaseSeedingService(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager, IRepository<Admin> adminRepository)
+        public DatabaseSeedingService(RoleManager<IdentityRole> roleManager, IIdentityUserService identityUserService, IRepository<Admin> adminRepository)
         {
             _roleManager = roleManager;
-            _userManager = userManager;
+            _identityUserService = identityUserService;
             _adminRepository = adminRepository;
         }
         public async Task Go()
         {
             await SeedRoles();
             await SeedDefaultAdminUser();
-            await SeedAllUsersAsUserRole();
         }
 
         private async Task SeedRoles()
@@ -36,22 +36,7 @@ namespace FribergCarRentals.Data
 
         private async Task SeedDefaultAdminUser()
         {
-            IdentityUser user = await _userManager.FindByEmailAsync("admin@admin.se");
-            if (user != null && !(await _userManager.IsInRoleAsync(user, "Admin")))
-            {
-                await _userManager.AddToRoleAsync(user, "Admin");
-                Admin admin = new Admin() { IdentityUser = user };
-                await _adminRepository.AddAsync(admin);
-            }
-        }
-
-        private async Task SeedAllUsersAsUserRole()
-        {
-            List<IdentityUser> allUsers = await _userManager.Users.ToListAsync();
-            foreach (IdentityUser user in allUsers)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
-            }
+            await _identityUserService.MakeAdmin("admin@admin.se");
         }
     }
 }
