@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Data
+﻿namespace FribergCarRentals.Interfaces
 {
     public interface IRepository<T>
     {

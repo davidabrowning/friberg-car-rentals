@@ -12,21 +12,26 @@ namespace FribergCarRentals
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+            // Add data layer services to the container
+            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
+            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
+            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
+            builder.Services.AddScoped<DatabaseSeedingService, DatabaseSeedingService>();
+            builder.Services.AddScoped<DatabaseCleaningService, DatabaseCleaningService>();
+
+            // Add service layer services to the container
             builder.Services.AddScoped<IIdentityUserService, IdentityUserService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<ICarService, CarService>();
-            // builder.Services.AddScoped<IReservationService, ReservationService>();
-            builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
-            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
-            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
-            builder.Services.AddScoped<DatabaseSeedingService, DatabaseSeedingService>();
-            builder.Services.AddScoped<DatabaseCleaningService, DatabaseCleaningService>();
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
+
+            // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();

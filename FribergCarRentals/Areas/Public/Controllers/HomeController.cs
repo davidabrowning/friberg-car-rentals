@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Public.ViewModels;
 using FribergCarRentals.ViewModels;
 using System.Diagnostics;
+using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {

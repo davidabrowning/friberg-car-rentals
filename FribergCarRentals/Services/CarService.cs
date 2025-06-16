@@ -1,5 +1,4 @@
-﻿using FribergCarRentals.Data;
-using FribergCarRentals.Interfaces;
+﻿using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
 
 namespace FribergCarRentals.Services

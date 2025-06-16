@@ -1,5 +1,4 @@
-﻿using FribergCarRentals.Data;
-using FribergCarRentals.Interfaces;
+﻿using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
