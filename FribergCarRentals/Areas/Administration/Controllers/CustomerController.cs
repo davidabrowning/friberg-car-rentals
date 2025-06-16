@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using FribergCarRentals.Areas.Administration.Helpers;
+using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -18,13 +19,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class CustomerController : Controller
     {
-        private readonly IRepository<Customer> _customerRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ICustomerService _customerService;
+        private readonly IIdentityUserService _identityUserService;
 
-        public CustomerController(IRepository<Customer> customerRepository, UserManager<IdentityUser> userManager)
+        public CustomerController(ICustomerService customerService, IIdentityUserService identityUserService)
         {
-            _customerRepository = customerRepository;
-            _userManager = userManager;
+            _customerService = customerService;
+            _identityUserService = identityUserService;
         }
 
         // GET: Customer
@@ -41,7 +42,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerRepository.GetByIdAsync((int)id);
+            Customer? customer = await _customerService.GetByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -60,7 +61,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser? identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == identityUserId);
+            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(identityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -86,7 +87,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(customerCreateViewModel);
             }
 
-            IdentityUser? identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == customerCreateViewModel.IdentityUserId);
+            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(customerCreateViewModel.IdentityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -94,7 +95,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             List<Reservation> reservations = new();
             Customer customer = ViewModelToCreateHelper.CreateNewCustomer(customerCreateViewModel, identityUser, reservations);
-            await _customerRepository.AddAsync(customer);
+            await _customerService.AddAsync(customer);
             return RedirectToAction(nameof(Index));
         }
 
@@ -106,7 +107,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerRepository.GetByIdAsync((int)id);
+            Customer? customer = await _customerService.GetByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -135,13 +136,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             try
             {
-                Customer? customer = await _customerRepository.GetByIdAsync(customerEditViewModel.CustomerId);
+                Customer? customer = await _customerService.GetByIdAsync(customerEditViewModel.CustomerId);
                 ViewModelToUpdateHelper.UpdatedExistingCustomer(customer, customerEditViewModel);
-                await _customerRepository.UpdateAsync(customer);
+                await _customerService.UpdateAsync(customer);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await CustomerExists(customerEditViewModel.CustomerId))
+                if (!await _customerService.IdExistsAsync(customerEditViewModel.CustomerId))
                 {
                     return NotFound();
                 }
@@ -161,7 +162,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerRepository.GetByIdAsync((int)id);
+            Customer? customer = await _customerService.GetByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -176,13 +177,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _customerRepository.DeleteAsync(id);
+            await _customerService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> CustomerExists(int id)
-        {
-            return await _customerRepository.IdExistsAsync(id);
         }
     }
 }
