@@ -3,7 +3,7 @@ using FribergCarRentals.Models;
 
 namespace FribergCarRentals.Services
 {
-    public class BasicCRUDService<T> : IBasicCRUDService<T>
+    public abstract class BasicCRUDService<T> : IBasicCRUDService<T>
     {
         IRepository<T> _repository;
 
@@ -11,7 +11,7 @@ namespace FribergCarRentals.Services
         {
             _repository = repository;
         }
-        public async Task<T> AddAsync(T t)
+        public async Task<T> CreateAsync(T t)
         {
             await _repository.AddAsync(t);
             return t;

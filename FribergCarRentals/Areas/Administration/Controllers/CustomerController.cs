@@ -18,13 +18,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class CustomerController : Controller
     {
-        private readonly ICustomerService _customerService;
-        private readonly IIdentityUserService _identityUserService;
+        private readonly IUserService _userService;
 
-        public CustomerController(ICustomerService customerService, IIdentityUserService identityUserService)
+        public CustomerController(IUserService userService)
         {
-            _customerService = customerService;
-            _identityUserService = identityUserService;
+            _userService = userService;
         }
 
         // GET: Customer
@@ -41,7 +39,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerService.GetByIdAsync((int)id);
+            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -60,7 +58,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(identityUserId);
+            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(identityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -86,7 +84,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(customerCreateViewModel);
             }
 
-            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(customerCreateViewModel.IdentityUserId);
+            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(customerCreateViewModel.IdentityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -94,7 +92,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             List<Reservation> reservations = new();
             Customer customer = ViewModelToCreateHelper.CreateNewCustomer(customerCreateViewModel, identityUser, reservations);
-            await _customerService.AddAsync(customer);
+            await _userService.CreateCustomerAsync(customer);
             return RedirectToAction(nameof(Index));
         }
 
@@ -106,7 +104,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerService.GetByIdAsync((int)id);
+            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -135,13 +133,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             try
             {
-                Customer? customer = await _customerService.GetByIdAsync(customerEditViewModel.CustomerId);
+                Customer? customer = await _userService.GetCustomerByIdAsync(customerEditViewModel.CustomerId);
                 ViewModelToUpdateHelper.UpdatedExistingCustomer(customer, customerEditViewModel);
-                await _customerService.UpdateAsync(customer);
+                await _userService.UpdateCustomerAsync(customer);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _customerService.IdExistsAsync(customerEditViewModel.CustomerId))
+                if (!await _userService.CustomerIdExistsAsync(customerEditViewModel.CustomerId))
                 {
                     return NotFound();
                 }
@@ -161,7 +159,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Customer? customer = await _customerService.GetByIdAsync((int)id);
+            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -176,7 +174,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _customerService.DeleteAsync(id);
+            await _userService.DeleteCustomerAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

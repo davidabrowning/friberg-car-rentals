@@ -19,13 +19,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class AdminController : Controller
     {
-        private readonly IAdminService _adminService;
-        private readonly IIdentityUserService _identityUserService;
+        private readonly IUserService _userService;
 
-        public AdminController(IAdminService adminService, IIdentityUserService identityUserService)
+        public AdminController(IUserService userService)
         {
-            _adminService = adminService;
-            _identityUserService = identityUserService;
+            _userService = userService;
         }
 
         // GET: Admin
@@ -62,12 +60,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(adminCreateViewModel);
             }
 
-            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(adminCreateViewModel.IdentityUserId);
+            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(adminCreateViewModel.IdentityUserId);
             if (identityUser == null)
                 return NotFound();
 
             Admin admin = ViewModelToCreateHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
-            await _adminService.AddAsync(admin);
+            await _userService.CreateAdminAsync(admin);
             return RedirectToAction(nameof(Index));
         }
 
@@ -79,7 +77,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin? admin = await _adminService.GetByIdAsync((int)id);
+            Admin? admin = await _userService.GetAdminByIdAsync((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -108,13 +106,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             try
             {
-                Admin admin = await _adminService.GetByIdAsync((int)id);
+                Admin admin = await _userService.GetAdminByIdAsync((int)id);
                 // ViewModelToUpdateHelper.UpdateExistingAdmin(admin, adminEditViewModel); - not yet implemented
-                await _adminService.UpdateAsync(admin);
+                await _userService.UpdateAdminAsync(admin);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await AdminExists(adminEditViewModel.AdminId))
+                if (!await _userService.AdminIdExistsAsync(adminEditViewModel.AdminId))
                 {
                     return NotFound();
                 }
@@ -134,7 +132,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin? admin = await _adminService.GetByIdAsync((int)id);
+            Admin? admin = await _userService.GetAdminByIdAsync((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -149,13 +147,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _adminService.DeleteAsync(id);
+            await _userService.DeleteAdminAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> AdminExists(int id)
-        {
-            return await _adminService.IdExistsAsync(id);
         }
     }
 }

@@ -75,7 +75,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
 
             Car car = ViewModelToCreateHelper.CreateNewCar(carCreateViewModel);
-            await _carService.AddAsync(car);
+            await _carService.CreateAsync(car);
             return RedirectToAction(nameof(Index));
         }
 

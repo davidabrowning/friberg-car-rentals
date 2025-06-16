@@ -7,6 +7,7 @@ namespace FribergCarRentals.Services
 {
     public class IdentityUserService : IIdentityUserService
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IRepository<Admin> _adminRepository;
         private readonly IRepository<Customer> _customerRepository;
@@ -15,8 +16,9 @@ namespace FribergCarRentals.Services
         private const string RoleNameAdmin = "Admin";
         private const string RoleNameCustomer = "Customer";
         private const string RoleNameUser = "User";
-        public IdentityUserService(UserManager<IdentityUser> userManager, IRepository<Admin> adminRepository, IRepository<Customer> customerRepository)
+        public IdentityUserService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, IRepository<Admin> adminRepository, IRepository<Customer> customerRepository)
         {
+            _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _adminRepository = adminRepository;
             _customerRepository = customerRepository;
@@ -130,16 +132,26 @@ namespace FribergCarRentals.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Admin?> GetAdminAccount(IdentityUser identityUser)
+        public async Task<Admin?> GetAdminAccountAsync(IdentityUser identityUser)
         {
             IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
             return admins.FirstOrDefault(a => a.IdentityUser.Id == identityUser.Id);
         }
 
-        public async Task<Customer?> GetCustomerAccount(IdentityUser identityUser)
+        public async Task<Customer?> GetCustomerAccountAsync(IdentityUser identityUser)
         {
             IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
             return customers.FirstOrDefault(c => c.IdentityUser.Id == identityUser.Id);
+        }
+
+        public async Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user == null)
+            {
+                return null;
+            }
+            return await _userManager.GetUserAsync(user);
         }
     }
 }

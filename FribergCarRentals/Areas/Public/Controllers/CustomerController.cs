@@ -17,16 +17,15 @@ namespace FribergCarRentals.Areas.Public.Controllers
     [Area("Public")]
     public class CustomerController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IRepository<Customer> _customerRepository;
-        public CustomerController(UserManager<IdentityUser> userManager, IRepository<Customer> customerRepository)
+        private readonly IUserService _userService;
+
+        public CustomerController(IUserService userService)
         {
-            _userManager = userManager;
-            _customerRepository = customerRepository;
+            _userService = userService;
         }
 
         // GET: Public/Customer
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return RedirectToAction("Index", "Home");
         }
@@ -50,7 +49,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
                 return View(populatedCustomerCreateVM);
             }
 
-            IdentityUser? identityUser = await _userManager.GetUserAsync(User);
+            IdentityUser? identityUser = await _userService.GetCurrentSignedInIdentityUserAsync();
             if (identityUser == null)
             {
                 return NotFound();
@@ -65,7 +64,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
                 HomeCountry = populatedCustomerCreateVM.HomeCountry,
             };
 
-            await _customerRepository.AddAsync(newCustomer);
+            await _userService.CreateCustomerAsync(newCustomer);
 
             return RedirectToAction(nameof(Index));
         }
