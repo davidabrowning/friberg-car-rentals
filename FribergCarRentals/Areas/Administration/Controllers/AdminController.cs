@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.Administration.Helpers;
+using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -18,13 +19,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class AdminController : Controller
     {
-        private readonly IRepository<Admin> _adminRepository;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IAdminService _adminService;
+        private readonly IIdentityUserService _identityUserService;
 
-        public AdminController(IRepository<Admin> adminRepository, UserManager<IdentityUser> userManager)
+        public AdminController(IAdminService adminService, IIdentityUserService identityUserService)
         {
-            _adminRepository = adminRepository;
-            _userManager = userManager;
+            _adminService = adminService;
+            _identityUserService = identityUserService;
         }
 
         // GET: Admin
@@ -60,18 +61,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 return View(adminCreateViewModel);
             }
-                
-            if (!ModelState.IsValid)
-            {
-                return View(adminCreateViewModel);
-            }
 
-            IdentityUser? identityUser = await _userManager.Users.Where(u => u.Id == adminCreateViewModel.IdentityUserId).FirstOrDefaultAsync();
+            IdentityUser? identityUser = await _identityUserService.GetByIdAsync(adminCreateViewModel.IdentityUserId);
             if (identityUser == null)
                 return NotFound();
 
             Admin admin = ViewModelToCreateHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
-            await _adminRepository.AddAsync(admin);
+            await _adminService.AddAsync(admin);
             return RedirectToAction(nameof(Index));
         }
 
@@ -83,7 +79,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin? admin = await _adminRepository.GetByIdAsync((int)id);
+            Admin? admin = await _adminService.GetByIdAsync((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -98,7 +94,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AdminId")] AdminEditViewModel adminEditViewModel)
+        public async Task<IActionResult> Edit(int id, AdminEditViewModel adminEditViewModel)
         {
             if (id != adminEditViewModel.AdminId)
             {
@@ -112,8 +108,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             try
             {
-                Admin admin = await _adminRepository.GetByIdAsync((int)id);
-                await _adminRepository.UpdateAsync(admin);
+                Admin admin = await _adminService.GetByIdAsync((int)id);
+                // ViewModelToUpdateHelper.UpdateExistingAdmin(admin, adminEditViewModel); - not yet implemented
+                await _adminService.UpdateAsync(admin);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -137,7 +134,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            Admin? admin = await _adminRepository.GetByIdAsync((int)id);
+            Admin? admin = await _adminService.GetByIdAsync((int)id);
             if (admin == null)
             {
                 return NotFound();
@@ -152,13 +149,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _adminRepository.DeleteAsync(id);
+            await _adminService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         private async Task<bool> AdminExists(int id)
         {
-            return await _adminRepository.IdExistsAsync(id);
+            return await _adminService.IdExistsAsync(id);
         }
     }
 }
