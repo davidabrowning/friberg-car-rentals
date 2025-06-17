@@ -65,7 +65,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
 
             Admin admin = ViewModelToCreateHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
-            await _userService.CreateAdminAsync(admin);
+            await _userService.MakeAdminAsync(identityUser);
             return RedirectToAction(nameof(Index));
         }
 
@@ -147,7 +147,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _userService.DeleteAdminAsync(id);
+            await _userService.RemoveAdminAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

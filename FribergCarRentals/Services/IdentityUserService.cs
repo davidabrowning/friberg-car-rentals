@@ -89,12 +89,12 @@ namespace FribergCarRentals.Services
             return await _userManager.Users.AnyAsync(u => u.UserName == username);
         }
 
-        public async Task<IdentityUser?> MakeAdmin(string username)
+        public async Task<IdentityUser?> MakeAdminAsync(string username)
         {
-            IdentityUser? user = await GetByEmailAsync(DefaultAdminEmail);
+            IdentityUser? user = await GetByEmailAsync(username);
             if (user == null)
             {
-                user = await AddIdentityUserAsync(DefaultAdminEmail);
+                user = await AddIdentityUserAsync(username);
             }
 
             if (await IsAdmin(user))
@@ -122,14 +122,30 @@ namespace FribergCarRentals.Services
             return await _userManager.GetUserAsync(user);
         }
 
-        public Task<IdentityUser?> RemoveAdmin(string username)
+        public async Task<IdentityUser?> RemoveAdmin(string username)
         {
-            throw new NotImplementedException();
+            IdentityUser? user = await GetByEmailAsync(username);
+            if (user == null)
+            {
+                user = await AddIdentityUserAsync(username);
+            }
+
+            await _userManager.RemoveFromRoleAsync(user, RoleNameAdmin);
+
+            return user;
         }
 
-        public Task<IdentityUser?> RemoveCustomer(string username)
+        public async Task<IdentityUser?> RemoveCustomer(string username)
         {
-            throw new NotImplementedException();
+            IdentityUser? user = await GetByEmailAsync(username);
+            if (user == null)
+            {
+                user = await AddIdentityUserAsync(username);
+            }
+
+            await _userManager.RemoveFromRoleAsync(user, RoleNameCustomer);
+
+            return user;
         }
     }
 }

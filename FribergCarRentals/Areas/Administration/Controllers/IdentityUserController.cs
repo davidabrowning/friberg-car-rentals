@@ -124,7 +124,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            await _userService.DeleteIdentityUserAsync(id);
+            await _userService.DeleteUserAsync(id);
 
             return RedirectToAction(nameof(Index));
         }
@@ -151,15 +151,21 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             if (identityUserIndexViewModel.IsAdmin)
             {
-                Admin admin = await _userService.GetAdminAccountAsync(user);
-                identityUserIndexViewModel.AdminId = admin.Id;
-                identityUserIndexViewModel.AdminName = admin.Id.ToString();
+                Admin? admin = await _userService.GetCorrespondingAdminAccountAsync(user);
+                if (admin != null)
+                {
+                    identityUserIndexViewModel.AdminId = admin.Id;
+                    identityUserIndexViewModel.AdminName = admin.Id.ToString();
+                }
             }
             if (identityUserIndexViewModel.IsCustomer)
             {
-                Customer customer = await _userService.GetCustomerAccountAsync(user);
-                identityUserIndexViewModel.CustomerId = customer.Id;
-                identityUserIndexViewModel.CustomerName = $"{customer.FirstName} {customer.LastName}";
+                Customer? customer = await _userService.GetCorrespondingCustomerAccountAsync(user);
+                if (customer != null)
+                {
+                    identityUserIndexViewModel.CustomerId = customer.Id;
+                    identityUserIndexViewModel.CustomerName = $"{customer.FirstName} {customer.LastName}";
+                }
             }
             return identityUserIndexViewModel;
         }

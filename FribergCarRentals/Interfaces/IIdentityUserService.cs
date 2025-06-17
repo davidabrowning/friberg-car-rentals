@@ -16,7 +16,7 @@ namespace FribergCarRentals.Interfaces
         Task<IdentityUser?> GetByEmailAsync(string email);
         Task<bool> IsAdmin(IdentityUser identityUser);
         Task<bool> IsCustomer(IdentityUser identityUser);
-        Task<IdentityUser?> MakeAdmin(string username);
+        Task<IdentityUser?> MakeAdminAsync(string username);
         Task<IdentityUser?> MakeCustomer(string username);
         Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync();
         Task<IdentityUser?> RemoveAdmin(string username);

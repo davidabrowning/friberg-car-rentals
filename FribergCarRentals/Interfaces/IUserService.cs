@@ -15,9 +15,9 @@ namespace FribergCarRentals.Interfaces
         Task<Admin> UpdateAdminAsync(Admin admin);
         Task<Customer> UpdateCustomerAsync(Customer customer);
         Task<IdentityUser> UpdateIdentityUserAsync(string id, string newUsername);
-        Task<Admin?> DeleteAdminAsync(int id);
+        Task<Admin?> RemoveAdminAsync(int id);
         Task<Customer?> DeleteCustomerAsync(int id);
-        Task<IdentityUser?> DeleteIdentityUserAsync(string id);
+        Task<IdentityUser?> DeleteUserAsync(string id);
         Task<IEnumerable<Admin>> GetAllAdminsAsync();
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
         Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync();
@@ -25,8 +25,8 @@ namespace FribergCarRentals.Interfaces
         Task<bool> CustomerIdExistsAsync(int id);
         Task<bool> IdentityUserExistsAsync(string id);
         Task<bool> IsInRoleAsync(IdentityUser identityUser, string roleName);
-        Task<Admin?> GetAdminAccountAsync(IdentityUser identityUser);
-        Task<Customer?> GetCustomerAccountAsync(IdentityUser identityUser);
+        Task<Admin?> GetCorrespondingAdminAccountAsync(IdentityUser identityUser);
+        Task<Customer?> GetCorrespondingCustomerAccountAsync(IdentityUser identityUser);
         Task<bool> IdentityUsernameExistsAsync(string username);
         Task<Admin?> MakeAdminAsync(IdentityUser identityUser);
     }

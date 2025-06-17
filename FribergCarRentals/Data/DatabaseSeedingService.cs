@@ -44,13 +44,6 @@ namespace FribergCarRentals.Data
             }
 
             await _userService.MakeAdminAsync(identityUser);
-
-            Admin? admin = await _userService.GetAdminAccountAsync(identityUser);
-            if (admin == null)
-            {
-                admin = new Admin() { IdentityUser = identityUser };
-                _userService.CreateAdminAsync(admin);
-            }
         }
     }
 }
