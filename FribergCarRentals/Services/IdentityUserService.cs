@@ -9,19 +9,15 @@ namespace FribergCarRentals.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly IRepository<Admin> _adminRepository;
-        private readonly IRepository<Customer> _customerRepository;
         private const string DefaultAdminEmail = "admin@admin.se";
         private const string DefaultPassword = "Abc123!";
         private const string RoleNameAdmin = "Admin";
         private const string RoleNameCustomer = "Customer";
         private const string RoleNameUser = "User";
-        public IdentityUserService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, IRepository<Admin> adminRepository, IRepository<Customer> customerRepository)
+        public IdentityUserService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
-            _adminRepository = adminRepository;
-            _customerRepository = customerRepository;
         }
         public async Task<IdentityUser> AddIdentityUserAsync(string username)
         {
@@ -34,26 +30,11 @@ namespace FribergCarRentals.Services
 
         public async Task<IdentityUser?> DeleteAsync(string id)
         {
-            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
-            Admin? admin = admins.Where(a => a.IdentityUser.Id == id).FirstOrDefault();
-            if (admin != null)
-            {
-                await _adminRepository.DeleteAsync(admin.Id);
-            }
-
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
-            Customer? customer = customers.Where(c => c.IdentityUser.Id == id).FirstOrDefault();
-            if (customer != null)
-            {
-                await _customerRepository.DeleteAsync(customer.Id);
-            }
-
             IdentityUser? identityUser = await _userManager.Users.Where(iu => iu.Id == id).FirstOrDefaultAsync();
             if (identityUser != null)
             {
                 await _userManager.DeleteAsync(identityUser);
             }
-
             return identityUser;
         }
 
@@ -122,26 +103,13 @@ namespace FribergCarRentals.Services
             }
 
             await _userManager.AddToRoleAsync(user, RoleNameAdmin);
-            Admin admin = new Admin() { IdentityUser = user };
-            await _adminRepository.AddAsync(admin);
+
             return user;
         }
 
         public Task<IdentityUser?> MakeCustomer(string username)
         {
             throw new NotImplementedException();
-        }
-
-        public async Task<Admin?> GetAdminAccountAsync(IdentityUser identityUser)
-        {
-            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
-            return admins.FirstOrDefault(a => a.IdentityUser.Id == identityUser.Id);
-        }
-
-        public async Task<Customer?> GetCustomerAccountAsync(IdentityUser identityUser)
-        {
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
-            return customers.FirstOrDefault(c => c.IdentityUser.Id == identityUser.Id);
         }
 
         public async Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync()
@@ -152,6 +120,16 @@ namespace FribergCarRentals.Services
                 return null;
             }
             return await _userManager.GetUserAsync(user);
+        }
+
+        public Task<IdentityUser?> RemoveAdmin(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IdentityUser?> RemoveCustomer(string username)
+        {
+            throw new NotImplementedException();
         }
     }
 }

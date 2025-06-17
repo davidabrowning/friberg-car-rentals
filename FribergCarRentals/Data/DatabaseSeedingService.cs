@@ -2,19 +2,18 @@
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace FribergCarRentals.Data
 {
     public class DatabaseSeedingService
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IIdentityUserService _identityUserService;
-        private readonly IRepository<Admin> _adminRepository;
-        public DatabaseSeedingService(RoleManager<IdentityRole> roleManager, IIdentityUserService identityUserService, IRepository<Admin> adminRepository)
+        private readonly IUserService _userService;
+        public DatabaseSeedingService(RoleManager<IdentityRole> roleManager, IUserService userService)
         {
             _roleManager = roleManager;
-            _identityUserService = identityUserService;
-            _adminRepository = adminRepository;
+            _userService = userService;
         }
         public async Task Go()
         {
@@ -36,7 +35,22 @@ namespace FribergCarRentals.Data
 
         private async Task SeedDefaultAdminUser()
         {
-            await _identityUserService.MakeAdmin("admin@admin.se");
+            IdentityUser? identityUser = _userService.GetAllIdentityUsersAsync()
+                .Result.FirstOrDefault(iu => iu.UserName == "admin@admin.se");
+
+            if (identityUser == null)
+            {
+                identityUser = await _userService.CreateIdentityUserAsync("admin@admin.se");
+            }
+
+            await _userService.MakeAdminAsync(identityUser);
+
+            Admin? admin = await _userService.GetAdminAccountAsync(identityUser);
+            if (admin == null)
+            {
+                admin = new Admin() { IdentityUser = identityUser };
+                _userService.CreateAdminAsync(admin);
+            }
         }
     }
 }

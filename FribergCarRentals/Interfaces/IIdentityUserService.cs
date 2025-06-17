@@ -18,8 +18,8 @@ namespace FribergCarRentals.Interfaces
         Task<bool> IsCustomer(IdentityUser identityUser);
         Task<IdentityUser?> MakeAdmin(string username);
         Task<IdentityUser?> MakeCustomer(string username);
-        Task<Admin?> GetAdminAccountAsync(IdentityUser identityUser);
-        Task<Customer?> GetCustomerAccountAsync(IdentityUser identityUser);
         Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync();
+        Task<IdentityUser?> RemoveAdmin(string username);
+        Task<IdentityUser?> RemoveCustomer(string username);
     }
 }

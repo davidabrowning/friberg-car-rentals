@@ -17,19 +17,16 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
     [Area("CustomerCenter")]
     public class CustomerController : Controller
     {
-        private readonly IRepository<Customer> _customerRepository;
-        private readonly UserManager<IdentityUser> _userManager;
-
-        public CustomerController(IRepository<Customer> customerRepository, UserManager<IdentityUser> userManager)
+        private readonly IUserService _userService;
+        public CustomerController(IUserService userService)
         {
-            _customerRepository = customerRepository;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         // GET: CustomerCenter/Customer
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
+            IEnumerable<Customer> customers = await _userService.GetAllCustomersAsync();
             return View(customers);
         }
 
@@ -41,7 +38,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            var customer = await _customerRepository.GetByIdAsync((int)id);
+            var customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -68,7 +65,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return View(customerCreateViewModel);
             }
 
-            IdentityUser identityUser = await _userManager.GetUserAsync(User);
+            IdentityUser? identityUser = await _userService.GetCurrentSignedInIdentityUserAsync();
             Customer customer = new Customer()
             {
                 IdentityUser = identityUser,
@@ -77,7 +74,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 HomeCity = customerCreateViewModel.HomeCity,
                 HomeCountry = customerCreateViewModel.HomeCountry,
             };
-            await _customerRepository.AddAsync(customer);
+            await _userService.CreateCustomerAsync(customer);
             return RedirectToAction(nameof(Index));
         }
 
@@ -89,7 +86,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            var customer = await _customerRepository.GetByIdAsync((int)id);
+            var customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -113,11 +110,11 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             {
                 try
                 {
-                    await _customerRepository.UpdateAsync(customer);
+                    await _userService.UpdateCustomerAsync(customer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await CustomerExists(customer.Id))
+                    if (!await _userService.CustomerIdExistsAsync(customer.Id))
                     {
                         return NotFound();
                     }
@@ -139,7 +136,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            var customer = await _customerRepository.GetByIdAsync((int)id);
+            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
                 return NotFound();
@@ -153,13 +150,8 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _customerRepository.DeleteAsync(id);
+            await _userService.DeleteCustomerAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> CustomerExists(int id)
-        {
-            return await _customerRepository.IdExistsAsync(id);
         }
     }
 }

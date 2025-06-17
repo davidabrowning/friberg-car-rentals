@@ -17,12 +17,10 @@ namespace FribergCarRentals.Areas.Public.Controllers
     [Area("Public")]
     public class HomeController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IRepository<Customer> _customerRepository;
-        public HomeController(UserManager<IdentityUser> userManager, IRepository<Customer> customerRepository)
+        private readonly IUserService _userService;
+        public HomeController(IUserService userService)
         {
-            _userManager = userManager;
-            _customerRepository = customerRepository;
+            _userService = userService;
         }
 
         // GET: Public/Home
@@ -30,7 +28,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
         {
             HomeIndexViewModel homeIndexViewModel = new();
 
-            IdentityUser? identityUser = await _userManager.GetUserAsync(User);
+            IdentityUser? identityUser = await _userService.GetCurrentSignedInIdentityUserAsync();
             if (identityUser == null)
             {
                 homeIndexViewModel.IsSignedIn = false;
@@ -38,7 +36,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
             }
             else
             {
-                IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
+                IEnumerable<Customer> customers = await _userService.GetAllCustomersAsync();
                 homeIndexViewModel.IsSignedIn = true;
                 homeIndexViewModel.HasCustomerAccount = customers.Any(c => c.IdentityUser == identityUser);
             }

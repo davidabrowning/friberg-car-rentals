@@ -28,5 +28,6 @@ namespace FribergCarRentals.Interfaces
         Task<Admin?> GetAdminAccountAsync(IdentityUser identityUser);
         Task<Customer?> GetCustomerAccountAsync(IdentityUser identityUser);
         Task<bool> IdentityUsernameExistsAsync(string username);
+        Task<Admin?> MakeAdminAsync(IdentityUser identityUser);
     }
 }
