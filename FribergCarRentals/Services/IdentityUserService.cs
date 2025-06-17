@@ -107,9 +107,22 @@ namespace FribergCarRentals.Services
             return user;
         }
 
-        public Task<IdentityUser?> MakeCustomer(string username)
+        public async Task<IdentityUser?> MakeCustomer(string username)
         {
-            throw new NotImplementedException();
+            IdentityUser? user = await GetByEmailAsync(username);
+            if (user == null)
+            {
+                user = await AddIdentityUserAsync(username);
+            }
+
+            if (await IsAdmin(user))
+            {
+                return user;
+            }
+
+            await _userManager.AddToRoleAsync(user, RoleNameCustomer);
+
+            return user;
         }
 
         public async Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync()
