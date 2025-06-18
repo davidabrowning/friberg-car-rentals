@@ -9,15 +9,17 @@ namespace FribergCarRentals.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private const string DefaultAdminEmail = "admin@admin.se";
         private const string DefaultPassword = "Abc123!";
         public const string RoleNameAdmin = "Admin";
         public const string RoleNameCustomer = "Customer";
         public const string RoleNameUser = "User";
-        public IdentityUserService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager)
+        public IdentityUserService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
         public async Task<IdentityUser> AddIdentityUserAsync(string username)
         {
@@ -92,12 +94,14 @@ namespace FribergCarRentals.Services
         public async Task<IdentityUser?> AddToRoleAsync(IdentityUser identityUser, string roleName)
         {
             await _userManager.AddToRoleAsync(identityUser, roleName);
+            await _signInManager.RefreshSignInAsync(identityUser);
             return identityUser;
         }
 
         public async Task<IdentityUser?> RemoveFromRoleAsync(IdentityUser identityUser, string roleName)
         {
             await _userManager.RemoveFromRoleAsync(identityUser, roleName);
+            await _signInManager.RefreshSignInAsync(identityUser);
             return identityUser;
         }
     }

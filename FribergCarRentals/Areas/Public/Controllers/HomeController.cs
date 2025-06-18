@@ -33,14 +33,18 @@ namespace FribergCarRentals.Areas.Public.Controllers
             {
                 homeIndexViewModel.IsSignedIn = false;
                 homeIndexViewModel.HasCustomerAccount = false;
+                return View(homeIndexViewModel);
             }
-            else
+
+            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            if (customer == null)
             {
-                IEnumerable<Customer> customers = new List<Customer>();
                 homeIndexViewModel.IsSignedIn = true;
-                homeIndexViewModel.HasCustomerAccount = customers.Any(c => c.IdentityUser == identityUser);
+                homeIndexViewModel.HasCustomerAccount = false;
+                return View(homeIndexViewModel);
             }
-            return View(homeIndexViewModel);
+
+            return RedirectToAction("Index", "Home", new { area = "CustomerCenter" });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
