@@ -13,55 +13,16 @@
 	<header>
 		@if (User.IsInRole("Admin"))
 		{
-			<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow">
-				<div class="container-fluid">
-					<a class="navbar-brand" asp-area="Administration" asp-controller="Admin" asp-action="Index">Administration</a>
-					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-					aria-expanded="false" aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-					</button>
-					<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-						<ul class="navbar-nav flex-grow-1">
-							<li class="nav-item">
-								<a class="nav-link text-light" asp-area="Administration" asp-controller="Car" asp-action="Index">Cars</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link text-light" asp-area="Administration" asp-controller="IdentityUser" asp-action="Index">IdentityUsers</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link text-light" asp-area="Administration" asp-controller="Reservation" asp-action="Index">Reservations</a>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</nav>
+			<partial name="_NavbarAdminPartial" />
 		}
-		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-			<div class="container-fluid">
-				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FribergCarRentals</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-				aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-					<ul class="navbar-nav flex-grow-1">
-						@if (User.IsInRole("User"))
-						{
-							<li class="nav-item">
-								<a class="nav-link text-dark" asp-area="CustomerCenter" asp-controller="Customer" asp-action="Index">CustomerAccount</a>
-							</li>
-						}
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="Public" asp-controller="Home" asp-action="Index">Home</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="Public" asp-controller="Car" asp-action="Index">Cars</a>
-						</li>
-					</ul>
-					<partial name="_LoginPartial" />
-				</div>
-			</div>
-		</nav>
+		@if (User.IsInRole("Customer"))
+		{
+			<partial name="_NavbarCustomerPartial" />
+		}
+		@if (!User.IsInRole("Admin") && !User.IsInRole("Customer"))
+		{
+			<partial name="_NavbarPublicPartial" />
+		}
 	</header>
 	<div class="container">
 		<main role="main" class="pb-3">
