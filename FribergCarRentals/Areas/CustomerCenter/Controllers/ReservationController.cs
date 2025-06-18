@@ -60,6 +60,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             ReservationCreateViewModel reservationCreateViewModel = new()
             {
                 CustomerId = customer.Id,
+                Cars = await _carService.GetAllAsync(),
             };
             return View(reservationCreateViewModel);
         }

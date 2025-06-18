@@ -8,5 +8,6 @@ namespace FribergCarRentals.Areas.CustomerCenter.ViewModels
         public DateOnly EndDate { get; set; }
         public int CarId { get; set; }
         public int CustomerId { get; set; }
+        public IEnumerable<Car> Cars { get; set; } = new List<Car>();
     }
 }

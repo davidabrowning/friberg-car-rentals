@@ -1,38 +1,50 @@
 ﻿using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
     public class ReservationRepository : IRepository<Reservation>
     {
-        public Task AddAsync(Reservation t)
+        private readonly ApplicationDbContext _applicationDbContext;
+        public ReservationRepository(ApplicationDbContext applicationDbContext)
         {
-            throw new NotImplementedException();
+            _applicationDbContext = applicationDbContext;
+        }
+        public async Task AddAsync(Reservation reservation)
+        {
+            await _applicationDbContext.Reservations.AddAsync(reservation);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            Reservation? reservation = await GetByIdAsync(id);
+            if (reservation == null)
+                return;
+            _applicationDbContext.Reservations.Remove(reservation);
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<Reservation>> GetAllAsync()
+        public async Task<IEnumerable<Reservation>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _applicationDbContext.Reservations.ToListAsync();
         }
 
-        public Task<Reservation?> GetByIdAsync(int id)
+        public async Task<Reservation?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _applicationDbContext.Reservations.FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public Task<bool> IdExistsAsync(int id)
+        public async Task<bool> IdExistsAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _applicationDbContext.Reservations.AnyAsync(r => r.Id == id);
         }
 
-        public Task UpdateAsync(Reservation t)
+        public async Task UpdateAsync(Reservation t)
         {
-            throw new NotImplementedException();
+            _applicationDbContext.Reservations.Update(t);
+            await _applicationDbContext.SaveChangesAsync();
         }
     }
 }
