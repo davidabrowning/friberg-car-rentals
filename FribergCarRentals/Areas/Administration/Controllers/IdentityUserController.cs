@@ -151,7 +151,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             if (identityUserIndexViewModel.IsAdmin)
             {
-                Admin? admin = await _userService.GetCorrespondingAdminAccountAsync(user);
+                Admin? admin = await _userService.GetAdminAsync(user);
                 if (admin != null)
                 {
                     identityUserIndexViewModel.AdminId = admin.Id;
@@ -160,7 +160,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             if (identityUserIndexViewModel.IsCustomer)
             {
-                Customer? customer = await _userService.GetCorrespondingCustomerAccountAsync(user);
+                Customer? customer = await _userService.GetCustomerAsync(user);
                 if (customer != null)
                 {
                     identityUserIndexViewModel.CustomerId = customer.Id;

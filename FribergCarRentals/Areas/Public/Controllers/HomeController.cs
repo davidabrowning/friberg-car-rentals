@@ -36,7 +36,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
             }
             else
             {
-                IEnumerable<Customer> customers = await _userService.GetAllCustomersAsync();
+                IEnumerable<Customer> customers = new List<Customer>();
                 homeIndexViewModel.IsSignedIn = true;
                 homeIndexViewModel.HasCustomerAccount = customers.Any(c => c.IdentityUser == identityUser);
             }

@@ -43,7 +43,12 @@ namespace FribergCarRentals.Data
                 identityUser = await _userService.CreateIdentityUserAsync("admin@admin.se");
             }
 
-            await _userService.MakeAdminAsync(identityUser);
+            Admin? admin = await _userService.GetAdminAsync(identityUser);
+            if (admin == null)
+            {
+                admin = new Admin() { IdentityUser = identityUser };
+                await _userService.CreateAdminAsync(admin);
+            }
         }
     }
 }

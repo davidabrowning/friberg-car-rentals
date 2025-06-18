@@ -11,9 +11,9 @@ namespace FribergCarRentals.Services
         private readonly UserManager<IdentityUser> _userManager;
         private const string DefaultAdminEmail = "admin@admin.se";
         private const string DefaultPassword = "Abc123!";
-        private const string RoleNameAdmin = "Admin";
-        private const string RoleNameCustomer = "Customer";
-        private const string RoleNameUser = "User";
+        public const string RoleNameAdmin = "Admin";
+        public const string RoleNameCustomer = "Customer";
+        public const string RoleNameUser = "User";
         public IdentityUserService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -58,16 +58,6 @@ namespace FribergCarRentals.Services
             return await _userManager.Users.AnyAsync(u => u.Id == id);
         }
 
-        public async Task<bool> IsAdmin(IdentityUser identityUser)
-        {
-            return await IsInRoleAsync(identityUser, RoleNameAdmin);
-        }
-
-        public async Task<bool> IsCustomer(IdentityUser identityUser)
-        {
-            return await IsInRoleAsync(identityUser, RoleNameCustomer);
-        }
-
         public async Task<bool> IsInRoleAsync(IdentityUser identityUser, string role)
         {
             return await _userManager.IsInRoleAsync(identityUser, role);
@@ -89,42 +79,6 @@ namespace FribergCarRentals.Services
             return await _userManager.Users.AnyAsync(u => u.UserName == username);
         }
 
-        public async Task<IdentityUser?> MakeAdminAsync(string username)
-        {
-            IdentityUser? user = await GetByEmailAsync(username);
-            if (user == null)
-            {
-                user = await AddIdentityUserAsync(username);
-            }
-
-            if (await IsAdmin(user))
-            {
-                return user;
-            }
-
-            await _userManager.AddToRoleAsync(user, RoleNameAdmin);
-
-            return user;
-        }
-
-        public async Task<IdentityUser?> MakeCustomer(string username)
-        {
-            IdentityUser? user = await GetByEmailAsync(username);
-            if (user == null)
-            {
-                user = await AddIdentityUserAsync(username);
-            }
-
-            if (await IsAdmin(user))
-            {
-                return user;
-            }
-
-            await _userManager.AddToRoleAsync(user, RoleNameCustomer);
-
-            return user;
-        }
-
         public async Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync()
         {
             var user = _httpContextAccessor.HttpContext?.User;
@@ -135,30 +89,16 @@ namespace FribergCarRentals.Services
             return await _userManager.GetUserAsync(user);
         }
 
-        public async Task<IdentityUser?> RemoveAdmin(string username)
+        public async Task<IdentityUser?> AddToRoleAsync(IdentityUser identityUser, string roleName)
         {
-            IdentityUser? user = await GetByEmailAsync(username);
-            if (user == null)
-            {
-                user = await AddIdentityUserAsync(username);
-            }
-
-            await _userManager.RemoveFromRoleAsync(user, RoleNameAdmin);
-
-            return user;
+            await _userManager.AddToRoleAsync(identityUser, roleName);
+            return identityUser;
         }
 
-        public async Task<IdentityUser?> RemoveCustomer(string username)
+        public async Task<IdentityUser?> RemoveFromRoleAsync(IdentityUser identityUser, string roleName)
         {
-            IdentityUser? user = await GetByEmailAsync(username);
-            if (user == null)
-            {
-                user = await AddIdentityUserAsync(username);
-            }
-
-            await _userManager.RemoveFromRoleAsync(user, RoleNameCustomer);
-
-            return user;
+            await _userManager.RemoveFromRoleAsync(identityUser, roleName);
+            return identityUser;
         }
     }
 }

@@ -12,14 +12,10 @@ namespace FribergCarRentals.Interfaces
         Task<IdentityUser?> UpdateUsernameAsync(string id, string newUsername);
         Task<IdentityUser?> DeleteAsync(string id);
         Task<List<IdentityUser>> GetAllAsync();
-        Task<bool> IsInRoleAsync(IdentityUser identityUser, string role);
-        Task<IdentityUser?> GetByEmailAsync(string email);
-        Task<bool> IsAdmin(IdentityUser identityUser);
-        Task<bool> IsCustomer(IdentityUser identityUser);
-        Task<IdentityUser?> MakeAdminAsync(string username);
-        Task<IdentityUser?> MakeCustomer(string username);
+        Task<IdentityUser?> GetByEmailAsync(string email);        
         Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync();
-        Task<IdentityUser?> RemoveAdmin(string username);
-        Task<IdentityUser?> RemoveCustomer(string username);
+        Task<bool> IsInRoleAsync(IdentityUser identityUser, string roleName);
+        Task<IdentityUser?> AddToRoleAsync(IdentityUser identityUser, string roleName);
+        Task<IdentityUser?> RemoveFromRoleAsync(IdentityUser identityUser, string roleName);
     }
 }

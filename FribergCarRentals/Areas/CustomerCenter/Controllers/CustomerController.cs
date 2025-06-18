@@ -26,7 +26,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Customer> customers = await _userService.GetAllCustomersAsync();
+            IEnumerable<Customer> customers = new List<Customer>();
             return View(customers);
         }
 
