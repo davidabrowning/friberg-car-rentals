@@ -19,20 +19,20 @@ namespace FribergCarRentals.Services
         }
 
         // General methods
-        public async Task<IdentityUser?> DeleteUserAsync(string id)
+        public async Task<IdentityUser?> DeleteIdentityUserAsync(string id)
         {
-            IdentityUser? identityUser = await GetIdentityUserByIdAsync(id);
+            IdentityUser? identityUser = await GetUserById(id);
             if (identityUser == null) {
                 return null;
             }
 
-            Admin? admin = await GetAdminAsync(identityUser);
+            Admin? admin = await GetAdminByUserAsync(identityUser);
             if (admin != null)
             {
                 await DeleteAdminAsync(admin.Id);
             }
 
-            Customer? customer = await GetCustomerAsync(identityUser);
+            Customer? customer = await GetCustomerByUserAsync(identityUser);
             if (customer != null)
             {
                 await DeleteCustomerAsync(customer.Id);
@@ -42,38 +42,34 @@ namespace FribergCarRentals.Services
 
             return identityUser;
         }
-        public async Task<Admin?> GetAdminAsync(IdentityUser identityUser)
+        public async Task<Admin?> GetAdminByUserAsync(IdentityUser identityUser)
         {
             IEnumerable<Admin> admins = await _adminService.GetAllAsync();
             return admins.FirstOrDefault(a => a.IdentityUser.Id == identityUser.Id);
         }
-        public async Task<Customer?> GetCustomerAsync(IdentityUser identityUser)
+        public async Task<Customer?> GetCustomerByUserAsync(IdentityUser identityUser)
         {
             IEnumerable<Customer> customers = await _customerService.GetAllAsync();
             return customers.FirstOrDefault(c => c.IdentityUser.Id == identityUser.Id);
         }
 
         // IdentityUser methods
-        public async Task<IdentityUser> CreateIdentityUserAsync(string username) =>
+        public async Task<IdentityUser> CreateUser(string username) =>
             await _identityUserService.AddIdentityUserAsync(username);
         public async Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync() =>
             await _identityUserService.GetAllAsync();
-        public async Task<IdentityUser?> GetCurrentSignedInIdentityUserAsync() =>
+        public async Task<IdentityUser?> GetCurrentUser() =>
             await _identityUserService.GetCurrentSignedInIdentityUserAsync();
-        public async Task<IdentityUser?> GetIdentityUserByIdAsync(string id) =>
+        public async Task<IdentityUser?> GetUserById(string id) =>
             await _identityUserService.GetByIdAsync(id);
-        public async Task<bool> IdentityUserExistsAsync(string id) =>
-            await _identityUserService.IdExistsAsync(id);
         public async Task<bool> IdentityUsernameExistsAsync(string username) =>
             await _identityUserService.UsernameExistsAsync(username);
         public async Task<bool> IsInRoleAsync(IdentityUser identityUser, string roleName) => 
             await _identityUserService.IsInRoleAsync(identityUser, roleName);
-        public async Task<IdentityUser?> UpdateIdentityUserAsync(string id, string newUsername) => 
+        public async Task<IdentityUser?> UpdateUsername(string id, string newUsername) => 
             await _identityUserService.UpdateUsernameAsync(id, newUsername);
 
         // Admin methods
-        public async Task<bool> AdminIdExistsAsync(int id) => 
-            await _adminService.IdExistsAsync(id);
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
             await _identityUserService.AddToRoleAsync(admin.IdentityUser, IdentityUserService.RoleNameAdmin);
@@ -103,8 +99,6 @@ namespace FribergCarRentals.Services
             await _customerService.CreateAsync(customer);
             return customer;
         }
-        public async Task<bool> CustomerIdExistsAsync(int id) => 
-            await _customerService.IdExistsAsync(id);
         public async Task<Customer?> DeleteCustomerAsync(int id)
         {
             Customer? customer = await GetCustomerByIdAsync(id);
@@ -117,7 +111,6 @@ namespace FribergCarRentals.Services
             await _customerService.DeleteAsync(customer.Id);
             return customer;
         }
-            
         public async Task<Customer?> GetCustomerByIdAsync(int id) => 
             await _customerService.GetByIdAsync(id);
         public async Task<Customer> UpdateCustomerAsync(Customer customer) => 

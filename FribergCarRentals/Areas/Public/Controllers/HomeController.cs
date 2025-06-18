@@ -28,7 +28,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
         {
             HomeIndexViewModel homeIndexViewModel = new();
 
-            IdentityUser? identityUser = await _userService.GetCurrentSignedInIdentityUserAsync();
+            IdentityUser? identityUser = await _userService.GetCurrentUser();
             if (identityUser == null)
             {
                 homeIndexViewModel.IsSignedIn = false;

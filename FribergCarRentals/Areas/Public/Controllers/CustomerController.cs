@@ -49,7 +49,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
                 return View(populatedCustomerCreateVM);
             }
 
-            IdentityUser? identityUser = await _userService.GetCurrentSignedInIdentityUserAsync();
+            IdentityUser? identityUser = await _userService.GetCurrentUser();
             if (identityUser == null)
             {
                 return NotFound();

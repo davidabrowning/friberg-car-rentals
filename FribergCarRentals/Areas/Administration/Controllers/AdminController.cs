@@ -60,7 +60,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(adminCreateViewModel);
             }
 
-            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(adminCreateViewModel.IdentityUserId);
+            IdentityUser? identityUser = await _userService.GetUserById(adminCreateViewModel.IdentityUserId);
             if (identityUser == null)
                 return NotFound();
 
@@ -112,14 +112,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _userService.AdminIdExistsAsync(adminEditViewModel.AdminId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
             return RedirectToAction(nameof(Index));
         }

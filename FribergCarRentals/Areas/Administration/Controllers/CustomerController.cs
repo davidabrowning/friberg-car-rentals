@@ -58,7 +58,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(identityUserId);
+            IdentityUser? identityUser = await _userService.GetUserById(identityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -84,7 +84,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(customerCreateViewModel);
             }
 
-            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(customerCreateViewModel.IdentityUserId);
+            IdentityUser? identityUser = await _userService.GetUserById(customerCreateViewModel.IdentityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -139,14 +139,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _userService.CustomerIdExistsAsync(customerEditViewModel.CustomerId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
             return RedirectToAction(nameof(Index));
         }

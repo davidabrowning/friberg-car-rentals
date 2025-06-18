@@ -56,7 +56,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(identityUserViewModel);
             }
 
-            await _userService.CreateIdentityUserAsync(identityUserViewModel.Username);
+            await _userService.CreateUser(identityUserViewModel.Username);
 
             return RedirectToAction(nameof(Index));
         }
@@ -69,7 +69,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(id);
+            IdentityUser? identityUser = await _userService.GetUserById(id);
             if (identityUser is null)
             {
                 return NotFound();
@@ -96,7 +96,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(identityUserEditViewModel);
             }
 
-            await _userService.UpdateIdentityUserAsync(id, identityUserEditViewModel.IdentityUserUsername);
+            await _userService.UpdateUsername(id, identityUserEditViewModel.IdentityUserUsername);
 
             return RedirectToAction(nameof(Index));
         }
@@ -109,7 +109,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUser? identityUser = await _userService.GetIdentityUserByIdAsync(id);
+            IdentityUser? identityUser = await _userService.GetUserById(id);
             if (identityUser == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            await _userService.DeleteUserAsync(id);
+            await _userService.DeleteIdentityUserAsync(id);
 
             return RedirectToAction(nameof(Index));
         }
@@ -151,7 +151,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             if (identityUserIndexViewModel.IsAdmin)
             {
-                Admin? admin = await _userService.GetAdminAsync(user);
+                Admin? admin = await _userService.GetAdminByUserAsync(user);
                 if (admin != null)
                 {
                     identityUserIndexViewModel.AdminId = admin.Id;
@@ -160,7 +160,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             if (identityUserIndexViewModel.IsCustomer)
             {
-                Customer? customer = await _userService.GetCustomerAsync(user);
+                Customer? customer = await _userService.GetCustomerByUserAsync(user);
                 if (customer != null)
                 {
                     identityUserIndexViewModel.CustomerId = customer.Id;

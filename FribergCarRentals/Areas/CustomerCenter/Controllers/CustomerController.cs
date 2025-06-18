@@ -65,7 +65,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return View(customerCreateViewModel);
             }
 
-            IdentityUser? identityUser = await _userService.GetCurrentSignedInIdentityUserAsync();
+            IdentityUser? identityUser = await _userService.GetCurrentUser();
             Customer customer = new Customer()
             {
                 IdentityUser = identityUser,
@@ -114,14 +114,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _userService.CustomerIdExistsAsync(customer.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
