@@ -1,5 +1,4 @@
 ﻿using FribergCarRentals.Areas.Administration.ViewModels;
-using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<CarIndexViewModel>
 
 @{
-	ViewData["Title"] = "Index";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>View</h1>
+<h1>Index</h1>
 
 <div class="row">
 	@foreach (var item in Model)
@@ -15,7 +15,7 @@
 			<div class="card-body">
 				<h5 class="card-title">@item.Make @item.Model (@item.Year)</h5>
 				<p class="card-text">@item.Description</p>
-				<a asp-area="Public" asp-controller="Customer" asp-action="Create" class="btn btn-primary">Rent</a>
+				<a asp-area="CustomerCenter" asp-controller="Reservation" asp-action="Create" asp-route-id="@item.Id" class="btn btn-primary">Rent</a>
 			</div>
 		</div>
 	}
