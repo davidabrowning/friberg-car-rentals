@@ -34,12 +34,20 @@ namespace FribergCarRentals.Data
 
         public async Task<IEnumerable<Customer>> GetAllAsync()
         {
-            return await _applicationDbContext.Customers.Include(c => c.IdentityUser).ToListAsync();
+            return await _applicationDbContext.Customers
+                .Include(c => c.IdentityUser)
+                .Include(c => c.Reservations)
+                    .ThenInclude(r => r.Car)
+                .ToListAsync();
         }
 
         public async Task<Customer?> GetByIdAsync(int id)
         {
-            return await _applicationDbContext.Customers.Where(c => c.Id == id).Include(c => c.IdentityUser).FirstOrDefaultAsync();
+            return await _applicationDbContext.Customers
+                .Where(c => c.Id == id)
+                .Include(c => c.IdentityUser)
+                .Include(c => c.Reservations)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> IdExistsAsync(int id)

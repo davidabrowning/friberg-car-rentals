@@ -32,7 +32,32 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Reservation
         public async Task<IActionResult> Index()
         {
-            return View(await _reservationService.GetAllAsync());
+            IdentityUser? identityUser = await _userService.GetCurrentUser();
+            if (identityUser == null)
+            {
+                return NotFound();
+            }
+
+            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            List<ReservationIndexViewModel> reservationIndexViewModelList = new();
+            foreach (Reservation reservation in customer.Reservations)
+            {
+                ReservationIndexViewModel reservationViewModel = new()
+                {
+                    Id = reservation.Id,
+                    StartDate = reservation.StartDate,
+                    EndDate = reservation.EndDate,
+                    Car = reservation.Car,
+                };
+                reservationIndexViewModelList.Add(reservationViewModel);
+            }
+            
+            return View(reservationIndexViewModelList);
         }
 
         // GET: CustomerCenter/Reservation/Details/5
@@ -110,7 +135,15 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            return View(reservation);
+            ReservationDeleteViewModel reservationDeleteViewModel = new()
+            {
+                Id = reservation.Id,
+                StartDate = reservation.StartDate,
+                EndDate = reservation.EndDate,
+                Car = reservation.Car,
+            };
+
+            return View(reservationDeleteViewModel);
         }
 
         // POST: CustomerCenter/Reservation/Delete/5

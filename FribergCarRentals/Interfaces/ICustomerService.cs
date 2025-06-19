@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace FribergCarRentals.Interfaces
 {
