@@ -74,7 +74,17 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             {
                 return NotFound();
             }
-            return View(customer);
+
+            CustomerEditViewModel customerEditViewModel = new()
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                HomeCity = customer.HomeCity,
+                HomeCountry = customer.HomeCountry,
+            };
+
+            return View(customerEditViewModel);
         }
 
         // POST: CustomerCenter/Customer/Edit
@@ -106,7 +116,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             customer.HomeCountry = customerEditViewModel.HomeCountry;
             await _userService.UpdateCustomerAsync(customer);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details");
         }
     }
 }
