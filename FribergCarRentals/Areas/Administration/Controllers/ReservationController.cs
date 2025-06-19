@@ -52,8 +52,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationIndexViewModel reservationViewModel = ViewModelMakerHelper.MakeReservationIndexViewModel(reservation);
-            return View(reservationViewModel);
+            ReservationDeleteViewModel reservationDeleteViewModel = new()
+            {
+                Id = reservation.Id,
+                StartDate = reservation.StartDate,
+                EndDate = reservation.EndDate,
+                Car = reservation.Car,
+                Customer = reservation.Customer,
+            };
+            return View(reservationDeleteViewModel);
         }
 
         // POST: Reservation/DeleteAsync/5

@@ -1,4 +1,4 @@
-﻿@model ReservationIndexViewModel
+﻿@model ReservationDeleteViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -11,6 +11,12 @@
     <h4>Reservation</h4>
     <hr />
     <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.StartDate)
         </dt>
@@ -22,6 +28,18 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.EndDate)
+        </dd>
+        <dt class="col-sm-2">
+            Car
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Car.Make @Model.Car.Model (@Model.Car.Year)
+        </dd>
+        <dt class="col-sm-2">
+            Customer
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Customer.FirstName @Model.Customer.LastName (@Model.Customer.IdentityUser.UserName)
         </dd>
     </dl>
     
