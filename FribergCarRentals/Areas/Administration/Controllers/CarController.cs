@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.Administration.Helpers;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using FribergCarRentals.Interfaces;
 
@@ -32,7 +24,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             IEnumerable<Car> cars = await _carService.GetAllAsync();
             foreach (Car car in cars)
             {
-                CarIndexViewModel carIndexViewModel = ViewModelMakerHelper.MakeCarIndexViewModel(car);
+                CarIndexViewModel carIndexViewModel = new CarIndexViewModel()
+                {
+                    Id = car.Id,
+                    Make = car.Make,
+                    Model = car.Model,
+                    Year = car.Year,
+                    Description = car.Description,
+                    ReservationIds = car.Reservations.Select(r => r.Id).ToList(),
+                };
                 carIndexViewModels.Add(carIndexViewModel);
             }
             return View(carIndexViewModels);
@@ -52,19 +52,26 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarIndexViewModel carIndexViewModel = ViewModelMakerHelper.MakeCarIndexViewModel(car);
+            CarIndexViewModel carIndexViewModel = new CarIndexViewModel()
+            {
+                Id = car.Id,
+                Make = car.Make,
+                Model = car.Model,
+                Year = car.Year,
+                Description = car.Description,
+                ReservationIds = car.Reservations.Select(r => r.Id).ToList(),
+            };
             return View(carIndexViewModel);
         }
 
         // GET: Car/Create
         public IActionResult Create()
         {
-            return View();
+            CarCreateViewModel carCerateViewModel = new();
+            return View(carCerateViewModel);
         }
 
         // POST: Car/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CarCreateViewModel carCreateViewModel)
@@ -74,8 +81,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(carCreateViewModel);
             }
 
-            Car car = ViewModelToCreateHelper.CreateNewCar(carCreateViewModel);
+            Car car = new()
+            {
+                Make = carCreateViewModel.Make,
+                Model = carCreateViewModel.Model,
+                Year = carCreateViewModel.Year,
+                Description = carCreateViewModel.Description,
+            };
             await _carService.CreateAsync(car);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -93,13 +107,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarEditViewModel carEditViewModel = ViewModelMakerHelper.MakeCarEditViewModel(car);
+            CarEditViewModel carEditViewModel = new CarEditViewModel()
+            {
+                Id = car.Id,
+                Make = car.Make,
+                Model = car.Model,
+                Year = car.Year,
+                Description = car.Description,
+            };
             return View(carEditViewModel);
         }
 
         // POST: Car/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CarEditViewModel carEditViewModel)
@@ -114,23 +133,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(carEditViewModel);
             }
 
-            try
+            Car car = await _carService.GetByIdAsync(carEditViewModel.Id);
+            if (car == null)
             {
-                Car car = await _carService.GetByIdAsync(carEditViewModel.Id);
-                ViewModelToUpdateHelper.UpdateExistingCar(car, carEditViewModel);
-                await _carService.UpdateAsync(car);
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await CarExists(carEditViewModel.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+
+            car.Make = carEditViewModel.Make;
+            car.Model = carEditViewModel.Model;
+            car.Year = carEditViewModel.Year;
+            car.Description = carEditViewModel.Description;
+            await _carService.UpdateAsync(car);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -148,7 +162,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarEditViewModel carEditViewModel = ViewModelMakerHelper.MakeCarEditViewModel(car);
+            CarEditViewModel carEditViewModel = new CarEditViewModel()
+            {
+                Id = car.Id,
+                Make = car.Make,
+                Model = car.Model,
+                Year = car.Year,
+                Description = car.Description,
+            };
             return View(carEditViewModel);
         }
 

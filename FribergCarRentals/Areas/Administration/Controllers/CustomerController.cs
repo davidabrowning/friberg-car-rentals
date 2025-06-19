@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Administration.ViewModels;
-using FribergCarRentals.Areas.Administration.Helpers;
 using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
@@ -45,8 +38,19 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerViewModel = ViewModelMakerHelper.MakeCustomerEditViewModel(customer);
-            return View(customerViewModel);
+            CustomerDetailsViewModel customerDetailsViewModel = new CustomerDetailsViewModel()
+            {
+                CustomerId = customer.Id,
+                IdentityUserId = customer.IdentityUser.Id,
+                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                HomeCity = customer.HomeCity,
+                HomeCountry = customer.HomeCountry,
+                ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
+            };
+
+            return View(customerDetailsViewModel);
         }
 
         // GET: Customer/Create/abcd-1234
@@ -73,8 +77,6 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         }
 
         // POST: Customer/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CustomerCreateViewModel customerCreateViewModel)
@@ -90,9 +92,17 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            List<Reservation> reservations = new();
-            Customer customer = ViewModelToCreateHelper.CreateNewCustomer(customerCreateViewModel, identityUser, reservations);
+            Customer customer = new()
+            {
+                IdentityUser = identityUser,
+                FirstName = customerCreateViewModel.FirstName,
+                LastName = customerCreateViewModel.LastName,
+                HomeCity = customerCreateViewModel.HomeCity,
+                HomeCountry = customerCreateViewModel.HomeCountry,
+                Reservations = new List<Reservation>(),
+            };
             await _userService.CreateCustomerAsync(customer);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -110,7 +120,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerEditViewModel = ViewModelMakerHelper.MakeCustomerEditViewModel(customer);
+            CustomerEditViewModel customerEditViewModel = new CustomerEditViewModel()
+            {
+                CustomerId = customer.Id,
+                IdentityUserId = customer.IdentityUser.Id,
+                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                HomeCity = customer.HomeCity,
+                HomeCountry = customer.HomeCountry,
+                ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
+            };
+
             return View(customerEditViewModel);
         }
 
@@ -131,17 +152,20 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(customerEditViewModel);
             }
 
-            try
+            Customer? customer = await _userService.GetCustomerByIdAsync(customerEditViewModel.CustomerId);
+
+            if (customer == null)
             {
-                Customer? customer = await _userService.GetCustomerByIdAsync(customerEditViewModel.CustomerId);
-                ViewModelToUpdateHelper.UpdatedExistingCustomer(customer, customerEditViewModel);
-                await _userService.UpdateCustomerAsync(customer);
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-            return RedirectToAction(nameof(Index));
+
+            customer.FirstName = customerEditViewModel.FirstName;
+            customer.LastName = customerEditViewModel.LastName;
+            customer.HomeCity = customerEditViewModel.HomeCity;
+            customer.HomeCountry = customerEditViewModel.HomeCountry;
+            await _userService.UpdateCustomerAsync(customer);
+
+            return RedirectToAction("Index");
         }
 
         // GET: Customer/DeleteAsync/5
@@ -158,8 +182,19 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerViewModel = ViewModelMakerHelper.MakeCustomerEditViewModel(customer);
-            return View(customerViewModel);
+            CustomerDeleteViewModel customerDeleteViewModel = new CustomerDeleteViewModel()
+            {
+                CustomerId = customer.Id,
+                IdentityUserId = customer.IdentityUser.Id,
+                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                HomeCity = customer.HomeCity,
+                HomeCountry = customer.HomeCountry,
+                ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
+            };
+
+            return View(customerDeleteViewModel);
         }
 
         // POST: Customer/DeleteAsync/5

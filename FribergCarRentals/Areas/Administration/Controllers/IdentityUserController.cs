@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Models;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.Administration.Helpers;
 using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
@@ -75,7 +67,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUserEditViewModel viewModel = ViewModelMakerHelper.MakeIdentityUserEditViewModel(identityUser);
+            IdentityUserEditViewModel viewModel = new IdentityUserEditViewModel()
+            {
+                IdentityUserId = identityUser.Id,
+                IdentityUserUsername = identityUser.UserName,
+            };
             return View(viewModel);
         }
 
@@ -115,7 +111,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            IdentityUserDeleteViewModel identityUserDeleteViewModel = ViewModelMakerHelper.MakeIdentityUserDeleteViewModel(identityUser);
+            IdentityUserDeleteViewModel identityUserDeleteViewModel = new IdentityUserDeleteViewModel()
+            {
+                IdentityUserId = identityUser.Id,
+                IdentityUserUsername = identityUser.UserName ?? "Unable to fetch username",
+            };
             return View(identityUserDeleteViewModel);
         }
 

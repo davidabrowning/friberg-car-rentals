@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.Administration.Helpers;
 using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
@@ -49,8 +42,6 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         }
 
         // POST: Admin/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AdminCreateViewModel adminCreateViewModel)
@@ -62,10 +53,16 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             IdentityUser? identityUser = await _userService.GetUserById(adminCreateViewModel.IdentityUserId);
             if (identityUser == null)
+            {
                 return NotFound();
+            }
 
-            Admin admin = ViewModelToCreateHelper.CreateNewAdmin(adminCreateViewModel, identityUser);
+            Admin admin = new()
+            {
+                IdentityUser = identityUser
+            };
             await _userService.CreateAdminAsync(admin);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -83,13 +80,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminViewModel = ViewModelMakerHelper.MakeAdminEditViewModel(admin);
+            AdminEditViewModel adminViewModel = new()
+            {
+                AdminId = admin.Id
+            };
             return View(adminViewModel);
         }
 
         // POST: Admin/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AdminEditViewModel adminEditViewModel)
@@ -131,8 +129,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminViewModel = ViewModelMakerHelper.MakeAdminEditViewModel(admin);
-            return View(adminViewModel);
+            AdminEditViewModel adminEditViewModel = new AdminEditViewModel()
+            {
+                AdminId = admin.Id,
+            };
+
+            return View(adminEditViewModel);
         }
 
         // POST: Admin/DeleteAsync/5

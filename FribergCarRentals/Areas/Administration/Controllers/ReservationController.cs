@@ -9,7 +9,6 @@ using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.Administration.ViewModels;
-using FribergCarRentals.Areas.Administration.Helpers;
 using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
@@ -32,7 +31,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
             foreach (Reservation reservation in reservations)
             {
-                ReservationIndexViewModel reservationViewModel = ViewModelMakerHelper.MakeReservationIndexViewModel(reservation);
+                ReservationIndexViewModel reservationViewModel = new ReservationIndexViewModel()
+                {
+                    Id = reservation.Id,
+                    StartDate = reservation.StartDate,
+                    EndDate = reservation.EndDate,
+                    Car = reservation.Car,
+                    Customer = reservation.Customer,
+                };
                 reservationViewModels.Add(reservationViewModel);
             }
             return View(reservationViewModels);
