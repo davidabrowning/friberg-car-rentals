@@ -17,10 +17,24 @@
             <div class="form-group">
                 <label asp-for="CarId" class="control-label"></label>
                 <select asp-for="CarId" class="form-select">
-                    <option selected>Choose a car</option>
+                    @if(Model.PreselectedCarId == 0)
+                    {
+                        <option selected>Choose a car</option>
+                    }
+                    else
+                    {
+                        <option>Choose a car</option>
+                    }
                     @foreach (Car car in Model.Cars)
                     {
-                        <option value="@car.Id">#@car.Id: @car.Make @car.Model (@car.Year)</option>
+                        if (Model.PreselectedCarId == car.Id)
+                        {
+                            <option selected value="@car.Id">#@car.Id: @car.Make @car.Model (@car.Year)</option>
+                        }
+                        else
+                        {
+                            <option value="@car.Id">#@car.Id: @car.Make @car.Model (@car.Year)</option>
+                        }
                     }
                 </select>
             </div>

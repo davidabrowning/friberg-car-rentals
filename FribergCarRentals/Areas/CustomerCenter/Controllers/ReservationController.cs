@@ -77,14 +77,20 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             return View(reservation);
         }
 
-        // GET: CustomerCenter/Reservation/Create
-        public async Task<IActionResult> Create()
+        // GET: CustomerCenter/Reservation/Create/5
+        public async Task<IActionResult> Create(int? id)
         {
+            int preselectedCarId = 0;
+            if (id != null)
+            {
+                preselectedCarId = (int)id;
+            }
             IdentityUser identityUser = await _userService.GetCurrentUser();
             Customer customer = await _userService.GetCustomerByUserAsync(identityUser);
             ReservationCreateViewModel reservationCreateViewModel = new()
             {
                 CustomerId = customer.Id,
+                PreselectedCarId = preselectedCarId,
                 Cars = await _carService.GetAllAsync(),
             };
             return View(reservationCreateViewModel);
@@ -99,6 +105,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         {
             if (!ModelState.IsValid)
             {
+                reservationCreateViewModel.Cars = await _carService.GetAllAsync();
                 return View(reservationCreateViewModel);
             }
 
