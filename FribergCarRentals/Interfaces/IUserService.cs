@@ -27,6 +27,7 @@ namespace FribergCarRentals.Interfaces
         Task<Customer> CreateCustomerAsync(Customer customer);
         Task<Customer?> GetCustomerByIdAsync(int id);
         Task<Customer?> GetCustomerByUserAsync(IdentityUser identityUser);
+        Task<Customer?> GetSignedInCustomer();
         Task<Customer> UpdateCustomerAsync(Customer customer);
         Task<Customer?> DeleteCustomerAsync(int id);
     }

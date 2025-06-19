@@ -115,5 +115,17 @@ namespace FribergCarRentals.Services
             await _customerService.GetByIdAsync(id);
         public async Task<Customer> UpdateCustomerAsync(Customer customer) => 
             await _customerService.UpdateAsync(customer);
+
+        public async Task<Customer?> GetSignedInCustomer()
+        {
+            IdentityUser? identityUser = await GetCurrentUser();
+            if (identityUser == null)
+            {
+                return null;
+            }
+
+            Customer? customer = await GetCustomerByUserAsync(identityUser);
+            return customer;
+        }
     }
 }

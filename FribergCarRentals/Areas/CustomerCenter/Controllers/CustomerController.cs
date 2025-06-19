@@ -23,22 +23,10 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             _userService = userService;
         }
 
-        // GET: CustomerCenter/Customer
-        public async Task<IActionResult> Index()
+        // GET: CustomerCenter/Customer/Details
+        public async Task<IActionResult> Details()
         {
-            IEnumerable<Customer> customers = new List<Customer>();
-            return View(customers);
-        }
-
-        // GET: CustomerCenter/Customer/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _userService.GetCustomerByIdAsync((int)id);
+            Customer? customer = await _userService.GetSignedInCustomer();
             if (customer == null)
             {
                 return NotFound();
@@ -78,15 +66,10 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: CustomerCenter/Customer/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: CustomerCenter/Customer/Edit
+        public async Task<IActionResult> Edit()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _userService.GetCustomerByIdAsync((int)id);
+            Customer? customer = await _userService.GetSignedInCustomer();
             if (customer == null)
             {
                 return NotFound();
@@ -94,56 +77,35 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             return View(customer);
         }
 
-        // POST: CustomerCenter/Customer/Edit/5
+        // POST: CustomerCenter/Customer/Edit
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,HomeCity,HomeCountry")] Customer customer)
+        public async Task<IActionResult> Edit(CustomerEditViewModel customerEditViewModel)
         {
-            if (id != customer.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _userService.UpdateCustomerAsync(customer);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customer);
-        }
-
-        // GET: CustomerCenter/Customer/DeleteAsync/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
+            Customer? customer = await _userService.GetSignedInCustomer();
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return View(customer);
-        }
+            if (customer.Id != customerEditViewModel.Id)
+            {
+                return NotFound();
+            }
 
-        // POST: CustomerCenter/Customer/DeleteAsync/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            await _userService.DeleteCustomerAsync(id);
+            if (!ModelState.IsValid)
+            {
+                return View(customerEditViewModel);
+            }
+
+            customer.FirstName = customerEditViewModel.FirstName;
+            customer.LastName = customerEditViewModel.LastName;
+            customer.HomeCity = customerEditViewModel.HomeCity;
+            customer.HomeCountry = customerEditViewModel.HomeCountry;
+            await _userService.UpdateCustomerAsync(customer);
+
             return RedirectToAction(nameof(Index));
         }
     }
