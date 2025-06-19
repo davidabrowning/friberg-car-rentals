@@ -30,6 +30,7 @@ namespace FribergCarRentals.Data
         {
             return await _applicationDbContext.Reservations
                 .Include(r => r.Customer)
+                    .ThenInclude(c => c.IdentityUser)
                 .Include(r => r.Car)
                 .ToListAsync();
         }

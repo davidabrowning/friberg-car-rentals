@@ -10,6 +10,7 @@ using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.Administration.ViewModels;
 using FribergCarRentals.Areas.Administration.Helpers;
+using FribergCarRentals.Interfaces;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -17,18 +18,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class ReservationController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IReservationService _reservationService;
 
-        public ReservationController(ApplicationDbContext context)
+        public ReservationController(IReservationService reservationService)
         {
-            _context = context;
+            _reservationService = reservationService;
         }
 
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
             List<ReservationIndexViewModel> reservationViewModels = new();
-            List<Reservation> reservations = await _context.Reservations.ToListAsync();
+            IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
             foreach (Reservation reservation in reservations)
             {
                 ReservationIndexViewModel reservationViewModel = ViewModelMakerHelper.MakeReservationIndexViewModel(reservation);
@@ -45,8 +46,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            var reservation = await _context.Reservations
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
             if (reservation == null)
             {
                 return NotFound();
@@ -61,19 +61,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
+            Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
             if (reservation != null)
             {
-                _context.Reservations.Remove(reservation);
+                await _reservationService.DeleteAsync(id);
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ReservationExists(int id)
-        {
-            return _context.Reservations.Any(e => e.Id == id);
         }
     }
 }
