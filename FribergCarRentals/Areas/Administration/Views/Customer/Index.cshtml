@@ -1,4 +1,5 @@
-﻿@model IEnumerable<CustomerEditViewModel>
+﻿@using FribergCarRentals.Areas.Administration.Views.Customer
+@model IEnumerable<IndexCustomerViewModel>
 
 @{
 	ViewData["Title"] = "Index";
@@ -36,31 +37,31 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (CustomerEditViewModel customerViewModel in Model)
+		@foreach (IndexCustomerViewModel indexCustomerViewModel in Model)
 		{
 			<tr>
 				<td>
-					@customerViewModel.CustomerId
+					@indexCustomerViewModel.CustomerId
 				</td>
 				<td>
-					@customerViewModel.IdentityUserId
+					@indexCustomerViewModel.IdentityUserId
 				</td>
 				<td>
-					@customerViewModel.FirstName
+					@indexCustomerViewModel.FirstName
 				</td>
 				<td>
-					@customerViewModel.LastName
+					@indexCustomerViewModel.LastName
 				</td>
 				<td>
-					@customerViewModel.HomeCity
+					@indexCustomerViewModel.HomeCity
 				</td>
 				<td>
-					@customerViewModel.HomeCountry
+					@indexCustomerViewModel.HomeCountry
 				</td>
 				<td>
-					<a asp-action="Edit" asp-route-id="@customerViewModel.CustomerId">Edit</a> |
-					<a asp-action="Details" asp-route-id="@customerViewModel.CustomerId">Details</a> |
-					<a asp-action="Delete" asp-route-id="@customerViewModel.CustomerId">Delete</a>
+					<a asp-action="Edit" asp-route-id="@indexCustomerViewModel.CustomerId">Edit</a> |
+					<a asp-action="Details" asp-route-id="@indexCustomerViewModel.CustomerId">Details</a> |
+					<a asp-action="Delete" asp-route-id="@indexCustomerViewModel.CustomerId">Delete</a>
 				</td>
 			</tr>
 		}

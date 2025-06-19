@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 using FribergCarRentals.Interfaces;
+using FribergCarRentals.Areas.CustomerCenter.Views.Customer;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
@@ -32,38 +32,16 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            return View(customer);
-        }
-
-        // GET: CustomerCenter/Customer/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CustomerCenter/Customer/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CustomerCreateViewModel customerCreateViewModel)
-        {
-            if (!ModelState.IsValid)
+            DetailsCustomerViewModel detailsCustomerViewModel = new()
             {
-                return View(customerCreateViewModel);
-            }
-
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            Customer customer = new Customer()
-            {
-                IdentityUser = identityUser,
-                FirstName = customerCreateViewModel.FirstName,
-                LastName = customerCreateViewModel.LastName,
-                HomeCity = customerCreateViewModel.HomeCity,
-                HomeCountry = customerCreateViewModel.HomeCountry,
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                HomeCity = customer.HomeCity,
+                HomeCountry = customer.HomeCountry,
             };
-            await _userService.CreateCustomerAsync(customer);
-            return RedirectToAction(nameof(Index));
+
+            return View(detailsCustomerViewModel);
         }
 
         // GET: CustomerCenter/Customer/Edit
@@ -75,7 +53,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerEditViewModel = new()
+            EditCustomerViewModel editCustomerViewModel = new()
             {
                 Id = customer.Id,
                 FirstName = customer.FirstName,
@@ -84,15 +62,13 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 HomeCountry = customer.HomeCountry,
             };
 
-            return View(customerEditViewModel);
+            return View(editCustomerViewModel);
         }
 
         // POST: CustomerCenter/Customer/Edit
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(CustomerEditViewModel customerEditViewModel)
+        public async Task<IActionResult> Edit(EditCustomerViewModel editCustomerViewModel)
         {
             Customer? customer = await _userService.GetSignedInCustomer();
             if (customer == null)
@@ -100,20 +76,20 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            if (customer.Id != customerEditViewModel.Id)
+            if (customer.Id != editCustomerViewModel.Id)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(customerEditViewModel);
+                return View(editCustomerViewModel);
             }
 
-            customer.FirstName = customerEditViewModel.FirstName;
-            customer.LastName = customerEditViewModel.LastName;
-            customer.HomeCity = customerEditViewModel.HomeCity;
-            customer.HomeCountry = customerEditViewModel.HomeCountry;
+            customer.FirstName = editCustomerViewModel.FirstName;
+            customer.LastName = editCustomerViewModel.LastName;
+            customer.HomeCity = editCustomerViewModel.HomeCity;
+            customer.HomeCountry = editCustomerViewModel.HomeCountry;
             await _userService.UpdateCustomerAsync(customer);
 
             return RedirectToAction("Details");

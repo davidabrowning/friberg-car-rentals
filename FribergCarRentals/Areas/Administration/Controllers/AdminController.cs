@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Areas.Administration.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Interfaces;
+using FribergCarRentals.Areas.Administration.Views.Admin;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -34,24 +34,24 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminCreateViewModel adminCreateViewModel = new()
+            CreateAdminViewModel createAdminViewModel = new()
             {
                 IdentityUserId = identityUserId,
             };
-            return View(adminCreateViewModel);
+            return View(createAdminViewModel);
         }
 
         // POST: Admin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(AdminCreateViewModel adminCreateViewModel)
+        public async Task<IActionResult> Create(CreateAdminViewModel createAdminViewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(adminCreateViewModel);
+                return View(createAdminViewModel);
             }
 
-            IdentityUser? identityUser = await _userService.GetUserById(adminCreateViewModel.IdentityUserId);
+            IdentityUser? identityUser = await _userService.GetUserById(createAdminViewModel.IdentityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -80,38 +80,36 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminViewModel = new()
+            EditAdminViewModel editAdminViewModel = new()
             {
                 AdminId = admin.Id
             };
-            return View(adminViewModel);
+            return View(editAdminViewModel);
         }
 
         // POST: Admin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, AdminEditViewModel adminEditViewModel)
+        public async Task<IActionResult> Edit(int id, EditAdminViewModel editAdminViewModel)
         {
-            if (id != adminEditViewModel.AdminId)
+            if (id != editAdminViewModel.AdminId)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(adminEditViewModel);
+                return View(editAdminViewModel);
             }
 
-            try
+            Admin admin = await _userService.GetAdminByIdAsync((int)id);
+            if (admin == null)
             {
-                Admin admin = await _userService.GetAdminByIdAsync((int)id);
-                // ViewModelToUpdateHelper.UpdateExistingAdmin(admin, adminEditViewModel); - not yet implemented
-                await _userService.UpdateAdminAsync(admin);
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
+
+            await _userService.UpdateAdminAsync(admin);
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -129,12 +127,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            AdminEditViewModel adminEditViewModel = new AdminEditViewModel()
+            DeleteAdminViewModel deleteAdminViewModel = new DeleteAdminViewModel()
             {
                 AdminId = admin.Id,
             };
 
-            return View(adminEditViewModel);
+            return View(deleteAdminViewModel);
         }
 
         // POST: Admin/DeleteAsync/5

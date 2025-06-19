@@ -1,6 +1,6 @@
-﻿namespace FribergCarRentals.Areas.Administration.ViewModels
+﻿namespace FribergCarRentals.Areas.Administration.Views.Car
 {
-    public class CarCreateViewModel
+    public class CreateCarViewModel
     {
         public string Make { get; set; } = "";
         public string Model { get; set; } = "";

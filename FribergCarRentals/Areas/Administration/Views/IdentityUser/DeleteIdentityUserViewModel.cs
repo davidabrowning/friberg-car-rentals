@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.Administration.ViewModels
+namespace FribergCarRentals.Areas.Administration.Views.IdentityUser
 {
-    public class IdentityUserDeleteViewModel
+    public class DeleteIdentityUserViewModel
     {
         [Required]
         public string IdentityUserId { get; set; } = null!;

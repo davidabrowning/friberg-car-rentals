@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Areas.Public.ViewModels;
 using FribergCarRentals.Interfaces;
+using FribergCarRentals.Areas.Public.Views.Customer;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {
@@ -33,7 +33,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
         // GET: Public/Customer/Create
         public IActionResult Create()
         {
-            CustomerCreateViewModel emptyVM = new();
+            CreateCustomerViewModel emptyVM = new();
             return View(emptyVM);
         }
 
@@ -42,7 +42,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CustomerCreateViewModel populatedCustomerCreateVM)
+        public async Task<IActionResult> Create(CreateCustomerViewModel populatedCustomerCreateVM)
         {
             if (!ModelState.IsValid)
             {

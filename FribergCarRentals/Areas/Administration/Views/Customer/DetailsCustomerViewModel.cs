@@ -1,6 +1,6 @@
-﻿namespace FribergCarRentals.Areas.Administration.ViewModels
+﻿namespace FribergCarRentals.Areas.Administration.Views.Customer
 {
-    public class CustomerDeleteViewModel
+    public class DetailsCustomerViewModel
     {
         public int CustomerId { get; set; }
         public string IdentityUserId { get; set; } = "";

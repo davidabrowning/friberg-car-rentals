@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.CustomerCenter.ViewModels;
 using FribergCarRentals.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using FribergCarRentals.Areas.CustomerCenter.Views.Reservation;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
@@ -44,10 +44,10 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            List<ReservationIndexViewModel> reservationIndexViewModelList = new();
+            List<IndexReservationViewModel> reservationIndexViewModelList = new();
             foreach (Reservation reservation in customer.Reservations)
             {
-                ReservationIndexViewModel reservationViewModel = new()
+                IndexReservationViewModel reservationViewModel = new()
                 {
                     Id = reservation.Id,
                     StartDate = reservation.StartDate,
@@ -60,23 +60,6 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             return View(reservationIndexViewModelList);
         }
 
-        // GET: CustomerCenter/Reservation/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-
-            return View(reservation);
-        }
-
         // GET: CustomerCenter/Reservation/Create/5
         public async Task<IActionResult> Create(int? id)
         {
@@ -87,7 +70,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             }
             IdentityUser identityUser = await _userService.GetCurrentUser();
             Customer customer = await _userService.GetCustomerByUserAsync(identityUser);
-            ReservationCreateViewModel reservationCreateViewModel = new()
+            CreateReservationViewModel reservationCreateViewModel = new()
             {
                 CustomerId = customer.Id,
                 PreselectedCarId = preselectedCarId,
@@ -97,11 +80,9 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         }
 
         // POST: CustomerCenter/Reservation/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ReservationCreateViewModel reservationCreateViewModel)
+        public async Task<IActionResult> Create(CreateReservationViewModel reservationCreateViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -142,7 +123,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            ReservationDeleteViewModel reservationDeleteViewModel = new()
+            DeleteReservationViewModel reservationDeleteViewModel = new()
             {
                 Id = reservation.Id,
                 StartDate = reservation.StartDate,

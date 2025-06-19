@@ -1,6 +1,6 @@
-﻿namespace FribergCarRentals.Areas.Administration.ViewModels
+﻿namespace FribergCarRentals.Areas.CustomerCenter.Views.Car
 {
-    public class CarEditViewModel
+    public class IndexCarViewModel
     {
         public int Id { get; set; }
         public string Make { get; set; } = "";

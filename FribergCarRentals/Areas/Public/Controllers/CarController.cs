@@ -1,4 +1,4 @@
-﻿using FribergCarRentals.Areas.Public.ViewModels;
+﻿using FribergCarRentals.Areas.Public.Views.Car;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +15,10 @@ namespace FribergCarRentals.Areas.Public.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            List<CarIndexViewModel> carIndexViewModelList = new();
+            List<IndexCarViewModel> carIndexViewModelList = new();
             foreach (Car car in await _carService.GetAllAsync())
             {
-                CarIndexViewModel carIndexViewModel = new()
+                IndexCarViewModel carIndexViewModel = new()
                 {
                     Id = car.Id,
                     Make = car.Make,

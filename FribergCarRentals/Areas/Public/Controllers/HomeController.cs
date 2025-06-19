@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Areas.Public.ViewModels;
 using FribergCarRentals.ViewModels;
 using System.Diagnostics;
 using FribergCarRentals.Interfaces;
+using FribergCarRentals.Areas.Public.Views.Home;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {
@@ -26,7 +26,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
         // GET: Public/Home
         public async Task<IActionResult> Index()
         {
-            HomeIndexViewModel homeIndexViewModel = new();
+            IndexHomeViewModel homeIndexViewModel = new();
 
             IdentityUser? identityUser = await _userService.GetCurrentUser();
             if (identityUser == null)

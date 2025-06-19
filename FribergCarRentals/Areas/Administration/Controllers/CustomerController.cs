@@ -2,8 +2,8 @@
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Areas.Administration.ViewModels;
 using FribergCarRentals.Interfaces;
+using FribergCarRentals.Areas.Administration.Views.Customer;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -38,7 +38,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerDetailsViewModel customerDetailsViewModel = new CustomerDetailsViewModel()
+            DetailsCustomerViewModel detailsCustomerViewModel = new DetailsCustomerViewModel()
             {
                 CustomerId = customer.Id,
                 IdentityUserId = customer.IdentityUser.Id,
@@ -50,7 +50,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
             };
 
-            return View(customerDetailsViewModel);
+            return View(detailsCustomerViewModel);
         }
 
         // GET: Customer/Create/abcd-1234
@@ -68,25 +68,25 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerCreateViewModel customerCreateViewModel = new()
+            CreateCustomerViewModel createCustomerViewModel = new()
             {
                 IdentityUserId = identityUser.Id,
-                IdentityUserUsername = identityUser.UserName,
+                IdentityUserUsername = identityUser.UserName ?? "Unable to get username",
             };
-            return View(customerCreateViewModel);
+            return View(createCustomerViewModel);
         }
 
         // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CustomerCreateViewModel customerCreateViewModel)
+        public async Task<IActionResult> Create(CreateCustomerViewModel createCustomerViewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(customerCreateViewModel);
+                return View(createCustomerViewModel);
             }
 
-            IdentityUser? identityUser = await _userService.GetUserById(customerCreateViewModel.IdentityUserId);
+            IdentityUser? identityUser = await _userService.GetUserById(createCustomerViewModel.IdentityUserId);
             if (identityUser == null)
             {
                 return NotFound();
@@ -95,10 +95,10 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             Customer customer = new()
             {
                 IdentityUser = identityUser,
-                FirstName = customerCreateViewModel.FirstName,
-                LastName = customerCreateViewModel.LastName,
-                HomeCity = customerCreateViewModel.HomeCity,
-                HomeCountry = customerCreateViewModel.HomeCountry,
+                FirstName = createCustomerViewModel.FirstName,
+                LastName = createCustomerViewModel.LastName,
+                HomeCity = createCustomerViewModel.HomeCity,
+                HomeCountry = createCustomerViewModel.HomeCountry,
                 Reservations = new List<Reservation>(),
             };
             await _userService.CreateCustomerAsync(customer);
@@ -120,7 +120,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerEditViewModel customerEditViewModel = new CustomerEditViewModel()
+            EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
             {
                 CustomerId = customer.Id,
                 IdentityUserId = customer.IdentityUser.Id,
@@ -132,37 +132,35 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
             };
 
-            return View(customerEditViewModel);
+            return View(editCustomerViewModel);
         }
 
         // POST: Customer/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CustomerEditViewModel customerEditViewModel)
+        public async Task<IActionResult> Edit(int id, EditCustomerViewModel editCustomerViewModel)
         {
-            if (id != customerEditViewModel.CustomerId)
+            if (id != editCustomerViewModel.CustomerId)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(customerEditViewModel);
+                return View(editCustomerViewModel);
             }
 
-            Customer? customer = await _userService.GetCustomerByIdAsync(customerEditViewModel.CustomerId);
+            Customer? customer = await _userService.GetCustomerByIdAsync(editCustomerViewModel.CustomerId);
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            customer.FirstName = customerEditViewModel.FirstName;
-            customer.LastName = customerEditViewModel.LastName;
-            customer.HomeCity = customerEditViewModel.HomeCity;
-            customer.HomeCountry = customerEditViewModel.HomeCountry;
+            customer.FirstName = editCustomerViewModel.FirstName;
+            customer.LastName = editCustomerViewModel.LastName;
+            customer.HomeCity = editCustomerViewModel.HomeCity;
+            customer.HomeCountry = editCustomerViewModel.HomeCountry;
             await _userService.UpdateCustomerAsync(customer);
 
             return RedirectToAction("Index");
@@ -182,7 +180,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CustomerDeleteViewModel customerDeleteViewModel = new CustomerDeleteViewModel()
+            DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
             {
                 CustomerId = customer.Id,
                 IdentityUserId = customer.IdentityUser.Id,
@@ -194,7 +192,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
             };
 
-            return View(customerDeleteViewModel);
+            return View(deleteCustomerViewModel);
         }
 
         // POST: Customer/DeleteAsync/5

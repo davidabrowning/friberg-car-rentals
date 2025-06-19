@@ -1,8 +1,7 @@
-﻿namespace FribergCarRentals.Areas.CustomerCenter.ViewModels
+﻿namespace FribergCarRentals.Areas.CustomerCenter.Views.Customer
 {
-    public class CustomerEditViewModel
+    public class CreateCustomerViewModel
     {
-        public int Id { get; set; }
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
         public string HomeCity { get; set; } = "";

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.Public.ViewModels
+namespace FribergCarRentals.Areas.Public.Views.Customer
 {
-    public class CustomerCreateViewModel
+    public class CreateCustomerViewModel
     {
         [Required]
         public string FirstName { get; set; } = null!;

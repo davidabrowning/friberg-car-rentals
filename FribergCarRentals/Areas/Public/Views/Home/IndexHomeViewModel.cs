@@ -1,6 +1,6 @@
-﻿namespace FribergCarRentals.Areas.Public.ViewModels
+﻿namespace FribergCarRentals.Areas.Public.Views.Home
 {
-    public class HomeIndexViewModel
+    public class IndexHomeViewModel
     {
         public bool IsSignedIn { get; set; }
         public bool HasCustomerAccount { get; set; }

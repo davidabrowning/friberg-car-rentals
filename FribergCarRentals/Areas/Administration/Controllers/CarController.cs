@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.Administration.ViewModels;
 using FribergCarRentals.Interfaces;
+using FribergCarRentals.Areas.Administration.Views.Car;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -20,11 +20,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // GET: Car
         public async Task<IActionResult> Index()
         {
-            List<CarIndexViewModel> carIndexViewModels = new();
+            List<IndexCarViewModel> indexCarViewModelList = new();
             IEnumerable<Car> cars = await _carService.GetAllAsync();
             foreach (Car car in cars)
             {
-                CarIndexViewModel carIndexViewModel = new CarIndexViewModel()
+                IndexCarViewModel indexCarViewModel = new IndexCarViewModel()
                 {
                     Id = car.Id,
                     Make = car.Make,
@@ -33,9 +33,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                     Description = car.Description,
                     ReservationIds = car.Reservations.Select(r => r.Id).ToList(),
                 };
-                carIndexViewModels.Add(carIndexViewModel);
+                indexCarViewModelList.Add(indexCarViewModel);
             }
-            return View(carIndexViewModels);
+            return View(indexCarViewModelList);
         }
 
         // GET: Car/Details/5
@@ -52,7 +52,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarIndexViewModel carIndexViewModel = new CarIndexViewModel()
+            DetailsCarViewModel detailsCarViewModel = new DetailsCarViewModel()
             {
                 Id = car.Id,
                 Make = car.Make,
@@ -61,32 +61,32 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Description = car.Description,
                 ReservationIds = car.Reservations.Select(r => r.Id).ToList(),
             };
-            return View(carIndexViewModel);
+            return View(detailsCarViewModel);
         }
 
         // GET: Car/Create
         public IActionResult Create()
         {
-            CarCreateViewModel carCerateViewModel = new();
-            return View(carCerateViewModel);
+            CreateCarViewModel createCarViewModel = new();
+            return View(createCarViewModel);
         }
 
         // POST: Car/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CarCreateViewModel carCreateViewModel)
+        public async Task<IActionResult> Create(CreateCarViewModel createCarViewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(carCreateViewModel);
+                return View(createCarViewModel);
             }
 
             Car car = new()
             {
-                Make = carCreateViewModel.Make,
-                Model = carCreateViewModel.Model,
-                Year = carCreateViewModel.Year,
-                Description = carCreateViewModel.Description,
+                Make = createCarViewModel.Make,
+                Model = createCarViewModel.Model,
+                Year = createCarViewModel.Year,
+                Description = createCarViewModel.Description,
             };
             await _carService.CreateAsync(car);
 
@@ -107,7 +107,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarEditViewModel carEditViewModel = new CarEditViewModel()
+            EditCarViewModel editCarViewModel = new EditCarViewModel()
             {
                 Id = car.Id,
                 Make = car.Make,
@@ -115,34 +115,34 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Year = car.Year,
                 Description = car.Description,
             };
-            return View(carEditViewModel);
+            return View(editCarViewModel);
         }
 
         // POST: Car/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CarEditViewModel carEditViewModel)
+        public async Task<IActionResult> Edit(int id, EditCarViewModel editCarViewModel)
         {
-            if (id != carEditViewModel.Id)
+            if (id != editCarViewModel.Id)
             {
                 return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
-                return View(carEditViewModel);
+                return View(editCarViewModel);
             }
 
-            Car car = await _carService.GetByIdAsync(carEditViewModel.Id);
+            Car car = await _carService.GetByIdAsync(editCarViewModel.Id);
             if (car == null)
             {
                 return NotFound();
             }
 
-            car.Make = carEditViewModel.Make;
-            car.Model = carEditViewModel.Model;
-            car.Year = carEditViewModel.Year;
-            car.Description = carEditViewModel.Description;
+            car.Make = editCarViewModel.Make;
+            car.Model = editCarViewModel.Model;
+            car.Year = editCarViewModel.Year;
+            car.Description = editCarViewModel.Description;
             await _carService.UpdateAsync(car);
 
             return RedirectToAction(nameof(Index));
@@ -162,7 +162,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            CarEditViewModel carEditViewModel = new CarEditViewModel()
+            DeleteCarViewModel deleteCarViewModel = new DeleteCarViewModel()
             {
                 Id = car.Id,
                 Make = car.Make,
@@ -170,7 +170,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Year = car.Year,
                 Description = car.Description,
             };
-            return View(carEditViewModel);
+            return View(deleteCarViewModel);
         }
 
         // POST: Car/DeleteAsync/5
@@ -186,9 +186,5 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> CarExists(int id)
-        {
-            return await _carService.IdExistsAsync(id);
-        }
     }
 }

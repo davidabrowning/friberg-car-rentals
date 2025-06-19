@@ -1,16 +1,16 @@
 ﻿using FribergCarRentals.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.CustomerCenter.ViewModels
+namespace FribergCarRentals.Areas.CustomerCenter.Views.Reservation
 {
-    public class ReservationCreateViewModel : IValidatableObject
+    public class CreateReservationViewModel : IValidatableObject
     {
         public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Today).AddDays(1);
         public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today).AddDays(8);
         public int CarId { get; set; }
         public int CustomerId { get; set; }
         public int PreselectedCarId { get; set; }
-        public IEnumerable<Car> Cars { get; set; } = new List<Car>();
+        public IEnumerable<Models.Car> Cars { get; set; } = new List<Models.Car>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

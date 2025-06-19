@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.Data;
 using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.Administration.ViewModels;
 using FribergCarRentals.Interfaces;
+using FribergCarRentals.Areas.Administration.Views.Reservation;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -27,11 +23,11 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
-            List<ReservationIndexViewModel> reservationViewModels = new();
+            List<IndexReservationViewModel> indexReservationViewModelList = new();
             IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
             foreach (Reservation reservation in reservations)
             {
-                ReservationIndexViewModel reservationViewModel = new ReservationIndexViewModel()
+                IndexReservationViewModel indexReservationViewModel = new IndexReservationViewModel()
                 {
                     Id = reservation.Id,
                     StartDate = reservation.StartDate,
@@ -39,9 +35,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                     Car = reservation.Car,
                     Customer = reservation.Customer,
                 };
-                reservationViewModels.Add(reservationViewModel);
+                indexReservationViewModelList.Add(indexReservationViewModel);
             }
-            return View(reservationViewModels);
+            return View(indexReservationViewModelList);
         }
 
         // GET: Reservation/Delete/5
@@ -58,7 +54,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return NotFound();
             }
 
-            ReservationDeleteViewModel reservationDeleteViewModel = new()
+            DeleteReservationViewModel deleteReservationViewModel = new()
             {
                 Id = reservation.Id,
                 StartDate = reservation.StartDate,
@@ -66,7 +62,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Car = reservation.Car,
                 Customer = reservation.Customer,
             };
-            return View(reservationDeleteViewModel);
+            return View(deleteReservationViewModel);
         }
 
         // POST: Reservation/DeleteAsync/5

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.Administration.ViewModels
+namespace FribergCarRentals.Areas.Administration.Views.Admin
 {
-    public class AdminCreateViewModel
+    public class CreateAdminViewModel
     {
         [Required]
         public required string IdentityUserId { get; set; }

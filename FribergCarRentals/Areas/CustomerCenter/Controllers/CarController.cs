@@ -1,4 +1,4 @@
-﻿using FribergCarRentals.Areas.CustomerCenter.ViewModels;
+﻿using FribergCarRentals.Areas.CustomerCenter.Views.Car;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
 using FribergCarRentals.Services;
@@ -18,10 +18,10 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            List<CarIndexViewModel> carIndexViewModelList = new();
+            List<IndexCarViewModel> indexCarViewModelList = new();
             foreach (Car car in await _carService.GetAllAsync())
             {
-                CarIndexViewModel carIndexViewModel = new()
+                IndexCarViewModel carIndexViewModel = new()
                 {
                     Id = car.Id,
                     Make = car.Make,
@@ -29,9 +29,9 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                     Year = car.Year,
                     Description = car.Description,
                 };
-                carIndexViewModelList.Add(carIndexViewModel);
+                indexCarViewModelList.Add(carIndexViewModel);
             }
-            return View(carIndexViewModelList);
+            return View(indexCarViewModelList);
         }
 
         // GET: CustomerCenter/Customer/Details/5
@@ -48,7 +48,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return NotFound();
             }
 
-            CarDetailsViewModel carDetailViewModel = new()
+            DetailsCarViewModel detailsCarViewModel = new()
             {
                 Id = car.Id,
                 Make = car.Make,
@@ -57,7 +57,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 Description = car.Description,
             };
 
-            return View(carDetailViewModel);
+            return View(detailsCarViewModel);
         }
     }
 }
