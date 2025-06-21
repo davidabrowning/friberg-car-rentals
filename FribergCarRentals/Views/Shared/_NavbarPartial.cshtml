@@ -1,0 +1,12 @@
+﻿@if (User.IsInRole("Admin"))
+{
+	<partial name="_NavbarAdminPartial" />
+}
+@if (User.IsInRole("Customer"))
+{
+	<partial name="_NavbarCustomerPartial" />
+}
+@if (!User.IsInRole("Admin") && !User.IsInRole("Customer"))
+{
+	<partial name="_NavbarPublicPartial" />
+}

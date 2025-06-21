@@ -8,5 +8,10 @@
         public int Year { get; set; } = 0;
         public string Description { get; set; } = "";
         public List<Reservation> Reservations { get; set; } = new();
+
+        public override string? ToString()
+        {
+            return $"{Make} {Model} ({Year})";
+        }
     }
 }

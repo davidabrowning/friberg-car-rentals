@@ -92,6 +92,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             customer.HomeCountry = editCustomerViewModel.HomeCountry;
             await _userService.UpdateCustomerAsync(customer);
 
+            TempData["SuccessMessage"] = "Customer information updated successfully";
             return RedirectToAction("Details");
         }
     }
