@@ -1,69 +1,41 @@
 ﻿using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
     public class DatabaseCleaningService
     {
-        private readonly IRepository<Admin> _adminRepository;
-        private readonly IRepository<Customer> _customerRepository;
-        private readonly UserManager<IdentityUser> _userManager;
-        public DatabaseCleaningService(IRepository<Admin> adminRepository, IRepository<Customer> customerRepository, UserManager<IdentityUser> userManager)
+        private readonly IAdminService _adminService;
+        private readonly ICustomerService _customerService;
+        public DatabaseCleaningService(IAdminService adminService, ICustomerService customerService)
         {
-            _adminRepository = adminRepository;
-            _customerRepository = customerRepository;
-            _userManager = userManager;
+            _adminService = adminService;
+            _customerService = customerService;
         }
         public async Task Go()
         {
             await RemoveAdminsWithoutIdentityUsers();
             await RemoveCustomersWithoutIdentityUsers();
-            await RemoveAdminRoleFromUsersWithoutAdminAccount();
-            await RemoveCustomerRoleFromUsersWithoutCustomerAccount();
         }
         private async Task RemoveAdminsWithoutIdentityUsers()
         {
-            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
+            IEnumerable<Admin> admins = await _adminService.GetAllAsync();
             foreach (Admin admin in admins)
             {
                 if (admin.IdentityUser == null)
                 {
-                    await _adminRepository.DeleteAsync(admin.Id);
+                    await _adminService.DeleteAsync(admin.Id);
                 }
             }
         }
         private async Task RemoveCustomersWithoutIdentityUsers()
         {
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
+            IEnumerable<Customer> customers = await _customerService.GetAllAsync();
             foreach (Customer customer in customers)
             {
                 if (customer.IdentityUser == null)
                 {
-                    await _customerRepository.DeleteAsync(customer.Id);
-                }
-            }
-        }
-        private async Task RemoveAdminRoleFromUsersWithoutAdminAccount()
-        {
-            IEnumerable<Admin> admins = await _adminRepository.GetAllAsync();
-            foreach (IdentityUser identityUser in await _userManager.Users.ToListAsync())
-            {
-                if (!admins.Any(a => a.IdentityUser == identityUser))
-                {
-                    await _userManager.RemoveFromRoleAsync(identityUser, "Admin");
-                }
-            }
-        }
-        private async Task RemoveCustomerRoleFromUsersWithoutCustomerAccount()
-        {
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
-            foreach (IdentityUser identityUser in await _userManager.Users.ToListAsync())
-            {
-                if (!customers.Any(a => a.IdentityUser == identityUser))
-                {
-                    await _userManager.RemoveFromRoleAsync(identityUser, "Customer");
+                    await _customerService.DeleteAsync(customer.Id);
                 }
             }
         }
