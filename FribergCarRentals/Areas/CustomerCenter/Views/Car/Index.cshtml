@@ -2,8 +2,8 @@
 @model IEnumerable<IndexCarViewModel>
 
 @{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Index</h1>
@@ -12,9 +12,16 @@
 	@foreach (var item in Model)
 	{
 		<div class="card" style="width: 18rem;">
-			<img src="~/images/Logo.png" class="card-img-top" alt="Car image">
 			<div class="card-body">
 				<h5 class="card-title">@item.Make @item.Model (@item.Year)</h5>
+				@if (item.PhotoUrl != string.Empty)
+				{
+					<img src="@item.PhotoUrl" class="card-img-top" alt="Car image">
+				}
+				else
+				{
+					<img src="~/images/Logo.png" class="card-img-top" alt="Car image">
+				}
 				<p class="card-text">@item.Description</p>
 				<a asp-area="CustomerCenter" asp-controller="Reservation" asp-action="Create" asp-route-id="@item.Id" class="btn btn-primary">Rent</a>
 			</div>

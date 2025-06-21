@@ -28,6 +28,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                     Model = car.Model,
                     Year = car.Year,
                     Description = car.Description,
+                    PhotoUrl = car.PhotoUrls.ElementAtOrDefault(0) ?? string.Empty,
                 };
                 indexCarViewModelList.Add(carIndexViewModel);
             }
