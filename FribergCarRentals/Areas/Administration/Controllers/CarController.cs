@@ -61,6 +61,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Model = car.Model,
                 Year = car.Year,
                 Description = car.Description,
+                PhotoUrls = car.PhotoUrls,
                 ReservationIds = car.Reservations.Select(r => r.Id).ToList(),
             };
             return View(detailsCarViewModel);
