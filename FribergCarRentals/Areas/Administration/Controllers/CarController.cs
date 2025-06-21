@@ -96,6 +96,79 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Car/Photos/5
+        public async Task<IActionResult> Photos(int? id)
+        {
+            if (id == null)
+            {
+                TempData["ErrorMessage"] = "Invalid car id number format.";
+                return RedirectToAction("Index");
+            }
+
+            Car? car = await _carService.GetByIdAsync((int)id);
+            if (car == null)
+            {
+                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                return RedirectToAction("Index");
+            }
+
+            PhotosCarViewModel photosCarViewModel = new()
+            {
+                Id = car.Id,
+                Car = car,
+                PhotoUrl1 = car.PhotoUrls.ElementAtOrDefault(0),
+                PhotoUrl2 = car.PhotoUrls.ElementAtOrDefault(1),
+                PhotoUrl3 = car.PhotoUrls.ElementAtOrDefault(2),
+            };
+            return View(photosCarViewModel);
+        }
+
+        // POST: Car/Photos/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Photos(int id,  PhotosCarViewModel photosCarViewModel)
+        {
+            if (id != photosCarViewModel.Id)
+            {
+                TempData["ErrorMessage"] = "Invalid car id.";
+                return RedirectToAction("Index");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                TempData["WarningMessage"] = "Invalid form information.";
+                return View(photosCarViewModel);
+            }
+
+            Car? car = await _carService.GetByIdAsync(photosCarViewModel.Id);
+            if (car == null)
+            {
+                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                return RedirectToAction("Index");
+            }
+
+            car.PhotoUrls = new List<string>();
+            string photo1 = photosCarViewModel.PhotoUrl1 ?? "".Trim();
+            string photo2 = photosCarViewModel.PhotoUrl2 ?? "".Trim();
+            string photo3 = photosCarViewModel.PhotoUrl3 ?? "".Trim();
+            if (photo1 != "")
+            {
+                car.PhotoUrls.Add(photo1);
+            }
+            if (photo2 != "")
+            {
+                car.PhotoUrls.Add(photo2);
+            }
+            if (photo3 != "")
+            {
+                car.PhotoUrls.Add(photo3);
+            }
+            await _carService.UpdateAsync(car);
+
+            TempData["SuccessMessage"] = $"Photos successfully uploaded for car: {car.ToString()}";
+            return RedirectToAction(nameof(Photos));
+        }
+
         // GET: Car/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

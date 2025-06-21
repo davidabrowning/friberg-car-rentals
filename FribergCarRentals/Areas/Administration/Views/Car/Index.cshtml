@@ -45,7 +45,8 @@
 					@Html.DisplayFor(modelItem => item.Description)
 				</td>
 				<td>
-					<a asp-area="Administration" asp-controller="Car" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+					<a asp-area="Administration" asp-controller="Car" asp-action="Photos" asp-route-id="@item.Id">Edit photos</a> |
+					<a asp-area="Administration" asp-controller="Car" asp-action="Edit" asp-route-id="@item.Id">Edit info</a> |
 					<a asp-area="Administration" asp-controller="Car" asp-action="Details" asp-route-id="@item.Id">Details</a> |
 					<a asp-area="Administration" asp-controller="Car" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
 				</td>
