@@ -5,19 +5,35 @@ namespace FribergCarRentals.Services
 {
     public class CustomerService : BasicCRUDService<Customer>, ICustomerService
     {
-        private readonly IRepository<Customer> _customerRepository;
-        public CustomerService(IRepository<Customer> customerRepository) : base(customerRepository)
+        private readonly IReservationService _reservationService;
+        public CustomerService(IRepository<Customer> customerRepository, IReservationService reservationServices) : base(customerRepository)
         {
-            _customerRepository = customerRepository;
+            _reservationService = reservationServices;
+        }
+
+        public override async Task<Customer?> DeleteAsync(int id)
+        {
+            Customer? customer = await GetByIdAsync(id);
+            if (customer == null) {
+                return null;
+            }
+
+            IEnumerable<Reservation> reservations = await _reservationService.GetByCustomerAsync(customer);
+            foreach (Reservation reservation in reservations)
+            {
+                await _reservationService.DeleteAsync(reservation.Id);
+            }
+
+            return await base.DeleteAsync(id);
         }
 
         public async Task<Customer?> DeleteCustomerByIdentityUserIdAsync(string identityUserId)
         {
-            IEnumerable<Customer> customers = await _customerRepository.GetAllAsync();
+            IEnumerable<Customer> customers = await GetAllAsync();
             Customer? customer = customers.Where(c => c.IdentityUser.Id == identityUserId).FirstOrDefault();
             if (customer != null)
             {
-                await _customerRepository.DeleteAsync(customer.Id);
+                await DeleteAsync(customer.Id);
             }
             return customer;
         }

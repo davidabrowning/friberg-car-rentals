@@ -16,7 +16,7 @@ namespace FribergCarRentals.Services
             await _repository.AddAsync(t);
             return t;
         }
-        public async Task<T?> DeleteAsync(int id)
+        public virtual async Task<T?> DeleteAsync(int id)
         {
             T? t = await GetByIdAsync(id);
             if (t == null)
