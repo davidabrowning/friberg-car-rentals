@@ -92,7 +92,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             await _carService.CreateAsync(car);
 
-            TempData["ErrorMessage"] = $"New car created: {car.ToString()}.";
+            TempData["SuccessMessage"] = $"New car created: {car.ToString()}.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -153,6 +153,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             car.Description = editCarViewModel.Description;
             await _carService.UpdateAsync(car);
 
+            TempData["SuccessMessage"] = $"Car information successfully updated: {car.ToString()}";
             return RedirectToAction(nameof(Index));
         }
 
@@ -162,14 +163,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             if (id == null)
             {
                 TempData["ErrorMessage"] = "Invalid car id.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             Car? car = await _carService.GetByIdAsync((int)id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = "Unable to find car with that id.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             DeleteCarViewModel deleteCarViewModel = new DeleteCarViewModel()
