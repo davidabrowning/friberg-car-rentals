@@ -2,14 +2,12 @@
 @model CreateReservationViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Reservation";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Create Reservation</h1>
 
-<h4>Reservation for customer @Model.CustomerId</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
