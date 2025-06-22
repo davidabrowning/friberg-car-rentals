@@ -7,5 +7,6 @@
         public string Model { get; set; } = "";
         public int Year { get; set; } = 0;
         public string Description { get; set; } = "";
+        public List<string> PhotoUrls { get; set; } = new();
     }
 }
