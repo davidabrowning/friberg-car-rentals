@@ -64,7 +64,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
 
             await _userService.CreateCustomerAsync(newCustomer);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

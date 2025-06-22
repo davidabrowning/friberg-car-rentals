@@ -106,7 +106,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             };
             await _reservationService.CreateAsync(reservation);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: CustomerCenter/Reservation/Delete/5
@@ -145,7 +145,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 await _reservationService.DeleteAsync(reservation.Id);
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

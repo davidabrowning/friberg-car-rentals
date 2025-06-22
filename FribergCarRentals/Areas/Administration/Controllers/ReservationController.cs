@@ -75,7 +75,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 await _reservationService.DeleteAsync(id);
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

@@ -54,7 +54,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             await _userService.CreateUser(createIdentityUserViewModel.Username);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: IdentityUserViewModels/Edit/5
@@ -98,7 +98,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             await _userService.UpdateUsername(id, editIdentityUserViewModel.IdentityUserUsername);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: Admin/Delete/5
@@ -130,7 +130,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             await _userService.DeleteIdentityUserAsync(id);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         private async Task<IndexIdentityUserViewModel> CreateIndexIdentityUserViewModel(IdentityUser user)

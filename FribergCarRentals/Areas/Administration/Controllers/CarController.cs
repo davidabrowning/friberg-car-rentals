@@ -94,7 +94,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             await _carService.CreateAsync(car);
 
             TempData["SuccessMessage"] = $"New car created: {car.ToString()}.";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: Car/Photos/5
@@ -167,7 +167,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             await _carService.UpdateAsync(car);
 
             TempData["SuccessMessage"] = $"Photos successfully uploaded for car: {car.ToString()}";
-            return RedirectToAction(nameof(Photos));
+            return RedirectToAction("Photos");
         }
 
         // GET: Car/Edit/5
@@ -228,7 +228,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             await _carService.UpdateAsync(car);
 
             TempData["SuccessMessage"] = $"Car information successfully updated: {car.ToString()}";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: Car/DeleteAsync/5
@@ -237,14 +237,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             if (id == null)
             {
                 TempData["ErrorMessage"] = "Invalid car id.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             Car? car = await _carService.GetByIdAsync((int)id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = "Unable to find car with that id.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
 
             DeleteCarViewModel deleteCarViewModel = new DeleteCarViewModel()
@@ -270,7 +270,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
 
             TempData["SuccessMessage"] = $"Car successfully deleted: {car.ToString()}";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
     }

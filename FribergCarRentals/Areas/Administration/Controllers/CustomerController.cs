@@ -74,7 +74,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             await _userService.CreateCustomerAsync(customer);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: Customer/Edit/5
@@ -172,7 +172,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _userService.DeleteCustomerAsync(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

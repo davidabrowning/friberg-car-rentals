@@ -63,7 +63,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             await _userService.CreateAdminAsync(admin);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: Admin/Edit/5
@@ -110,7 +110,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             await _userService.UpdateAdminAsync(admin);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
 
         // GET: Admin/DeleteAsync/5
@@ -141,7 +141,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _userService.DeleteAdminAsync(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }
