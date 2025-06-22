@@ -52,7 +52,7 @@
 				@if (identityUserIndexViewModel.IsCustomer)
 				{
 					<td>
-						<a asp-controller="Customer" asp-action="Details" asp-route-id="@identityUserIndexViewModel.CustomerId" class="btn btn-outline-primary">
+						<a asp-controller="Customer" asp-action="Edit" asp-route-id="@identityUserIndexViewModel.CustomerId" class="btn btn-outline-primary">
 							@identityUserIndexViewModel.CustomerName
 						</a>
 					</td>

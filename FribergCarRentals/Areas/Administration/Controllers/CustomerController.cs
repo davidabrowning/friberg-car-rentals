@@ -24,35 +24,6 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             return RedirectToAction("Index", "IdentityUser");
         }
 
-        // GET: Customer/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            DetailsCustomerViewModel detailsCustomerViewModel = new DetailsCustomerViewModel()
-            {
-                CustomerId = customer.Id,
-                IdentityUserId = customer.IdentityUser.Id,
-                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
-                FirstName = customer.FirstName,
-                LastName = customer.LastName,
-                HomeCity = customer.HomeCity,
-                HomeCountry = customer.HomeCountry,
-                ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
-            };
-
-            return View(detailsCustomerViewModel);
-        }
-
         // GET: Customer/Create/abcd-1234
         [HttpGet("Administration/Customer/Create/{identityUserId}")]
         public async Task<IActionResult> Create(string? identityUserId)
