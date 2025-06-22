@@ -129,7 +129,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             };
             await _reservationService.CreateAsync(reservation);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessReservationCreated;
+            TempData["SuccessMessage"] = UserMessage.SuccessReservationCreated + " " + reservation.ToString();
             return RedirectToAction("Index");
         }
 

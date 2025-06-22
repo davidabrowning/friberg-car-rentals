@@ -11,5 +11,10 @@ namespace FribergCarRentals.Models
         public string HomeCity { get; set; } = "";
         public string HomeCountry { get; set; } = "";
         public List<Reservation> Reservations { get; set; } = new();
+
+        public override string? ToString()
+        {
+            return $"Customer #{Id} {FirstName} {LastName} ({IdentityUser.UserName})";
+        }
     }
 }

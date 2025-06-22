@@ -7,5 +7,10 @@
         public DateOnly EndDate { get; set; }
         public Car? Car { get; set; }
         public Customer? Customer { get; set; }
+
+        public override string? ToString()
+        {
+            return $"Confirmation ID #{Id} | {Customer.ToString()} | {Car.ToString()} | {StartDate} to {EndDate}";
+        }
     }
 }

@@ -23,7 +23,7 @@
         public const string ErrorCarIsNull = "Error: Car is null.";
         public const string SuccessCarPhotosUpdated = "Success: Car photos updated.";
 
-        public const string SuccessReservationCreated = "Success: Reservation created.";
+        public const string SuccessReservationCreated = "Success: Your reservation is confirmed!";
         public const string SuccessReservationUpdated = "Success: Reservation updated.";
         public const string SuccessReservationDeleted = "Success: Reservation deleted.";
         public const string ErrorReservationIsNull = "Error: Reservation is null.";
