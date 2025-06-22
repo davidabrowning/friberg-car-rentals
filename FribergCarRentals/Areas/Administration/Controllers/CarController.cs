@@ -215,7 +215,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(editCarViewModel);
             }
 
-            Car car = await _carService.GetByIdAsync(editCarViewModel.Id);
+            Car? car = await _carService.GetByIdAsync(editCarViewModel.Id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
@@ -265,10 +265,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Car? car = await _carService.GetByIdAsync(id);
-            if (car != null)
+            if (car == null)
             {
-                await _carService.DeleteAsync(car.Id);
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
+                return RedirectToAction("Index");
             }
+
+            await _carService.DeleteAsync(car.Id);
 
             TempData["SuccessMessage"] = UserMessage.SuccessCarDeleted + " " + car.ToString();
             return RedirectToAction("Index");

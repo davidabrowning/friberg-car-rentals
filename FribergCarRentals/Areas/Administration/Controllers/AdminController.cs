@@ -112,7 +112,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(editAdminViewModel);
             }
 
-            Admin admin = await _userService.GetAdminByIdAsync((int)id);
+            Admin? admin = await _userService.GetAdminByIdAsync((int)id);
             if (admin == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;

@@ -79,7 +79,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             EditIdentityUserViewModel editIdentityUserViewModel = new EditIdentityUserViewModel()
             {
                 IdentityUserId = identityUser.Id,
-                IdentityUserUsername = identityUser.UserName,
+                IdentityUserUsername = identityUser.UserName ?? "Unable to get username",
             };
             return View(editIdentityUserViewModel);
         }
@@ -148,7 +148,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             IndexIdentityUserViewModel indexIdentityUserViewModel = new()
             {
                 IdentityUserId = user.Id,
-                IdentityUserUsername = user.UserName,
+                IdentityUserUsername = user.UserName ?? "Unable to get username",
                 IsAdmin = await _userService.IsInRoleAsync(user, "Admin"),
                 IsCustomer = await _userService.IsInRoleAsync(user, "Customer"),
             };
