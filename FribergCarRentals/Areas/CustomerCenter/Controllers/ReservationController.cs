@@ -149,6 +149,19 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
+            Customer? currentCustomer = await _userService.GetSignedInCustomer();
+            if (currentCustomer == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
+            }
+
+            if (reservation.Customer != currentCustomer)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorAccessDenied;
+                return RedirectToAction("Index");
+            }
+
             DeleteReservationViewModel reservationDeleteViewModel = new()
             {
                 Id = reservation.Id,
