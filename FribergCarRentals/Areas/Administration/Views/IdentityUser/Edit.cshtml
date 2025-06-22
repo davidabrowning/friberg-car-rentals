@@ -21,15 +21,12 @@
                 <input asp-for="IdentityUserUsername" class="form-control" />
                 <span asp-validation-for="IdentityUserUsername" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
                 <a asp-area="Administration" asp-controller="IdentityUser" asp-action="Delete" asp-route-id="@Model.IdentityUserId" class="btn btn-danger">Delete</a>
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 

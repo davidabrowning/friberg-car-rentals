@@ -42,7 +42,7 @@
 					@item.Customer.FirstName @item.Customer.LastName (@item.Customer.IdentityUser.UserName)
 				</td>
 				<td>
-					<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+					<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>
 				</td>
 			</tr>
 		}
