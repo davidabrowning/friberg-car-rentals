@@ -40,7 +40,7 @@ namespace FribergCarRentals
 
             var app = builder.Build();
 
-            // Seed roles
+            // Seed roles, default admin user, and default cars
             using (IServiceScope scope = app.Services.CreateScope())
             {
                 DatabaseSeedingService seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingService>();

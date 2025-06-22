@@ -12,9 +12,16 @@
 	@foreach (var item in Model)
 	{
 		<div class="card" style="width: 18rem;">
-			<img src="~/images/Logo.png" class="card-img-top" alt="Car image">
 			<div class="card-body">
 				<h5 class="card-title">@item.Make @item.Model (@item.Year)</h5>
+				@if (item.PhotoUrl != string.Empty)
+				{
+					<img src="@item.PhotoUrl" class="card-img-top" alt="Car image">
+				}
+				else
+				{
+					<img src="~/images/Logo.png" class="card-img-top" alt="Car image">
+				}
 				<p class="card-text">@item.Description</p>
 				<a asp-area="Public" asp-controller="Customer" asp-action="Create" class="btn btn-primary">Reserve</a>
 			</div>
