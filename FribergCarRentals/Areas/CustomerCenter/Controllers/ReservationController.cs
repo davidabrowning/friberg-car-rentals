@@ -48,7 +48,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             }
 
             List<IndexReservationViewModel> reservationIndexViewModelList = new();
-            foreach (Reservation reservation in customer.Reservations)
+            foreach (Reservation reservation in customer.Reservations.OrderByDescending(r => r.StartDate).ToList())
             {
                 IndexReservationViewModel reservationViewModel = new()
                 {

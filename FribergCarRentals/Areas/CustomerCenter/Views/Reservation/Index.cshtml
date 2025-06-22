@@ -9,7 +9,7 @@
 <h1>My Reservations</h1>
 
 <p>
-	<a asp-action="Create">Create New</a>
+	<a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 <table class="table">
 	<thead>
@@ -43,7 +43,10 @@
 					<a asp-controller="Car" asp-action="Details" asp-route-id="@item.Car.Id" class="btn btn-outline-secondary">
 						View car details
 					</a>
-					<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>
+					@if (item.StartDate > DateOnly.FromDateTime(DateTime.Now))
+					{
+						<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>
+					}
 				</td>
 			</tr>
 		}
