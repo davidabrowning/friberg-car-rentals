@@ -4,6 +4,7 @@ using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.IdentityUser;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -44,6 +45,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (await _userService.IdentityUsernameExistsAsync(createIdentityUserViewModel.Username))
             {
+                TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
                 return View(createIdentityUserViewModel);
             }
 
@@ -54,6 +56,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             await _userService.CreateUser(createIdentityUserViewModel.Username);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
             return RedirectToAction("Index");
         }
 
@@ -62,13 +65,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             IdentityUser? identityUser = await _userService.GetUserById(id);
             if (identityUser is null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
             }
 
             EditIdentityUserViewModel editIdentityUserViewModel = new EditIdentityUserViewModel()
@@ -88,7 +93,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id != editIdentityUserViewModel.IdentityUserId)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsInvalid;
+                return RedirectToAction("Index");
             }
 
             if (!ModelState.IsValid)
@@ -98,6 +104,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             await _userService.UpdateUsername(id, editIdentityUserViewModel.IdentityUserUsername);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessUserUpdated;
             return RedirectToAction("Index");
         }
 
@@ -106,13 +113,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             IdentityUser? identityUser = await _userService.GetUserById(id);
             if (identityUser == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
             }
 
             DeleteIdentityUserViewModel deleteIdentityUserViewModel = new DeleteIdentityUserViewModel()
@@ -130,6 +139,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             await _userService.DeleteIdentityUserAsync(id);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessUserDeleted;
             return RedirectToAction("Index");
         }
 

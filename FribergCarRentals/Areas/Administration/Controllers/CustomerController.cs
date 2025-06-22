@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Customer;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -30,13 +31,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (identityUserId == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             IdentityUser? identityUser = await _userService.GetUserById(identityUserId);
             if (identityUser == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
             }
 
             CreateCustomerViewModel createCustomerViewModel = new()
@@ -74,6 +77,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             await _userService.CreateCustomerAsync(customer);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
             return RedirectToAction("Index");
         }
 
@@ -82,13 +86,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
             }
 
             EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
@@ -113,7 +119,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id != editCustomerViewModel.CustomerId)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             if (!ModelState.IsValid)
@@ -125,7 +132,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
             }
 
             customer.FirstName = editCustomerViewModel.FirstName;
@@ -134,6 +142,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             customer.HomeCountry = editCustomerViewModel.HomeCountry;
             await _userService.UpdateCustomerAsync(customer);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
             return RedirectToAction("Index");
         }
 
@@ -142,13 +151,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
             if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
             }
 
             DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
@@ -172,6 +183,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _userService.DeleteCustomerAsync(id);
+
+            TempData["SuccessMessage"] = UserMessage.SuccessCustomerDeleted;
             return RedirectToAction("Index");
         }
     }

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.CustomerCenter.Views.Reservation;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
@@ -35,13 +36,15 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             IdentityUser? identityUser = await _userService.GetCurrentUser();
             if (identityUser == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
             }
 
             Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
             if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
             }
 
             List<IndexReservationViewModel> reservationIndexViewModelList = new();
@@ -56,7 +59,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 };
                 reservationIndexViewModelList.Add(reservationViewModel);
             }
-            
+
             return View(reservationIndexViewModelList);
         }
 
@@ -68,8 +71,21 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             {
                 preselectedCarId = (int)id;
             }
-            IdentityUser identityUser = await _userService.GetCurrentUser();
-            Customer customer = await _userService.GetCustomerByUserAsync(identityUser);
+
+            IdentityUser? identityUser = await _userService.GetCurrentUser();
+            if (identityUser == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
+            }
+
+            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            if (customer == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
+            }
+
             CreateReservationViewModel reservationCreateViewModel = new()
             {
                 CustomerId = customer.Id,
@@ -91,10 +107,17 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             }
 
             Customer? customer = await _userService.GetCustomerByIdAsync(reservationCreateViewModel.CustomerId);
-            Car? car = await _carService.GetByIdAsync(reservationCreateViewModel.CarId);
-            if (customer == null || car == null) 
+            if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
+            }
+
+            Car? car = await _carService.GetByIdAsync(reservationCreateViewModel.CarId);
+            if (car == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
+                return RedirectToAction("Index");
             }
 
             Reservation reservation = new()
@@ -106,6 +129,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             };
             await _reservationService.CreateAsync(reservation);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessReservationCreated;
             return RedirectToAction("Index");
         }
 
@@ -114,13 +138,15 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
             if (reservation == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                return RedirectToAction("Index");
             }
 
             DeleteReservationViewModel reservationDeleteViewModel = new()
@@ -140,11 +166,15 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Reservation? reservation = await _reservationService.GetByIdAsync(id);
-            if (reservation != null)
+            if (reservation == null)
             {
-                await _reservationService.DeleteAsync(reservation.Id);
+                TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                return RedirectToAction("Index");
             }
 
+            await _reservationService.DeleteAsync(reservation.Id);
+
+            TempData["SuccessMessage"] = UserMessage.SuccessReservationDeleted;
             return RedirectToAction("Index");
         }
     }

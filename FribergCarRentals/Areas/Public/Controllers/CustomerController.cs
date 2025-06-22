@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Areas.Public.Views.Customer;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {
@@ -50,7 +51,8 @@ namespace FribergCarRentals.Areas.Public.Controllers
             IdentityUser? identityUser = await _userService.GetCurrentUser();
             if (identityUser == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
             }
 
             Customer newCustomer = new Customer()
@@ -64,6 +66,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
 
             await _userService.CreateCustomerAsync(newCustomer);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
             return RedirectToAction("Index");
         }
     }

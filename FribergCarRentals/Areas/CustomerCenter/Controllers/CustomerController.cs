@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Areas.CustomerCenter.Views.Customer;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
@@ -23,13 +24,19 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             _userService = userService;
         }
 
+        public IActionResult Index()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
         // GET: CustomerCenter/Customer/Details
         public async Task<IActionResult> Details()
         {
             Customer? customer = await _userService.GetSignedInCustomer();
             if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
             }
 
             DetailsCustomerViewModel detailsCustomerViewModel = new()
@@ -50,7 +57,8 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             Customer? customer = await _userService.GetSignedInCustomer();
             if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
             }
 
             EditCustomerViewModel editCustomerViewModel = new()
@@ -73,12 +81,14 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             Customer? customer = await _userService.GetSignedInCustomer();
             if (customer == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                return RedirectToAction("Index");
             }
 
             if (customer.Id != editCustomerViewModel.Id)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsInvalid;
+                return RedirectToAction("Index");
             }
 
             if (!ModelState.IsValid)
@@ -92,7 +102,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             customer.HomeCountry = editCustomerViewModel.HomeCountry;
             await _userService.UpdateCustomerAsync(customer);
 
-            TempData["SuccessMessage"] = "Customer information updated successfully";
+            TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
             return RedirectToAction("Details");
         }
     }

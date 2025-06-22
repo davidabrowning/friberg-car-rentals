@@ -6,6 +6,7 @@ using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Reservation;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -45,13 +46,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
             if (reservation == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                return RedirectToAction("Index");
             }
 
             DeleteReservationViewModel deleteReservationViewModel = new()
@@ -71,10 +74,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
-            if (reservation != null)
+            if (reservation == null)
             {
-                await _reservationService.DeleteAsync(id);
+                TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                return RedirectToAction("Index");
             }
+
+            await _reservationService.DeleteAsync(id);
+
+            TempData["SuccessMessage"] = UserMessage.SuccessReservationDeleted;
             return RedirectToAction("Index");
         }
     }

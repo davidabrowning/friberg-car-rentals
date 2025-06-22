@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Areas.CustomerCenter.Views.Car;
+using FribergCarRentals.Helpers;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Models;
 using FribergCarRentals.Services;
@@ -40,13 +41,15 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             Car? car = await _carService.GetByIdAsync((int)id);
             if (car == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
+                return RedirectToAction("Index");
             }
 
             DetailsCarViewModel detailsCarViewModel = new()

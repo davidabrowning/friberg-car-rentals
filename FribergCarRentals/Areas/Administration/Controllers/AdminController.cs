@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Admin;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -31,7 +32,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (identityUserId == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
             }
 
             CreateAdminViewModel createAdminViewModel = new()
@@ -48,13 +50,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (!ModelState.IsValid)
             {
+                TempData["WarningMessage"] = UserMessage.WarningInvalidFormData;
                 return View(createAdminViewModel);
             }
 
             IdentityUser? identityUser = await _userService.GetUserById(createAdminViewModel.IdentityUserId);
             if (identityUser == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
             }
 
             Admin admin = new()
@@ -63,6 +67,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             await _userService.CreateAdminAsync(admin);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessAdminCreated;
             return RedirectToAction("Index");
         }
 
@@ -71,13 +76,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             Admin? admin = await _userService.GetAdminByIdAsync((int)id);
             if (admin == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                return RedirectToAction("Index");
             }
 
             EditAdminViewModel editAdminViewModel = new()
@@ -94,22 +101,27 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id != editAdminViewModel.AdminId)
             {
-                return NotFound();
+
+                TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                return RedirectToAction("Index");
             }
 
             if (!ModelState.IsValid)
             {
+                TempData["WarningMessage"] = UserMessage.WarningInvalidFormData;
                 return View(editAdminViewModel);
             }
 
             Admin admin = await _userService.GetAdminByIdAsync((int)id);
             if (admin == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                return RedirectToAction("Index");
             }
 
             await _userService.UpdateAdminAsync(admin);
 
+            TempData["SuccessMessage"] = UserMessage.SuccessAdminUpdated;
             return RedirectToAction("Index");
         }
 
@@ -118,13 +130,15 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
+                return RedirectToAction("Index");
             }
 
             Admin? admin = await _userService.GetAdminByIdAsync((int)id);
             if (admin == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                return RedirectToAction("Index");
             }
 
             DeleteAdminViewModel deleteAdminViewModel = new DeleteAdminViewModel()
@@ -141,6 +155,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _userService.DeleteAdminAsync(id);
+
+            TempData["SuccessMessage"] = UserMessage.SuccessAdminDeleted;
             return RedirectToAction("Index");
         }
     }

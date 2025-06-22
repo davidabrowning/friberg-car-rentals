@@ -3,6 +3,7 @@ using FribergCarRentals.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Car;
+using FribergCarRentals.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -43,14 +44,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                TempData["ErrorMessage"] = "Invalid car id number format.";
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
                 return RedirectToAction("Index");
             }
 
             Car? car = await _carService.GetByIdAsync((int)id);
             if (car == null)
             {
-                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
             }
 
@@ -93,7 +94,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             };
             await _carService.CreateAsync(car);
 
-            TempData["SuccessMessage"] = $"New car created: {car.ToString()}.";
+            TempData["SuccessMessage"] = UserMessage.SuccessCarCreated + " " + car.ToString();
             return RedirectToAction("Index");
         }
 
@@ -102,14 +103,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                TempData["ErrorMessage"] = "Invalid car id number format.";
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
                 return RedirectToAction("Index");
             }
 
             Car? car = await _carService.GetByIdAsync((int)id);
             if (car == null)
             {
-                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
             }
 
@@ -131,20 +132,20 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id != photosCarViewModel.Id)
             {
-                TempData["ErrorMessage"] = "Invalid car id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsInvalid;
                 return RedirectToAction("Index");
             }
 
             if (!ModelState.IsValid)
             {
-                TempData["WarningMessage"] = "Invalid form information.";
+                TempData["WarningMessage"] = UserMessage.WarningInvalidFormData;
                 return View(photosCarViewModel);
             }
 
             Car? car = await _carService.GetByIdAsync(photosCarViewModel.Id);
             if (car == null)
             {
-                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
             }
 
@@ -166,7 +167,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             await _carService.UpdateAsync(car);
 
-            TempData["SuccessMessage"] = $"Photos successfully uploaded for car: {car.ToString()}";
+            TempData["SuccessMessage"] = UserMessage.SuccessCarPhotosUpdated + " " + car.ToString();
             return RedirectToAction("Photos");
         }
 
@@ -175,14 +176,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                TempData["ErrorMessage"] = "Invalid car id number format.";
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
                 return RedirectToAction("Index");
             }
 
             Car? car = await _carService.GetByIdAsync((int)id);
             if (car == null)
             {
-                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
             }
 
@@ -204,20 +205,20 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id != editCarViewModel.Id)
             {
-                TempData["ErrorMessage"] = "Invalid car id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsInvalid;
                 return RedirectToAction("Index");
             }
 
             if (!ModelState.IsValid)
             {
-                TempData["WarningMessage"] = "Invalid form information.";
+                TempData["WarningMessage"] = UserMessage.WarningInvalidFormData;
                 return View(editCarViewModel);
             }
 
             Car car = await _carService.GetByIdAsync(editCarViewModel.Id);
             if (car == null)
             {
-                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
             }
 
@@ -227,7 +228,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             car.Description = editCarViewModel.Description;
             await _carService.UpdateAsync(car);
 
-            TempData["SuccessMessage"] = $"Car information successfully updated: {car.ToString()}";
+            TempData["SuccessMessage"] = UserMessage.SuccessCarUpdated + " " + car.ToString();
             return RedirectToAction("Index");
         }
 
@@ -236,14 +237,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         {
             if (id == null)
             {
-                TempData["ErrorMessage"] = "Invalid car id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
                 return RedirectToAction("Index");
             }
 
             Car? car = await _carService.GetByIdAsync((int)id);
             if (car == null)
             {
-                TempData["ErrorMessage"] = "Unable to find car with that id.";
+                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
             }
 
@@ -269,7 +270,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 await _carService.DeleteAsync(car.Id);
             }
 
-            TempData["SuccessMessage"] = $"Car successfully deleted: {car.ToString()}";
+            TempData["SuccessMessage"] = UserMessage.SuccessCarDeleted + " " + car.ToString();
             return RedirectToAction("Index");
         }
 
