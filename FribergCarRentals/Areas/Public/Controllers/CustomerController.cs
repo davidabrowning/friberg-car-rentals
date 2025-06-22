@@ -32,8 +32,14 @@ namespace FribergCarRentals.Areas.Public.Controllers
         }
 
         // GET: Public/Customer/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            Customer? signedInCustomer = await _userService.GetSignedInCustomer();
+            if (signedInCustomer != null)
+            {
+                return RedirectToAction("Index", "Car", new { area = "CustomerCenter" });
+            }
+
             CreateCustomerViewModel emptyVM = new();
             return View(emptyVM);
         }
