@@ -22,7 +22,7 @@ namespace FribergCarRentals.Data
             IEnumerable<Admin> admins = await _adminService.GetAllAsync();
             foreach (Admin admin in admins)
             {
-                if (admin.IdentityUser == null)
+                if (admin.UserId == null)
                 {
                     await _adminService.DeleteAsync(admin.Id);
                 }

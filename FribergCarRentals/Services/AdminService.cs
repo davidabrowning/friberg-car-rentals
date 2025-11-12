@@ -11,7 +11,7 @@ namespace FribergCarRentals.Services
         public async Task<Admin?> DeleteAdminByIdentityUserIdAsync(string identityUserId)
         {
             IEnumerable<Admin> admins = await GetAllAsync();
-            Admin? admin = admins.Where(a => a.IdentityUser.Id == identityUserId).FirstOrDefault();
+            Admin? admin = admins.Where(a => a.UserId == identityUserId).FirstOrDefault();
             if (admin != null)
             {
                 await DeleteAsync(admin.Id);

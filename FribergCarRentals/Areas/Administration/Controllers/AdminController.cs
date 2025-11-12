@@ -63,7 +63,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             Admin admin = new()
             {
-                IdentityUser = identityUser
+                UserId = identityUser.Id
             };
             await _userService.CreateAdminAsync(admin);
 

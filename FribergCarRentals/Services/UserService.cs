@@ -45,7 +45,7 @@ namespace FribergCarRentals.Services
         public async Task<Admin?> GetAdminByUserAsync(IdentityUser identityUser)
         {
             IEnumerable<Admin> admins = await _adminService.GetAllAsync();
-            return admins.FirstOrDefault(a => a.IdentityUser.Id == identityUser.Id);
+            return admins.FirstOrDefault(a => a.UserId == identityUser.Id);
         }
         public async Task<Customer?> GetCustomerByUserAsync(IdentityUser identityUser)
         {
@@ -72,7 +72,8 @@ namespace FribergCarRentals.Services
         // Admin methods
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
-            await _identityUserService.AddToRoleAsync(admin.IdentityUser, IdentityUserService.RoleNameAdmin);
+            IdentityUser identityUser = await _identityUserService.GetByIdAsync(admin.UserId);
+            await _identityUserService.AddToRoleAsync(identityUser, IdentityUserService.RoleNameAdmin);
             await _adminService.CreateAsync(admin);
             return admin;
         }
@@ -88,7 +89,8 @@ namespace FribergCarRentals.Services
                 return null;
             }
 
-            await _identityUserService.RemoveFromRoleAsync(admin.IdentityUser, IdentityUserService.RoleNameAdmin);
+            IdentityUser identityUser = await _identityUserService.GetByIdAsync(admin.UserId);
+            await _identityUserService.RemoveFromRoleAsync(identityUser, IdentityUserService.RoleNameAdmin);
             return await _adminService.DeleteAsync(admin.Id);
         }
 

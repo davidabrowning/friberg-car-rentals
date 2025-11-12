@@ -49,7 +49,7 @@ namespace FribergCarRentals.Data
             Admin? admin = await _userService.GetAdminByUserAsync(identityUser);
             if (admin == null)
             {
-                admin = new Admin() { IdentityUser = identityUser };
+                admin = new Admin() { UserId = identityUser.Id };
                 await _userService.CreateAdminAsync(admin);
             }
         }
