@@ -50,7 +50,7 @@ namespace FribergCarRentals.Services
         public async Task<Customer?> GetCustomerByUserAsync(IdentityUser identityUser)
         {
             IEnumerable<Customer> customers = await _customerService.GetAllAsync();
-            return customers.FirstOrDefault(c => c.IdentityUser.Id == identityUser.Id);
+            return customers.FirstOrDefault(c => c.UserId == identityUser.Id);
         }
 
         // IdentityUser methods
@@ -97,7 +97,8 @@ namespace FribergCarRentals.Services
         // Customer methods
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-            await _identityUserService.AddToRoleAsync(customer.IdentityUser, IdentityUserService.RoleNameCustomer);
+            IdentityUser identityUser = await _identityUserService.GetByIdAsync(customer.UserId);
+            await _identityUserService.AddToRoleAsync(identityUser, IdentityUserService.RoleNameCustomer);
             await _customerService.CreateAsync(customer);
             return customer;
         }
@@ -109,7 +110,8 @@ namespace FribergCarRentals.Services
                 return null;
             }
 
-            await _identityUserService.RemoveFromRoleAsync(customer.IdentityUser, IdentityUserService.RoleNameCustomer);
+            IdentityUser identityUser = await _identityUserService.GetByIdAsync(customer.UserId);
+            await _identityUserService.RemoveFromRoleAsync(identityUser, IdentityUserService.RoleNameCustomer);
             await _customerService.DeleteAsync(customer.Id);
             return customer;
         }

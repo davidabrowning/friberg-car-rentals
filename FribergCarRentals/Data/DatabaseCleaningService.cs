@@ -33,7 +33,7 @@ namespace FribergCarRentals.Data
             IEnumerable<Customer> customers = await _customerService.GetAllAsync();
             foreach (Customer customer in customers)
             {
-                if (customer.IdentityUser == null)
+                if (customer.UserId == null)
                 {
                     await _customerService.DeleteAsync(customer.Id);
                 }

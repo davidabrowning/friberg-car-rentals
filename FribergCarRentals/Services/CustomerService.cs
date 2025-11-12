@@ -30,7 +30,7 @@ namespace FribergCarRentals.Services
         public async Task<Customer?> DeleteCustomerByIdentityUserIdAsync(string identityUserId)
         {
             IEnumerable<Customer> customers = await GetAllAsync();
-            Customer? customer = customers.Where(c => c.IdentityUser.Id == identityUserId).FirstOrDefault();
+            Customer? customer = customers.Where(c => c.UserId == identityUserId).FirstOrDefault();
             if (customer != null)
             {
                 await DeleteAsync(customer.Id);

@@ -63,7 +63,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
 
             Customer newCustomer = new Customer()
             {
-                IdentityUser = identityUser,
+                UserId = identityUser.Id,
                 FirstName = populatedCustomerCreateVM.FirstName,
                 LastName = populatedCustomerCreateVM.LastName,
                 HomeCity = populatedCustomerCreateVM.HomeCity,

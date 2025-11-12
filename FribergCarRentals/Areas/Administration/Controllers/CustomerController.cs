@@ -68,7 +68,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             Customer customer = new()
             {
-                IdentityUser = identityUser,
+                UserId = identityUser.Id,
                 FirstName = createCustomerViewModel.FirstName,
                 LastName = createCustomerViewModel.LastName,
                 HomeCity = createCustomerViewModel.HomeCity,
@@ -97,11 +97,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
+            IdentityUser identityUser = await _userService.GetUserById(customer.UserId);
             EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
             {
                 CustomerId = customer.Id,
-                IdentityUserId = customer.IdentityUser.Id,
-                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
+                IdentityUserId = identityUser.Id,
+                IdentityUserUsername = identityUser.UserName ?? "Unable to fetch username",
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 HomeCity = customer.HomeCity,
@@ -162,11 +163,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
+            IdentityUser identityUser = await _userService.GetUserById(customer.UserId);
             DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
             {
                 CustomerId = customer.Id,
-                IdentityUserId = customer.IdentityUser.Id,
-                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
+                IdentityUserId = identityUser.Id,
+                IdentityUserUsername = identityUser.UserName ?? "Unable to fetch username",
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 HomeCity = customer.HomeCity,
