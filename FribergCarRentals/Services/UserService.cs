@@ -1,6 +1,6 @@
 ﻿using FribergCarRentals.Data;
 using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 

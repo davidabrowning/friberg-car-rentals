@@ -1,4 +1,4 @@
-﻿using FribergCarRentals.Models;
+﻿using FribergCarRentals.Core.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Views.Reservation
@@ -10,7 +10,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Views.Reservation
         public int CarId { get; set; }
         public int CustomerId { get; set; }
         public int PreselectedCarId { get; set; }
-        public IEnumerable<Models.Car> Cars { get; set; } = new List<Models.Car>();
+        public IEnumerable<Core.Models.Car> Cars { get; set; } = new List<Core.Models.Car>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

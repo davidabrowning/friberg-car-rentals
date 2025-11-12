@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Models
+﻿namespace FribergCarRentals.Core.Models
 {
     public class Car
     {

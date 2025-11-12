@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace FribergCarRentals.Models
+﻿namespace FribergCarRentals.Core.Models
 {
     public class Customer
     {
