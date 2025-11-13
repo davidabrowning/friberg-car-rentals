@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.CustomerCenter.Views.Reservation;
 using FribergCarRentals.Helpers;

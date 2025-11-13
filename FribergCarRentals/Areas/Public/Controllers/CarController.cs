@@ -1,5 +1,5 @@
 ﻿using FribergCarRentals.Areas.Public.Views.Car;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 

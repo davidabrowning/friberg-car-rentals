@@ -9,7 +9,7 @@ using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.ViewModels;
 using System.Diagnostics;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Public.Views.Home;
 
 namespace FribergCarRentals.Areas.Public.Controllers

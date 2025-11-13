@@ -1,4 +1,4 @@
-﻿using FribergCarRentals.Interfaces;
+﻿using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Core.Models;
 using System.Threading.Tasks;
 

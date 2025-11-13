@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Admin;
 using FribergCarRentals.Helpers;
 
