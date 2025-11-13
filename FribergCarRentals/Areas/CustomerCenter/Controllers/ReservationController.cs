@@ -33,14 +33,14 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Reservation
         public async Task<IActionResult> Index()
         {
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -72,14 +72,14 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 preselectedCarId = (int)id;
             }
 
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -106,7 +106,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return View(reservationCreateViewModel);
             }
 
-            Customer? customer = await _userService.GetCustomerByIdAsync(reservationCreateViewModel.CustomerId);
+            Customer? customer = await _userService.GetCustomerByCustomerIdAsync(reservationCreateViewModel.CustomerId);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;

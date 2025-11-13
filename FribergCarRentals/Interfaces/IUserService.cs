@@ -6,27 +6,28 @@ namespace FribergCarRentals.Interfaces
     public interface IUserService
     {
         // IdentityUser
-        Task<IdentityUser> CreateUser(string username);
-        Task<IdentityUser?> GetCurrentUser();
-        Task<IdentityUser?> GetUserById(string id);
-        Task<IdentityUser?> UpdateUsername(string id, string newUsername);
-        Task<IdentityUser?> DeleteIdentityUserAsync(string id);
-        Task<bool> IdentityUsernameExistsAsync(string username);
-        Task<bool> IsInRoleAsync(IdentityUser identityUser, string roleName);
-        Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync();
+        Task<string> CreateUser(string username);
+        Task<string?> GetCurrentUserId();
+        Task<string?> GetUsernameByUserId(string userId);
+        Task<string?> GetUserIdByUsername(string username);
+        Task<string?> UpdateUsername(string userId, string newUsername);
+        Task<string?> DeleteUserAsync(string userId);
+        Task<bool> UsernameExistsAsync(string username);
+        Task<bool> IsInRoleAsync(string userId, string roleName);
+        Task<List<string>> GetAllUserIdsAsync();
         
 
         // Admin
         Task<Admin> CreateAdminAsync(Admin admin);
-        Task<Admin?> GetAdminByIdAsync(int id);
-        Task<Admin?> GetAdminByUserAsync(IdentityUser identityUser);
+        Task<Admin?> GetAdminByAdminIdAsync(int id);
+        Task<Admin?> GetAdminByUserIdAsync(string userId);
         Task<Admin> UpdateAdminAsync(Admin admin);
         Task<Admin?> DeleteAdminAsync(int id);
 
         // Customer
         Task<Customer> CreateCustomerAsync(Customer customer);
-        Task<Customer?> GetCustomerByIdAsync(int id);
-        Task<Customer?> GetCustomerByUserAsync(IdentityUser identityUser);
+        Task<Customer?> GetCustomerByCustomerIdAsync(int id);
+        Task<Customer?> GetCustomerByUserIdAsync(string userId);
         Task<Customer?> GetSignedInCustomer();
         Task<Customer> UpdateCustomerAsync(Customer customer);
         Task<Customer?> DeleteCustomerAsync(int id);

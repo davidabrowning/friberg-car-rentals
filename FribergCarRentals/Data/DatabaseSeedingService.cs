@@ -38,18 +38,17 @@ namespace FribergCarRentals.Data
 
         private async Task SeedDefaultAdminUser()
         {
-            IdentityUser? identityUser = _userService.GetAllIdentityUsersAsync()
-                .Result.FirstOrDefault(iu => iu.UserName == "admin@admin.se");
-
-            if (identityUser == null)
+            string defaultAdminUsername = "admin@admin.se";
+            string? defaultAdminUserId = await _userService.GetUserIdByUsername(defaultAdminUsername);
+            if (defaultAdminUserId == null)
             {
-                identityUser = await _userService.CreateUser("admin@admin.se");
+                defaultAdminUserId = await _userService.CreateUser(defaultAdminUsername);
             }
 
-            Admin? admin = await _userService.GetAdminByUserAsync(identityUser);
+            Admin? admin = await _userService.GetAdminByUserIdAsync(defaultAdminUserId);
             if (admin == null)
             {
-                admin = new Admin() { UserId = identityUser.Id };
+                admin = new Admin() { UserId = defaultAdminUserId };
                 await _userService.CreateAdminAsync(admin);
             }
         }

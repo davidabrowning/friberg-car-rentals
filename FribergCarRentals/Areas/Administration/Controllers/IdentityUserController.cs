@@ -23,10 +23,10 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> Index()
         {
             List<IndexIdentityUserViewModel> indexIdentityUserViewModelList = new();
-            IEnumerable<IdentityUser> identityUsers = await _userService.GetAllIdentityUsersAsync();
-            foreach (IdentityUser identityUser in identityUsers)
+            IEnumerable<string> userIds = await _userService.GetAllUserIdsAsync();
+            foreach (string userId in userIds)
             {
-                indexIdentityUserViewModelList.Add(await CreateIndexIdentityUserViewModel(identityUser));
+                indexIdentityUserViewModelList.Add(await CreateIndexIdentityUserViewModel(userId));
             }
             return View(indexIdentityUserViewModelList);
         }
@@ -43,7 +43,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateIdentityUserViewModel createIdentityUserViewModel)
         {
-            if (await _userService.IdentityUsernameExistsAsync(createIdentityUserViewModel.Username))
+            if (await _userService.UsernameExistsAsync(createIdentityUserViewModel.Username))
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
                 return View(createIdentityUserViewModel);
@@ -61,16 +61,16 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         }
 
         // GET: IdentityUserViewModels/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string userId)
         {
-            if (id == null)
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
                 return RedirectToAction("Index");
             }
 
-            IdentityUser? identityUser = await _userService.GetUserById(id);
-            if (identityUser is null)
+            string? username = await _userService.GetUsernameByUserId(userId);
+            if (username is null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -78,8 +78,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             EditIdentityUserViewModel editIdentityUserViewModel = new EditIdentityUserViewModel()
             {
-                IdentityUserId = identityUser.Id,
-                IdentityUserUsername = identityUser.UserName ?? "Unable to get username",
+                IdentityUserId = userId,
+                IdentityUserUsername = username,
             };
             return View(editIdentityUserViewModel);
         }
@@ -117,8 +117,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            IdentityUser? identityUser = await _userService.GetUserById(id);
-            if (identityUser == null)
+            string? username = await _userService.GetUsernameByUserId(id);
+            if (username == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -126,8 +126,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             DeleteIdentityUserViewModel deleteIdentityUserViewModel = new DeleteIdentityUserViewModel()
             {
-                IdentityUserId = identityUser.Id,
-                IdentityUserUsername = identityUser.UserName ?? "Unable to fetch username",
+                IdentityUserId = id,
+                IdentityUserUsername = username,
             };
             return View(deleteIdentityUserViewModel);
         }
@@ -137,24 +137,25 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            await _userService.DeleteIdentityUserAsync(id);
+            await _userService.DeleteUserAsync(id);
 
             TempData["SuccessMessage"] = UserMessage.SuccessUserDeleted;
             return RedirectToAction("Index");
         }
 
-        private async Task<IndexIdentityUserViewModel> CreateIndexIdentityUserViewModel(IdentityUser user)
+        private async Task<IndexIdentityUserViewModel> CreateIndexIdentityUserViewModel(string userId)
         {
+            string username = await _userService.GetUsernameByUserId(userId);
             IndexIdentityUserViewModel indexIdentityUserViewModel = new()
             {
-                IdentityUserId = user.Id,
-                IdentityUserUsername = user.UserName ?? "Unable to get username",
-                IsAdmin = await _userService.IsInRoleAsync(user, "Admin"),
-                IsCustomer = await _userService.IsInRoleAsync(user, "Customer"),
+                IdentityUserId = userId,
+                IdentityUserUsername = username,
+                IsAdmin = await _userService.IsInRoleAsync(userId, "Admin"),
+                IsCustomer = await _userService.IsInRoleAsync(userId, "Customer"),
             };
             if (indexIdentityUserViewModel.IsAdmin)
             {
-                Admin? admin = await _userService.GetAdminByUserAsync(user);
+                Admin? admin = await _userService.GetAdminByUserIdAsync(userId);
                 if (admin != null)
                 {
                     indexIdentityUserViewModel.AdminId = admin.Id;
@@ -163,7 +164,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
             if (indexIdentityUserViewModel.IsCustomer)
             {
-                Customer? customer = await _userService.GetCustomerByUserAsync(user);
+                Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
                 if (customer != null)
                 {
                     indexIdentityUserViewModel.CustomerId = customer.Id;

@@ -54,8 +54,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(createAdminViewModel);
             }
 
-            IdentityUser? identityUser = await _userService.GetUserById(createAdminViewModel.IdentityUserId);
-            if (identityUser == null)
+            string userId = createAdminViewModel.IdentityUserId;
+            string? username = await _userService.GetUsernameByUserId(userId);
+            if (username == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -63,7 +64,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             Admin admin = new()
             {
-                UserId = identityUser.Id
+                UserId = userId
             };
             await _userService.CreateAdminAsync(admin);
 
@@ -80,7 +81,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Admin? admin = await _userService.GetAdminByIdAsync((int)id);
+            Admin? admin = await _userService.GetAdminByAdminIdAsync((int)id);
             if (admin == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
@@ -112,7 +113,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(editAdminViewModel);
             }
 
-            Admin? admin = await _userService.GetAdminByIdAsync((int)id);
+            Admin? admin = await _userService.GetAdminByAdminIdAsync((int)id);
             if (admin == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
@@ -134,7 +135,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Admin? admin = await _userService.GetAdminByIdAsync((int)id);
+            Admin? admin = await _userService.GetAdminByAdminIdAsync((int)id);
             if (admin == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;

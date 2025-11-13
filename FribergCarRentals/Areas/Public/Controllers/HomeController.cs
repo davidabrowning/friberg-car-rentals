@@ -28,15 +28,15 @@ namespace FribergCarRentals.Areas.Public.Controllers
         {
             IndexHomeViewModel homeIndexViewModel = new();
 
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 homeIndexViewModel.IsSignedIn = false;
                 homeIndexViewModel.HasCustomerAccount = false;
                 return View(homeIndexViewModel);
             }
 
-            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
             if (customer == null)
             {
                 homeIndexViewModel.IsSignedIn = true;

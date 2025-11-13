@@ -54,8 +54,8 @@ namespace FribergCarRentals.Areas.Public.Controllers
                 return View(populatedCustomerCreateVM);
             }
 
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -63,7 +63,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
 
             Customer newCustomer = new Customer()
             {
-                UserId = identityUser.Id,
+                UserId = userId,
                 FirstName = populatedCustomerCreateVM.FirstName,
                 LastName = populatedCustomerCreateVM.LastName,
                 HomeCity = populatedCustomerCreateVM.HomeCity,
