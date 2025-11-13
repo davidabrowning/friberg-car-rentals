@@ -5,8 +5,8 @@
         Task<bool> IdExistsAsync(string id);
         Task<bool> UsernameExistsAsync(string username);
         Task<string> AddUserAsync(string username);
-        Task<string?> GetUsernameByUserIdAsync(string username);
-        Task<string?> GetUserIdByUsernameAsync(string id);
+        Task<string?> GetUsernameByUserIdAsync(string userId);
+        Task<string?> GetUserIdByUsernameAsync(string username);
         Task<string?> UpdateUsernameAndReturnStringUserIdAsync(string id, string newUsername);
         Task<string?> DeleteByUserIdAsync(string id);
         Task<List<string>> GetAllUserIdsAsync();

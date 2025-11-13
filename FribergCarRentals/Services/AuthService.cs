@@ -42,19 +42,29 @@ namespace FribergCarRentals.Services
             return identityUser.Id;
         }
 
-        public Task<string?> GetUsernameByUserIdAsync(string username)
+        public async Task<string?> GetUsernameByUserIdAsync(string userId)
         {
-            throw new NotImplementedException();
+            IdentityUser? identityUser = await GetIdentityUserByUserId(userId);
+            if (identityUser == null)
+            {
+                return null;
+            }
+            return identityUser.UserName;
         }
 
-        public Task<string?> GetUserIdByUsernameAsync(string id)
+        public async Task<string?> GetUserIdByUsernameAsync(string username)
         {
-            throw new NotImplementedException();
+            IdentityUser? identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
+            if (identityUser == null)
+            {
+                return null;
+            }
+            return identityUser.Id;
         }
 
         public async Task<string?> UpdateUsernameAndReturnStringUserIdAsync(string userId, string newUsername)
         {
-            IdentityUser? identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            IdentityUser? identityUser = await GetIdentityUserByUserId(userId);
             if (identityUser == null)
             {
                 return null;
