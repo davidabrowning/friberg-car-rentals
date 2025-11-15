@@ -4,7 +4,7 @@ using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.IdentityUser;
-using FribergCarRentals.Helpers;
+using FribergCarRentals.Core.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.CustomerCenter.Views.Reservation;
-using FribergCarRentals.Helpers;
+using FribergCarRentals.Core.Helpers;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
