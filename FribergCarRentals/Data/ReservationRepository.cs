@@ -1,5 +1,5 @@
-﻿using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+﻿using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
@@ -30,7 +30,6 @@ namespace FribergCarRentals.Data
         {
             return await _applicationDbContext.Reservations
                 .Include(r => r.Customer)
-                    .ThenInclude(c => c.IdentityUser)
                 .Include(r => r.Car)
                 .OrderByDescending(r => r.StartDate)
                     .ThenByDescending(r => r.EndDate)
@@ -41,7 +40,6 @@ namespace FribergCarRentals.Data
         {
             return await _applicationDbContext.Reservations
                 .Include(r => r.Customer)
-                    .ThenInclude(c => c.IdentityUser)
                 .Include(r => r.Car)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }

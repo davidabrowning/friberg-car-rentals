@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Customer;
-using FribergCarRentals.Helpers;
+using FribergCarRentals.Core.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -26,17 +26,17 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         }
 
         // GET: Customer/Create/abcd-1234
-        [HttpGet("Administration/Customer/Create/{identityUserId}")]
-        public async Task<IActionResult> Create(string? identityUserId)
+        [HttpGet("Administration/Customer/Create/{userId}")]
+        public async Task<IActionResult> Create(string? userId)
         {
-            if (identityUserId == null)
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorIdIsNull;
                 return RedirectToAction("Index");
             }
 
-            IdentityUser? identityUser = await _userService.GetUserById(identityUserId);
-            if (identityUser == null)
+            string? username = await _userService.GetUsernameByUserId(userId);
+            if (username == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -44,8 +44,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             CreateCustomerViewModel createCustomerViewModel = new()
             {
-                IdentityUserId = identityUser.Id,
-                IdentityUserUsername = identityUser.UserName ?? "Unable to get username",
+                IdentityUserId = userId,
+                IdentityUserUsername = username,
             };
             return View(createCustomerViewModel);
         }
@@ -60,15 +60,16 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(createCustomerViewModel);
             }
 
-            IdentityUser? identityUser = await _userService.GetUserById(createCustomerViewModel.IdentityUserId);
-            if (identityUser == null)
+            string userId = createCustomerViewModel.IdentityUserId;
+            string? username = await _userService.GetUsernameByUserId(createCustomerViewModel.IdentityUserId);
+            if (username == null)
             {
                 return NotFound();
             }
 
             Customer customer = new()
             {
-                IdentityUser = identityUser,
+                UserId = userId,
                 FirstName = createCustomerViewModel.FirstName,
                 LastName = createCustomerViewModel.LastName,
                 HomeCity = createCustomerViewModel.HomeCity,
@@ -90,18 +91,19 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
+            Customer? customer = await _userService.GetCustomerByCustomerIdAsync((int)id);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
             }
 
+            string username = await _userService.GetUsernameByUserId(customer.UserId);
             EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
             {
                 CustomerId = customer.Id,
-                IdentityUserId = customer.IdentityUser.Id,
-                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
+                IdentityUserId = customer.UserId,
+                IdentityUserUsername = username,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 HomeCity = customer.HomeCity,
@@ -128,7 +130,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(editCustomerViewModel);
             }
 
-            Customer? customer = await _userService.GetCustomerByIdAsync(editCustomerViewModel.CustomerId);
+            Customer? customer = await _userService.GetCustomerByCustomerIdAsync(editCustomerViewModel.CustomerId);
 
             if (customer == null)
             {
@@ -155,18 +157,19 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Customer? customer = await _userService.GetCustomerByIdAsync((int)id);
+            Customer? customer = await _userService.GetCustomerByCustomerIdAsync((int)id);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
             }
 
+            string username = await _userService.GetUsernameByUserId(customer.UserId);
             DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
             {
                 CustomerId = customer.Id,
-                IdentityUserId = customer.IdentityUser.Id,
-                IdentityUserUsername = customer.IdentityUser.UserName ?? "Unable to fetch username",
+                IdentityUserId = customer.UserId,
+                IdentityUserUsername = username,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 HomeCity = customer.HomeCity,

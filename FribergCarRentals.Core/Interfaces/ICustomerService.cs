@@ -1,7 +1,6 @@
-﻿using FribergCarRentals.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.Interfaces
+namespace FribergCarRentals.Core.Interfaces
 {
     public interface ICustomerService : IBasicCRUDService<Customer>
     {

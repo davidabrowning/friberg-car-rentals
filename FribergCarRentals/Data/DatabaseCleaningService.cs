@@ -1,5 +1,5 @@
-﻿using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+﻿using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.Data
 {
@@ -22,7 +22,7 @@ namespace FribergCarRentals.Data
             IEnumerable<Admin> admins = await _adminService.GetAllAsync();
             foreach (Admin admin in admins)
             {
-                if (admin.IdentityUser == null)
+                if (admin.UserId == null)
                 {
                     await _adminService.DeleteAsync(admin.Id);
                 }
@@ -33,7 +33,7 @@ namespace FribergCarRentals.Data
             IEnumerable<Customer> customers = await _customerService.GetAllAsync();
             foreach (Customer customer in customers)
             {
-                if (customer.IdentityUser == null)
+                if (customer.UserId == null)
                 {
                     await _customerService.DeleteAsync(customer.Id);
                 }

@@ -1,5 +1,5 @@
-﻿using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+﻿using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.Services
 {
@@ -30,7 +30,7 @@ namespace FribergCarRentals.Services
         public async Task<Customer?> DeleteCustomerByIdentityUserIdAsync(string identityUserId)
         {
             IEnumerable<Customer> customers = await GetAllAsync();
-            Customer? customer = customers.Where(c => c.IdentityUser.Id == identityUserId).FirstOrDefault();
+            Customer? customer = customers.Where(c => c.UserId == identityUserId).FirstOrDefault();
             if (customer != null)
             {
                 await DeleteAsync(customer.Id);

@@ -1,5 +1,5 @@
-﻿using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+﻿using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,12 +29,12 @@ namespace FribergCarRentals.Data
 
         public async Task<IEnumerable<Admin>> GetAllAsync()
         {
-            return await _applicationDbContext.Admins.Include(a => a.IdentityUser).ToListAsync();
+            return await _applicationDbContext.Admins.ToListAsync();
         }
 
         public async Task<Admin?> GetByIdAsync(int id)
         {
-            return await _applicationDbContext.Admins.Include(a => a.IdentityUser).Where(a => a.Id == id).FirstOrDefaultAsync();
+            return await _applicationDbContext.Admins.Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<bool> IdExistsAsync(int id)

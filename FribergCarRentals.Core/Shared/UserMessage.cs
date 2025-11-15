@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Helpers
+﻿namespace FribergCarRentals.Core.Helpers
 {
     public static class UserMessage
     {

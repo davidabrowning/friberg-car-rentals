@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Reservation;
-using FribergCarRentals.Helpers;
+using FribergCarRentals.Core.Helpers;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {

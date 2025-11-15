@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Public.Views.Customer;
-using FribergCarRentals.Helpers;
+using FribergCarRentals.Core.Helpers;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {
@@ -54,8 +54,8 @@ namespace FribergCarRentals.Areas.Public.Controllers
                 return View(populatedCustomerCreateVM);
             }
 
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -63,7 +63,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
 
             Customer newCustomer = new Customer()
             {
-                IdentityUser = identityUser,
+                UserId = userId,
                 FirstName = populatedCustomerCreateVM.FirstName,
                 LastName = populatedCustomerCreateVM.LastName,
                 HomeCity = populatedCustomerCreateVM.HomeCity,

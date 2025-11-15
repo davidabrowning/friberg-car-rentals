@@ -1,5 +1,5 @@
-﻿using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+﻿using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +35,6 @@ namespace FribergCarRentals.Data
         public async Task<IEnumerable<Customer>> GetAllAsync()
         {
             return await _applicationDbContext.Customers
-                .Include(c => c.IdentityUser)
                 .Include(c => c.Reservations)
                     .ThenInclude(r => r.Car)
                 .ToListAsync();
@@ -45,7 +44,6 @@ namespace FribergCarRentals.Data
         {
             return await _applicationDbContext.Customers
                 .Where(c => c.Id == id)
-                .Include(c => c.IdentityUser)
                 .Include(c => c.Reservations)
                 .FirstOrDefaultAsync();
         }
@@ -64,9 +62,9 @@ namespace FribergCarRentals.Data
         // ========================================== Private helper methods ==========================================
         private async Task<IdentityUser?> GetIdentityUser(Customer customer)
         {
-            if (customer.IdentityUser == null)
+            if (customer.UserId == null)
                 return null;
-            return await _userManager.FindByIdAsync(customer.IdentityUser.Id);
+            return await _userManager.FindByIdAsync(customer.UserId);
         }
 
         private async Task AddToCustomerRole(Customer customer)
