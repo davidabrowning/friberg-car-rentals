@@ -26,8 +26,8 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningServiceSeparated>();
 
             // Add service layer services to the container
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IUserService, UserServiceSeparated>();
+            builder.Services.AddScoped<IAuthService, AuthServiceSeparated>();
             builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
             builder.Services.AddScoped<ICustomerService, CustomerServiceSeparated>();
             builder.Services.AddScoped<ICarService, CarServiceSeparated>();

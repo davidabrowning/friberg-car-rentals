@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
-namespace FribergCarRentals.Services
+namespace FribergCarRentals.WebApi.Services
 {
-    public class AuthService : IAuthService
+    public class AuthServiceSeparated : IAuthService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
@@ -16,7 +16,7 @@ namespace FribergCarRentals.Services
         public const string RoleNameAdmin = "Admin";
         public const string RoleNameCustomer = "Customer";
         public const string RoleNameUser = "User";
-        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthServiceSeparated(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
