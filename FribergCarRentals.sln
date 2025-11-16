@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergCarRentals", "FribergCarRentals\FribergCarRentals.csproj", "{95DE3EA4-8F1F-433E-8C1A-80D11C0AEA1D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergCarRentals.Mvc", "FribergCarRentals\FribergCarRentals.Mvc.csproj", "{95DE3EA4-8F1F-433E-8C1A-80D11C0AEA1D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergCarRentals.Core", "FribergCarRentals.Core\FribergCarRentals.Core.csproj", "{9E5F10A5-76D4-401B-A57B-1740D8A877E6}"
 EndProject
