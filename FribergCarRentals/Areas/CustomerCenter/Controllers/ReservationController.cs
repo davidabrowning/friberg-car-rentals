@@ -23,7 +23,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         private readonly ICarService _carService;
         private readonly IUserService _userService;
 
-        public ReservationController(ApplicationDbContext context, IReservationService reservationService, ICarService carService, IUserService userService)
+        public ReservationController(IReservationService reservationService, ICarService carService, IUserService userService)
         {
             _reservationService = reservationService;
             _carService = carService;

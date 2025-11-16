@@ -1,14 +1,14 @@
-﻿using FribergCarRentals.Core.Interfaces;
+﻿using FribergCarRentals.Data;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Core.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
     public class AdminRepository : IRepository<Admin>
     {
-        private readonly ApplicationDbContext _applicationDbContext;
-        public AdminRepository(ApplicationDbContext applicationDbContext)
+        private readonly ApplicationDbContextSeparated _applicationDbContext;
+        public AdminRepository(ApplicationDbContextSeparated applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }

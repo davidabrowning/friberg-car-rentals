@@ -16,7 +16,8 @@ namespace FribergCarRentals
 
             // Add data layer services to the container
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            // builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<ApplicationDbContextSeparated>(options => options.UseSqlServer(connectionString));
             builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
@@ -35,7 +36,7 @@ namespace FribergCarRentals
             // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContextSeparated>();
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();

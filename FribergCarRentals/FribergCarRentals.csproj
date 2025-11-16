@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FribergCarRentals.Core\FribergCarRentals.Core.csproj" />
+    <ProjectReference Include="..\FribergCarRentals.Data\FribergCarRentals.Data.csproj" />
   </ItemGroup>
 
 </Project>
