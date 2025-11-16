@@ -7,8 +7,8 @@ namespace FribergCarRentals.Data
 {
     public class ReservationRepository : IRepository<Reservation>
     {
-        private readonly ApplicationDbContextSeparated _applicationDbContext;
-        public ReservationRepository(ApplicationDbContextSeparated applicationDbContext)
+        private readonly ApplicationDbContext _applicationDbContext;
+        public ReservationRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }

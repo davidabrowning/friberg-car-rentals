@@ -7,8 +7,8 @@ namespace FribergCarRentals.Data
 {
     public class AdminRepository : IRepository<Admin>
     {
-        private readonly ApplicationDbContextSeparated _applicationDbContext;
-        public AdminRepository(ApplicationDbContextSeparated applicationDbContext)
+        private readonly ApplicationDbContext _applicationDbContext;
+        public AdminRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
