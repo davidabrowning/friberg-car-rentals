@@ -31,7 +31,7 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
             builder.Services.AddScoped<ICustomerService, CustomerServiceSeparated>();
             builder.Services.AddScoped<ICarService, CarServiceSeparated>();
-            builder.Services.AddScoped<IReservationService, ReservationService>();
+            builder.Services.AddScoped<IReservationService, ReservationServiceSeparated>();
 
             // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
