@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Core.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Administration.Views.Admin;
