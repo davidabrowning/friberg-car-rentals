@@ -43,14 +43,14 @@ namespace FribergCarRentals
             // Seed roles, default admin user, and default cars
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingServiceSeparated>();
+                IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<IDatabaseSeeder>();
                 await seedingService.SeedAsync();
             }
 
             // Run DB cleanup
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningServiceSeparated>();
+                IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<IDatabaseCleaner>();
                 await cleaningService.CleanAsync();
             }
 
