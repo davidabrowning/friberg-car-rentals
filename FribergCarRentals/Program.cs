@@ -4,6 +4,7 @@ using FribergCarRentals.Core.Models;
 using FribergCarRentals.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using FribergCarRentals.WebApi.Services;
 
 namespace FribergCarRentals
 {
@@ -27,7 +28,7 @@ namespace FribergCarRentals
             // Add service layer services to the container
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IAdminService, AdminService>();
+            builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<ICarService, CarService>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
