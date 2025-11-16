@@ -2,8 +2,8 @@
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.ViewModels;
 using System.Diagnostics;
-using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Public.Views.Home;
+using FribergCarRentals.Core.Interfaces.Services;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {

@@ -1,6 +1,6 @@
 ﻿using FribergCarRentals.Areas.CustomerCenter.Views.Car;
 using FribergCarRentals.Core.Helpers;
-using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

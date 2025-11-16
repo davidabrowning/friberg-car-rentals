@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Core.Interfaces;
+﻿using FribergCarRentals.Core.Interfaces.Repositories;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using System.Threading.Tasks;
 
