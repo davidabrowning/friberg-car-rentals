@@ -1,6 +1,6 @@
 ﻿using FribergCarRentals.Data;
-using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -8,124 +8,132 @@ namespace FribergCarRentals.Services
 {
     public class UserService : IUserService
     {
-        private readonly IIdentityUserService _identityUserService;
+        private readonly IAuthService _authService;
         private readonly IAdminService _adminService;
         private readonly ICustomerService _customerService;
-        public UserService(IIdentityUserService identityUserService, IAdminService adminService, ICustomerService customerService)
+        public UserService(IAuthService authService, IAdminService adminService, ICustomerService customerService)
         {
-            _identityUserService = identityUserService;
+            _authService = authService;
             _adminService = adminService;
             _customerService = customerService;
         }
 
         // General methods
-        public async Task<IdentityUser?> DeleteIdentityUserAsync(string id)
-        {
-            IdentityUser? identityUser = await GetUserById(id);
-            if (identityUser == null) {
-                return null;
-            }
-
-            Admin? admin = await GetAdminByUserAsync(identityUser);
-            if (admin != null)
-            {
-                await DeleteAdminAsync(admin.Id);
-            }
-
-            Customer? customer = await GetCustomerByUserAsync(identityUser);
-            if (customer != null)
-            {
-                await DeleteCustomerAsync(customer.Id);
-            }
-
-            await _identityUserService.DeleteAsync(id);
-
-            return identityUser;
-        }
-        public async Task<Admin?> GetAdminByUserAsync(IdentityUser identityUser)
+        public async Task<Admin?> GetAdminByUserIdAsync(string userId)
         {
             IEnumerable<Admin> admins = await _adminService.GetAllAsync();
-            return admins.FirstOrDefault(a => a.IdentityUser.Id == identityUser.Id);
+            return admins.FirstOrDefault(a => a.UserId == userId);
         }
-        public async Task<Customer?> GetCustomerByUserAsync(IdentityUser identityUser)
+        public async Task<Customer?> GetCustomerByUserIdAsync(string userId)
         {
             IEnumerable<Customer> customers = await _customerService.GetAllAsync();
-            return customers.FirstOrDefault(c => c.IdentityUser.Id == identityUser.Id);
+            return customers.FirstOrDefault(c => c.UserId == userId);
         }
 
-        // IdentityUser methods
-        public async Task<IdentityUser> CreateUser(string username) =>
-            await _identityUserService.AddIdentityUserAsync(username);
-        public async Task<IEnumerable<IdentityUser>> GetAllIdentityUsersAsync() =>
-            await _identityUserService.GetAllAsync();
-        public async Task<IdentityUser?> GetCurrentUser() =>
-            await _identityUserService.GetCurrentSignedInIdentityUserAsync();
-        public async Task<IdentityUser?> GetUserById(string id) =>
-            await _identityUserService.GetByIdAsync(id);
-        public async Task<bool> IdentityUsernameExistsAsync(string username) =>
-            await _identityUserService.UsernameExistsAsync(username);
-        public async Task<bool> IsInRoleAsync(IdentityUser identityUser, string roleName) => 
-            await _identityUserService.IsInRoleAsync(identityUser, roleName);
-        public async Task<IdentityUser?> UpdateUsername(string id, string newUsername) => 
-            await _identityUserService.UpdateUsernameAsync(id, newUsername);
+        // User methods
+        public async Task<string> CreateUser(string username) =>
+            await _authService.AddUserAsync(username);
+        public async Task<string?> GetCurrentUserId() =>
+            await _authService.GetCurrentSignedInUserId();
+        public async Task<bool> UsernameExistsAsync(string username) =>
+            await _authService.UsernameExistsAsync(username);
+        public async Task<bool> IsInRoleAsync(string userId, string roleName) => 
+            await _authService.IsInRoleAsync(userId, roleName);
+        public async Task<string?> UpdateUsername(string userId, string newUsername) =>
+            await _authService.UpdateUsernameAndReturnStringUserIdAsync(userId, newUsername);
+            
 
         // Admin methods
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
-            await _identityUserService.AddToRoleAsync(admin.IdentityUser, IdentityUserService.RoleNameAdmin);
+            await _authService.AddToRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
             await _adminService.CreateAsync(admin);
             return admin;
         }
-        public async Task<Admin?> GetAdminByIdAsync(int id) => 
+        public async Task<Admin?> GetAdminByAdminIdAsync(int id) => 
             await _adminService.GetByIdAsync(id);
         public async Task<Admin> UpdateAdminAsync(Admin admin) => 
             await _adminService.UpdateAsync(admin);
         public async Task<Admin?> DeleteAdminAsync(int adminId)
         {
-            Admin? admin = await GetAdminByIdAsync(adminId);
+            Admin? admin = await GetAdminByAdminIdAsync(adminId);
             if (admin == null)
             {
                 return null;
             }
 
-            await _identityUserService.RemoveFromRoleAsync(admin.IdentityUser, IdentityUserService.RoleNameAdmin);
+            await _authService.RemoveFromRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
             return await _adminService.DeleteAsync(admin.Id);
         }
 
         // Customer methods
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-            await _identityUserService.AddToRoleAsync(customer.IdentityUser, IdentityUserService.RoleNameCustomer);
+            await _authService.AddToRoleAsync(customer.UserId, AuthService.RoleNameCustomer);
             await _customerService.CreateAsync(customer);
             return customer;
         }
         public async Task<Customer?> DeleteCustomerAsync(int id)
         {
-            Customer? customer = await GetCustomerByIdAsync(id);
+            Customer? customer = await GetCustomerByCustomerIdAsync(id);
             if (customer == null)
             {
                 return null;
             }
 
-            await _identityUserService.RemoveFromRoleAsync(customer.IdentityUser, IdentityUserService.RoleNameCustomer);
+            await _authService.RemoveFromRoleAsync(customer.UserId, AuthService.RoleNameCustomer);
             await _customerService.DeleteAsync(customer.Id);
             return customer;
         }
-        public async Task<Customer?> GetCustomerByIdAsync(int id) => 
+        public async Task<Customer?> GetCustomerByCustomerIdAsync(int id) => 
             await _customerService.GetByIdAsync(id);
         public async Task<Customer> UpdateCustomerAsync(Customer customer) => 
             await _customerService.UpdateAsync(customer);
 
         public async Task<Customer?> GetSignedInCustomer()
         {
-            IdentityUser? identityUser = await GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await GetCurrentUserId();
+            if (userId == null)
             {
                 return null;
             }
 
-            Customer? customer = await GetCustomerByUserAsync(identityUser);
+            Customer? customer = await GetCustomerByUserIdAsync(userId);
             return customer;
+        }
+
+        public async Task<string?> DeleteUserAsync(string userId)
+        {
+            Admin? admin = await GetAdminByUserIdAsync(userId);
+            if (admin != null)
+            {
+                await DeleteAdminAsync(admin.Id);
+            }
+
+            Customer? customer = await GetCustomerByUserIdAsync(userId);
+            if (customer != null)
+            {
+                await DeleteCustomerAsync(customer.Id);
+            }
+
+            await _authService.DeleteByUserIdAsync(userId);
+
+            return userId;
+        }
+
+        public Task<string?> GetUserIdByUsername(string username)
+        {
+            return _authService.GetUserIdByUsernameAsync(username);
+        }
+
+        public Task<List<string>> GetAllUserIdsAsync()
+        {
+            return _authService.GetAllUserIdsAsync();
+        }
+
+        public Task<string?> GetUsernameByUserId(string userId)
+        {
+            return _authService.GetUsernameByUserIdAsync(userId);
         }
     }
 }

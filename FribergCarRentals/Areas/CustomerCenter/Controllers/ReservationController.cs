@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FribergCarRentals.Data;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Areas.CustomerCenter.Views.Reservation;
-using FribergCarRentals.Helpers;
+using FribergCarRentals.Core.Helpers;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
@@ -23,7 +23,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         private readonly ICarService _carService;
         private readonly IUserService _userService;
 
-        public ReservationController(ApplicationDbContext context, IReservationService reservationService, ICarService carService, IUserService userService)
+        public ReservationController(IReservationService reservationService, ICarService carService, IUserService userService)
         {
             _reservationService = reservationService;
             _carService = carService;
@@ -33,14 +33,14 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Reservation
         public async Task<IActionResult> Index()
         {
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -72,14 +72,14 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 preselectedCarId = (int)id;
             }
 
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -106,7 +106,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return View(reservationCreateViewModel);
             }
 
-            Customer? customer = await _userService.GetCustomerByIdAsync(reservationCreateViewModel.CustomerId);
+            Customer? customer = await _userService.GetCustomerByCustomerIdAsync(reservationCreateViewModel.CustomerId);
             if (customer == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;

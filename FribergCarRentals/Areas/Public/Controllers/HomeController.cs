@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.ViewModels;
 using System.Diagnostics;
-using FribergCarRentals.Interfaces;
+using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Public.Views.Home;
 
 namespace FribergCarRentals.Areas.Public.Controllers
@@ -28,15 +28,15 @@ namespace FribergCarRentals.Areas.Public.Controllers
         {
             IndexHomeViewModel homeIndexViewModel = new();
 
-            IdentityUser? identityUser = await _userService.GetCurrentUser();
-            if (identityUser == null)
+            string? userId = await _userService.GetCurrentUserId();
+            if (userId == null)
             {
                 homeIndexViewModel.IsSignedIn = false;
                 homeIndexViewModel.HasCustomerAccount = false;
                 return View(homeIndexViewModel);
             }
 
-            Customer? customer = await _userService.GetCustomerByUserAsync(identityUser);
+            Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
             if (customer == null)
             {
                 homeIndexViewModel.IsSignedIn = true;

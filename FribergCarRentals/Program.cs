@@ -1,6 +1,6 @@
 using FribergCarRentals.Data;
-using FribergCarRentals.Interfaces;
-using FribergCarRentals.Models;
+using FribergCarRentals.Core.Interfaces;
+using FribergCarRentals.Core.Models;
 using FribergCarRentals.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,16 +17,16 @@ namespace FribergCarRentals
             // Add data layer services to the container
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-            builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
-            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
-            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
-            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
-            builder.Services.AddScoped<DatabaseSeedingService, DatabaseSeedingService>();
-            builder.Services.AddScoped<DatabaseCleaningService, DatabaseCleaningService>();
+            builder.Services.AddScoped<IRepository<Admin>, AdminRepositorySeparated>();
+            builder.Services.AddScoped<IRepository<Car>, CarRepositorySeparated>();
+            builder.Services.AddScoped<IRepository<Customer>, CustomerRepositorySeparated>();
+            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepositorySeparated>();
+            builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingServiceSeparated>();
+            builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningServiceSeparated>();
 
             // Add service layer services to the container
             builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IIdentityUserService, IdentityUserService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<ICarService, CarService>();
@@ -43,15 +43,15 @@ namespace FribergCarRentals
             // Seed roles, default admin user, and default cars
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                DatabaseSeedingService seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingService>();
-                await seedingService.Go();
+                IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingServiceSeparated>();
+                await seedingService.SeedAsync();
             }
 
             // Run DB cleanup
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                DatabaseCleaningService cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningService>();
-                await cleaningService.Go();
+                IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningServiceSeparated>();
+                await cleaningService.CleanAsync();
             }
 
             // Configure the HTTP request pipeline.

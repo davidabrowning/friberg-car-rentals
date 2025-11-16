@@ -16,4 +16,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FribergCarRentals.Core\FribergCarRentals.Core.csproj" />
+    <ProjectReference Include="..\FribergCarRentals.Data\FribergCarRentals.Data.csproj" />
+  </ItemGroup>
+
 </Project>

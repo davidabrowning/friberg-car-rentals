@@ -39,7 +39,7 @@
 					@item.Car.Make @item.Car.Model (@item.Car.Year)
 				</td>
 				<td>
-					@item.Customer.FirstName @item.Customer.LastName (@item.Customer.IdentityUser.UserName)
+					@item.Customer.FirstName @item.Customer.LastName (@item.Customer.UserId)
 				</td>
 				<td>
 					<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>

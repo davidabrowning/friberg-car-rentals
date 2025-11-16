@@ -1,4 +1,4 @@
-﻿using FribergCarRentals.Models;
+﻿using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.Areas.Administration.Views.Car
 {
