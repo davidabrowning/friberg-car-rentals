@@ -1,4 +1,7 @@
 
+using FribergCarRentals.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace FribergCarRentals.WebApi
 {
     public class Program
@@ -6,8 +9,10 @@ namespace FribergCarRentals.WebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             // Add services to the container.
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
