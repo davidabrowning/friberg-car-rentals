@@ -30,7 +30,7 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
             builder.Services.AddScoped<ICustomerService, CustomerServiceSeparated>();
-            builder.Services.AddScoped<ICarService, CarService>();
+            builder.Services.AddScoped<ICarService, CarServiceSeparated>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
 
             // Add other services to the container

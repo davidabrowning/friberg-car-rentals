@@ -2,12 +2,12 @@
 using FribergCarRentals.Core.Models;
 using System.Threading.Tasks;
 
-namespace FribergCarRentals.Services
+namespace FribergCarRentals.WebApi.Services
 {
-    public class CarService : BasicCRUDService<Car>, ICarService
+    public class CarServiceSeparated : BasicCRUDServiceSeparated<Car>, ICarService
     {
         private readonly IReservationService _reservationService;
-        public CarService(IRepository<Car> carRepository, IReservationService reservationService) : base(carRepository)
+        public CarServiceSeparated(IRepository<Car> carRepository, IReservationService reservationService) : base(carRepository)
         {
             _reservationService = reservationService;
         }
