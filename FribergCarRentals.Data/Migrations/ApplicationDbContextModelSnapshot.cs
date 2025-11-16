@@ -22,35 +22,7 @@ namespace FribergCarRentals.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FribergCarRentals.Areas.Administration.Views.Car.EditCarViewModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Make")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EditCarViewModel");
-                });
-
-            modelBuilder.Entity("FribergCarRentals.Models.Admin", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Admin", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,7 +39,7 @@ namespace FribergCarRentals.Data.Migrations
                     b.ToTable("Admins");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Car", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Car", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -99,7 +71,7 @@ namespace FribergCarRentals.Data.Migrations
                     b.ToTable("Cars");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Customer", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -132,7 +104,7 @@ namespace FribergCarRentals.Data.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Reservation", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Reservation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -363,13 +335,13 @@ namespace FribergCarRentals.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Reservation", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Reservation", b =>
                 {
-                    b.HasOne("FribergCarRentals.Models.Car", "Car")
+                    b.HasOne("FribergCarRentals.Core.Models.Car", "Car")
                         .WithMany("Reservations")
                         .HasForeignKey("CarId");
 
-                    b.HasOne("FribergCarRentals.Models.Customer", "Customer")
+                    b.HasOne("FribergCarRentals.Core.Models.Customer", "Customer")
                         .WithMany("Reservations")
                         .HasForeignKey("CustomerId");
 
@@ -429,12 +401,12 @@ namespace FribergCarRentals.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Car", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Car", b =>
                 {
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Customer", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Customer", b =>
                 {
                     b.Navigation("Reservations");
                 });

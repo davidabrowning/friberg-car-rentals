@@ -1,15 +1,16 @@
 ﻿using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Core.Models;
+using FribergCarRentals.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
-    public class CustomerRepository : IRepository<Customer>
+    public class CustomerRepositorySeparated : IRepository<Customer>
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly UserManager<IdentityUser> _userManager;
-        public CustomerRepository(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
+        public CustomerRepositorySeparated(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
         {
             _applicationDbContext = applicationDbContext;
             _userManager = userManager;

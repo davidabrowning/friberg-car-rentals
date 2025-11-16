@@ -1,13 +1,14 @@
 ﻿using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Core.Models;
+using FribergCarRentals.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
-    public class ReservationRepository : IRepository<Reservation>
+    public class ReservationRepositorySeparated : IRepository<Reservation>
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        public ReservationRepository(ApplicationDbContext applicationDbContext)
+        public ReservationRepositorySeparated(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
