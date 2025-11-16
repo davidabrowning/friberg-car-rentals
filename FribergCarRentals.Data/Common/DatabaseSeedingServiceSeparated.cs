@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace FribergCarRentals.Data
 {
-    public class DatabaseSeedingServiceSeparated
+    public class DatabaseSeedingServiceSeparated : IDatabaseSeeder
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserService _userService;
@@ -17,7 +17,7 @@ namespace FribergCarRentals.Data
             _userService = userService;
             _carService = carService;
         }
-        public async Task Go()
+        public async Task SeedAsync()
         {
             await SeedRoles();
             await SeedDefaultAdminUser();

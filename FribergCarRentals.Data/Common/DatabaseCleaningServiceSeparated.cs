@@ -3,7 +3,7 @@ using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.Data
 {
-    public class DatabaseCleaningServiceSeparated
+    public class DatabaseCleaningServiceSeparated : IDatabaseCleaner
     {
         private readonly IAdminService _adminService;
         private readonly ICustomerService _customerService;
@@ -12,7 +12,7 @@ namespace FribergCarRentals.Data
             _adminService = adminService;
             _customerService = customerService;
         }
-        public async Task Go()
+        public async Task CleanAsync()
         {
             await RemoveAdminsWithoutIdentityUsers();
             await RemoveCustomersWithoutIdentityUsers();
