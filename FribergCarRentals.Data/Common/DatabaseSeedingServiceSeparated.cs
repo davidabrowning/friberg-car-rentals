@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace FribergCarRentals.Data
 {
-    public class DatabaseSeedingService
+    public class DatabaseSeedingServiceSeparated
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserService _userService;
         private readonly ICarService _carService;
-        public DatabaseSeedingService(RoleManager<IdentityRole> roleManager, IUserService userService, ICarService carService)
+        public DatabaseSeedingServiceSeparated(RoleManager<IdentityRole> roleManager, IUserService userService, ICarService carService)
         {
             _roleManager = roleManager;
             _userService = userService;

@@ -21,8 +21,8 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IRepository<Car>, CarRepositorySeparated>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepositorySeparated>();
             builder.Services.AddScoped<IRepository<Reservation>, ReservationRepositorySeparated>();
-            builder.Services.AddScoped<DatabaseSeedingService, DatabaseSeedingService>();
-            builder.Services.AddScoped<DatabaseCleaningService, DatabaseCleaningService>();
+            builder.Services.AddScoped<DatabaseSeedingServiceSeparated, DatabaseSeedingServiceSeparated>();
+            builder.Services.AddScoped<DatabaseCleaningServiceSeparated, DatabaseCleaningServiceSeparated>();
 
             // Add service layer services to the container
             builder.Services.AddScoped<IUserService, UserService>();
@@ -43,14 +43,14 @@ namespace FribergCarRentals
             // Seed roles, default admin user, and default cars
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                DatabaseSeedingService seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingService>();
+                DatabaseSeedingServiceSeparated seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingServiceSeparated>();
                 await seedingService.Go();
             }
 
             // Run DB cleanup
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                DatabaseCleaningService cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningService>();
+                DatabaseCleaningServiceSeparated cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningServiceSeparated>();
                 await cleaningService.Go();
             }
 
