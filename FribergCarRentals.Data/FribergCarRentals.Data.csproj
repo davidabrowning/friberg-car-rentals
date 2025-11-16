@@ -21,8 +21,4 @@
     <ProjectReference Include="..\FribergCarRentals.Core\FribergCarRentals.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>

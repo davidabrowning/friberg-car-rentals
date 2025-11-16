@@ -18,7 +18,7 @@ namespace FribergCarRentals
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
-            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
+            builder.Services.AddScoped<IRepository<Car>, CarRepositorySeparated>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
             builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
             builder.Services.AddScoped<DatabaseSeedingService, DatabaseSeedingService>();
