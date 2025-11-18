@@ -1,11 +1,6 @@
 ﻿using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
-using FribergCarRentals.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace FribergCarRentals.WebApi.Controllers
 {
