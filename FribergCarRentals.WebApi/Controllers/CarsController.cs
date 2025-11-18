@@ -19,12 +19,6 @@ namespace FribergCarRentals.WebApi.Controllers
             _carService = carService;
         }
 
-        [HttpGet("cars-count")]
-        public async Task<IActionResult> CarsCount()
-        {
-            return Ok(42);
-        }
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Car>>> GetAll()
         {
