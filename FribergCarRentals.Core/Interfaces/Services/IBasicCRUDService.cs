@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Core.Interfaces
+﻿namespace FribergCarRentals.Core.Interfaces.Services
 {
     public interface IBasicCRUDService<T>
     {

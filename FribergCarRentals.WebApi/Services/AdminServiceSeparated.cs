@@ -1,11 +1,12 @@
-﻿using FribergCarRentals.Core.Interfaces;
+﻿using FribergCarRentals.Core.Interfaces.Repositories;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.Services
+namespace FribergCarRentals.WebApi.Services
 {
-    public class AdminService : BasicCRUDService<Admin>, IAdminService
+    public class AdminServiceSeparated : BasicCRUDServiceSeparated<Admin>, IAdminService
     {
-        public AdminService(IRepository<Admin> adminRepository) : base(adminRepository)
+        public AdminServiceSeparated(IRepository<Admin> adminRepository) : base(adminRepository)
         {
         }
         public async Task<Admin?> DeleteAdminByIdentityUserIdAsync(string identityUserId)

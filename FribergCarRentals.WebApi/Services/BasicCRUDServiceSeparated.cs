@@ -1,13 +1,14 @@
-﻿using FribergCarRentals.Core.Interfaces;
+﻿using FribergCarRentals.Core.Interfaces.Repositories;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.Services
+namespace FribergCarRentals.WebApi.Services
 {
-    public abstract class BasicCRUDService<T> : IBasicCRUDService<T>
+    public abstract class BasicCRUDServiceSeparated<T> : IBasicCRUDService<T>
     {
         IRepository<T> _repository;
 
-        public BasicCRUDService(IRepository<T> repository)
+        public BasicCRUDServiceSeparated(IRepository<T> repository)
         {
             _repository = repository;
         }

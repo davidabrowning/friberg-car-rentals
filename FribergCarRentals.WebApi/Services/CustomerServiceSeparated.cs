@@ -1,12 +1,13 @@
-﻿using FribergCarRentals.Core.Interfaces;
+﻿using FribergCarRentals.Core.Interfaces.Repositories;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.Services
+namespace FribergCarRentals.WebApi.Services
 {
-    public class CustomerService : BasicCRUDService<Customer>, ICustomerService
+    public class CustomerServiceSeparated : BasicCRUDServiceSeparated<Customer>, ICustomerService
     {
         private readonly IReservationService _reservationService;
-        public CustomerService(IRepository<Customer> customerRepository, IReservationService reservationServices) : base(customerRepository)
+        public CustomerServiceSeparated(IRepository<Customer> customerRepository, IReservationService reservationServices) : base(customerRepository)
         {
             _reservationService = reservationServices;
         }

@@ -1,6 +1,6 @@
 ﻿using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.Core.Interfaces
+namespace FribergCarRentals.Core.Interfaces.Services
 {
     public interface IReservationService : IBasicCRUDService<Reservation>
     {
