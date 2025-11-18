@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Core.Models;
+﻿using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace FribergCarRentals.Core.Interfaces.ApiClients
 {
-    public interface ICarApiClient
+    public interface ICarApiClient : IBasicCRUDService<Car>
     {
-        Task<IEnumerable<Car>> GetAllAsync();
     }
 }
