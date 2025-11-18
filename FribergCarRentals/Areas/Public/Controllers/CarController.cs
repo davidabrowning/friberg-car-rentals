@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Areas.Public.Views.Car;
+using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,14 +10,16 @@ namespace FribergCarRentals.Areas.Public.Controllers
     public class CarController : Controller
     {
         private readonly ICarService _carService;
-        public CarController(ICarService carService)
+        private readonly ICarApiClient _carApiClient;
+        public CarController(ICarService carService, ICarApiClient carApiClient)
         {
             _carService = carService;
+            _carApiClient = carApiClient;
         }
         public async Task<IActionResult> Index()
         {
             List<IndexCarViewModel> carIndexViewModelList = new();
-            foreach (Car car in await _carService.GetAllAsync())
+            foreach (Car car in await _carApiClient.GetAllAsync())
             {
                 IndexCarViewModel carIndexViewModel = new()
                 {

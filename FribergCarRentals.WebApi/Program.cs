@@ -1,5 +1,9 @@
 
+using FribergCarRentals.Core.Interfaces.Repositories;
+using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Models;
 using FribergCarRentals.Data;
+using FribergCarRentals.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.WebApi
@@ -13,6 +17,10 @@ namespace FribergCarRentals.WebApi
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddScoped<IRepository<Car>, CarRepositorySeparated>();
+            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepositorySeparated>();
+            builder.Services.AddScoped<ICarService, CarServiceSeparated>();
+            builder.Services.AddScoped<IReservationService, ReservationServiceSeparated>();
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
