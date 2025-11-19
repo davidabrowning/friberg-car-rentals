@@ -36,5 +36,16 @@ namespace FribergCarRentals.Tests
             reservations = await reservationService.GetByCarAsync(car);
             Assert.Single(reservations);
         }
+
+        [Fact]
+        public async Task GetByCarAsync_ShouldReturnEmptyIfTestedAgainWithoutReaddingCar()
+        {
+            car = new();
+            reservation = new() { Car = car };
+            // await reservationService.CreateAsync(reservation); <== tests that this line is required
+            //                                                        to re-add reservation
+            reservations = await reservationService.GetByCarAsync(car);
+            Assert.Empty(reservations);
+        }
     }
 }
