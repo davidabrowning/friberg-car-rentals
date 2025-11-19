@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Tests
+﻿namespace FribergCarRentals.Tests.Tests.Other
 {
     public class SampleTests
     {

@@ -1,7 +1,8 @@
 ﻿using FribergCarRentals.Core.Interfaces.Repositories;
 using FribergCarRentals.Core.Models;
+using FribergCarRentals.Tests.Mock.Data.Database;
 
-namespace FribergCarRentals.Tests
+namespace FribergCarRentals.Tests.Mock.Data.Repositories
 {
     public class MockReservationRepository : IRepository<Reservation>
     {

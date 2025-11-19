@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergCarRentals.Tests
+namespace FribergCarRentals.Tests.Mock.Data.Database
 {
     public static class MockDatabase
     {
