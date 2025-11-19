@@ -15,9 +15,9 @@ namespace FribergCarRentals.Tests
         // Reused variables
         private static IRepository<Reservation> reservationRepository = new MockReservationRepository();
         private static IReservationService reservationService = new ReservationServiceSeparated(reservationRepository);
-        private static IEnumerable<Reservation> reservations;
-        private static Car car;
-        private static Reservation reservation;
+        private static IEnumerable<Reservation>? reservations;
+        private static Car? car;
+        private static Reservation? reservation;
 
         [Fact]
         public async Task GetByCarAsync_ShouldReturnEmptyListIfNewCar()
