@@ -13,21 +13,28 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
     public class ReservationApiClientTests
     {
         // Reused variables
-        private MockHttpMessageHandler? mockHttpMessageHandler;
-        private HttpClient? httpClient;
+        private MockHttpMessageHandler mockHttpMessageHandler;
+        private HttpClient httpClient;
+        private ReservationApiClient reservationApiClient;
         private List<Reservation>? reservations;
-        private ReservationApiClient? reservationApiClient;
+
+        public ReservationApiClientTests()
+        {
+            mockHttpMessageHandler = new();
+            httpClient = new(mockHttpMessageHandler)
+            {
+                BaseAddress = new Uri("http://localhost")
+            };
+            reservationApiClient = new(httpClient);
+        }
 
         [Fact]
         public async Task Get_ReturnsReservations()
         {
             reservations = new() { new Reservation(), new Reservation() };
-            mockHttpMessageHandler = new("/api/reservations", reservations, HttpStatusCode.OK);
-            httpClient = new HttpClient(mockHttpMessageHandler)
-            {
-                BaseAddress = new Uri("http://localhost")
-            };
-            reservationApiClient = new(httpClient);
+            mockHttpMessageHandler.ExpectedPath = "/api/reservations";
+            mockHttpMessageHandler.ResponseObject = reservations;
+            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
             IEnumerable<Reservation> result = await reservationApiClient.GetAsync();
             Assert.Equal(2, result.Count());
         }
@@ -38,12 +45,9 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
             Reservation otherReservation = new Reservation() { Id = 123 };
             Reservation targetReservation = new Reservation() { Id = 456 };
             reservations = new() { otherReservation, targetReservation };
-            mockHttpMessageHandler = new($"/api/reservations/{targetReservation.Id}", targetReservation, HttpStatusCode.OK);
-            httpClient = new HttpClient(mockHttpMessageHandler)
-            {
-                BaseAddress = new Uri("http://localhost")
-            };
-            reservationApiClient = new(httpClient);
+            mockHttpMessageHandler.ExpectedPath = $"/api/reservations/{targetReservation.Id}";
+            mockHttpMessageHandler.ResponseObject = targetReservation;
+            mockHttpMessageHandler.HttpStatusCode= HttpStatusCode.OK;
             Reservation? result = await reservationApiClient.GetAsync(targetReservation.Id);
             Assert.Equal(targetReservation, result);
         }

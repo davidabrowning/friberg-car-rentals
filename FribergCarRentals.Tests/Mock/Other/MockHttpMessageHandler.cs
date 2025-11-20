@@ -10,16 +10,9 @@ namespace FribergCarRentals.Tests.Mock.Other
 {
     public class MockHttpMessageHandler : HttpMessageHandler
     {
-        private readonly string _expectedPath;
-        private readonly Object? _responseObject;
-        private readonly HttpStatusCode _httpStatusCode;
-
-        public MockHttpMessageHandler(string expectedPath, Object? responseObject, HttpStatusCode httpStatusCode)
-        {
-            _expectedPath = expectedPath;
-            _responseObject = responseObject;
-            _httpStatusCode = httpStatusCode;
-        }
+        public string? ExpectedPath { get; set; }
+        public Object? ResponseObject { get; set; }
+        public HttpStatusCode HttpStatusCode { get; set; }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -29,15 +22,15 @@ namespace FribergCarRentals.Tests.Mock.Other
             }
 
             string actualPath = request.RequestUri.PathAndQuery;
-            if (actualPath != _expectedPath)
+            if (actualPath != ExpectedPath)
             {
-                throw new InvalidOperationException($"Incorrect path. Expected path: {_expectedPath}. Actual path: {actualPath}.");
+                throw new InvalidOperationException($"Incorrect path. Expected path: {ExpectedPath}. Actual path: {actualPath}.");
             }
 
-            HttpResponseMessage httpResponseMessage = new(_httpStatusCode);
-            if (_responseObject != null)
+            HttpResponseMessage httpResponseMessage = new(HttpStatusCode);
+            if (ResponseObject != null)
             {
-                string responseObjectAsJson = JsonSerializer.Serialize(_responseObject);
+                string responseObjectAsJson = JsonSerializer.Serialize(ResponseObject);
                 httpResponseMessage.Content = new StringContent(responseObjectAsJson);
             }
             return Task.FromResult(httpResponseMessage);
