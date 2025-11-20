@@ -47,5 +47,8 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
             Reservation? result = await reservationApiClient.GetAsync(targetReservation.Id);
             Assert.Equal(targetReservation, result);
         }
+
+        [Fact]
+
     }
 }

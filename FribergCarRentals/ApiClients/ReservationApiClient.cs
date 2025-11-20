@@ -11,11 +11,6 @@ namespace FribergCarRentals.Mvc.ApiClients
             _httpClient = httpClient;
         }
 
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<Reservation>> GetAsync()
         {
             List<Reservation> reservationList = await _httpClient.GetFromJsonAsync<List<Reservation>>("api/reservations") ?? new();
@@ -27,12 +22,17 @@ namespace FribergCarRentals.Mvc.ApiClients
             return await _httpClient.GetFromJsonAsync<Reservation>($"api/reservations/{id}");
         }
 
-        public Task<Reservation> PostAsync(Reservation t)
+        public Task<Reservation> PostAsync(Reservation reservation)
         {
             throw new NotImplementedException();
         }
 
-        public Task PutAsync(Reservation t)
+        public Task PutAsync(Reservation reservation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
