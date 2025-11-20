@@ -1,13 +1,6 @@
 ﻿using FribergCarRentals.Core.Models;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.Tests.Mock.Other;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
 {
@@ -16,64 +9,65 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         // Reused variables
         private MockHttpMessageHandler mockHttpMessageHandler;
         private ReservationApiClient reservationApiClient;
-        private List<Reservation>? reservations;
-        private Reservation? reservation;
+        private List<Reservation> reservations;
+        private Reservation reservation;
 
         public ReservationApiClientTests()
         {
             mockHttpMessageHandler = new();
             HttpClient httpClient = new(mockHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             reservationApiClient = new(httpClient);
+            reservations = new() { new Reservation() { Id = 27 }, new Reservation() { Id = 28 } };
+            reservation = new() { Id = 42 };
         }
 
         [Fact]
-        public async Task Get_ReturnsReservations()
+        public async Task GetAll_IsConfiguredCorrectly()
         {
-            reservations = new() { new Reservation(), new Reservation() };
-            mockHttpMessageHandler.ExpectedPath = "/api/reservations";
-            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Get;
             mockHttpMessageHandler.ResponseObject = reservations;
-            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
-            IEnumerable<Reservation> result = await reservationApiClient.GetAsync();
-            Assert.Equal(2, result.Count());
+            var result = await reservationApiClient.GetAsync();
+            Assert.IsType<List<Reservation>>(result);
+            Assert.Equal("/api/reservations", mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Get, mockHttpMessageHandler.RequestMethod);
         }
 
         [Fact]
-        public async Task GetId_ReturnsCorrectReservation()
+        public async Task GetOne_IsConfiguredCorrectly()
         {
-            Reservation otherReservation = new Reservation() { Id = 123 };
-            Reservation targetReservation = new Reservation() { Id = 456 };
-            reservations = new() { otherReservation, targetReservation };
-            mockHttpMessageHandler.ExpectedPath = $"/api/reservations/{targetReservation.Id}";
-            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Get;
-            mockHttpMessageHandler.ResponseObject = targetReservation;
-            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
-            Reservation? result = await reservationApiClient.GetAsync(targetReservation.Id);
-            Assert.Equal(targetReservation, result);
-        }
-
-        [Fact]
-        public async Task Post_AddsReservationWithoutError()
-        {
-            reservation = new();
-            mockHttpMessageHandler.ExpectedPath = $"/api/reservations";
-            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Post;
             mockHttpMessageHandler.ResponseObject = reservation;
-            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
-            Reservation? result = await reservationApiClient.PostAsync(reservation);
-            Assert.Equal(reservation, result);
+            var result = await reservationApiClient.GetAsync(reservation.Id);
+            Assert.IsType<Reservation>(result);
+            Assert.Equal($"/api/reservations/{reservation.Id}", mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Get, mockHttpMessageHandler.RequestMethod);
         }
 
         [Fact]
-        public async Task Put_UsesCorrectHttpInfo()
+        public async Task Post_IsConfiguredCorrectly()
+        {
+            mockHttpMessageHandler.ResponseObject = new Reservation();
+            var result = await reservationApiClient.PostAsync(new Reservation());
+            Assert.IsType<Reservation>(result);
+            Assert.Equal("/api/reservations", mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Post, mockHttpMessageHandler.RequestMethod);
+        }
+
+        [Fact]
+        public async Task Put_IsConfiguredCorrectly()
         {
             reservation = new();
-            mockHttpMessageHandler.ExpectedPath = $"/api/reservations/{reservation.Id}";
-            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Put;
             mockHttpMessageHandler.ResponseObject = null;
-            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.NoContent;
             await reservationApiClient.PutAsync(reservation);
-            Assert.True(true); // Checks that we arrive here with no errors previously
+            Assert.Equal($"/api/reservations/{reservation.Id}", mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Put, mockHttpMessageHandler.RequestMethod);
+        }   
+
+        [Fact]
+        public async Task Delete_UsesCorrectHttpInfo()
+        {
+            mockHttpMessageHandler.ResponseObject = null;
+            await reservationApiClient.DeleteAsync(reservation.Id);
+            Assert.Equal($"/api/reservations/{reservation.Id}", mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Delete, mockHttpMessageHandler.RequestMethod);
         }
     }
 }

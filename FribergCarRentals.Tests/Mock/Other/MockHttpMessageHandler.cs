@@ -10,36 +10,18 @@ namespace FribergCarRentals.Tests.Mock.Other
 {
     public class MockHttpMessageHandler : HttpMessageHandler
     {
-        public string? ExpectedPath { get; set; }
-        public HttpMethod? ExpectedMethod { get; set; }
-        public Object? ResponseObject { get; set; }
-        public HttpStatusCode HttpStatusCode { get; set; }
+        public string? RequestPath { get; set; }
+        public HttpMethod? RequestMethod { get; set; }
+        public Object? ResponseObject { get; set; } = new Object();
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (request.RequestUri == null)
-            {
-                throw new InvalidOperationException("No path URI given.");
-            }
+            RequestPath = request.RequestUri?.PathAndQuery;
+            RequestMethod = request.Method;
 
-            string actualPath = request.RequestUri.PathAndQuery;
-            if (actualPath != ExpectedPath)
-            {
-                throw new InvalidOperationException($"Incorrect path. Expected path: {ExpectedPath}. Actual path: {actualPath}.");
-            }
-
-            HttpMethod actualMethod = request.Method;
-            if (actualMethod != ExpectedMethod)
-            {
-                throw new InvalidOperationException($"Incorrect HttpMethod. Expected method: {ExpectedMethod}. Actual method: {actualMethod}.");
-            }
-
-            HttpResponseMessage httpResponseMessage = new(HttpStatusCode);
-            if (ResponseObject != null)
-            {
-                string responseObjectAsJson = JsonSerializer.Serialize(ResponseObject);
-                httpResponseMessage.Content = new StringContent(responseObjectAsJson);
-            }
+            HttpResponseMessage httpResponseMessage = new(HttpStatusCode.OK);
+            string responseObjectAsJson = JsonSerializer.Serialize(ResponseObject);
+            httpResponseMessage.Content = new StringContent(responseObjectAsJson);
             return Task.FromResult(httpResponseMessage);
         }
     }
