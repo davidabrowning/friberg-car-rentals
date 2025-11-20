@@ -14,17 +14,13 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
     {
         // Reused variables
         private MockHttpMessageHandler mockHttpMessageHandler;
-        private HttpClient httpClient;
         private ReservationApiClient reservationApiClient;
         private List<Reservation>? reservations;
 
         public ReservationApiClientTests()
         {
             mockHttpMessageHandler = new();
-            httpClient = new(mockHttpMessageHandler)
-            {
-                BaseAddress = new Uri("http://localhost")
-            };
+            HttpClient httpClient = new(mockHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
             reservationApiClient = new(httpClient);
         }
 
@@ -47,7 +43,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
             reservations = new() { otherReservation, targetReservation };
             mockHttpMessageHandler.ExpectedPath = $"/api/reservations/{targetReservation.Id}";
             mockHttpMessageHandler.ResponseObject = targetReservation;
-            mockHttpMessageHandler.HttpStatusCode= HttpStatusCode.OK;
+            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
             Reservation? result = await reservationApiClient.GetAsync(targetReservation.Id);
             Assert.Equal(targetReservation, result);
         }
