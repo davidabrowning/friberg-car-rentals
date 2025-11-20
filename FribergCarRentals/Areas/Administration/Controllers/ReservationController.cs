@@ -3,7 +3,7 @@ using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.Administration.Views.Reservation;
 using FribergCarRentals.Core.Helpers;
-using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Interfaces.ApiClients;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -11,18 +11,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class ReservationController : Controller
     {
-        private readonly IReservationService _reservationService;
+        private readonly IApiClient<Reservation> _reservationApiClient;
 
-        public ReservationController(IReservationService reservationService)
+        public ReservationController(IApiClient<Reservation> reservationApiClient)
         {
-            _reservationService = reservationService;
+            _reservationApiClient = reservationApiClient;
         }
 
         // GET: Reservation
         public async Task<IActionResult> Index()
         {
             List<IndexReservationViewModel> indexReservationViewModelList = new();
-            IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
+            IEnumerable<Reservation> reservations = await _reservationApiClient.GetAsync();
             foreach (Reservation reservation in reservations)
             {
                 IndexReservationViewModel indexReservationViewModel = new IndexReservationViewModel()
@@ -47,7 +47,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
+            Reservation? reservation = await _reservationApiClient.GetAsync((int)id);
             if (reservation == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
@@ -70,14 +70,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
+            Reservation? reservation = await _reservationApiClient.GetAsync((int)id);
             if (reservation == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
                 return RedirectToAction("Index");
             }
 
-            await _reservationService.DeleteAsync(id);
+            await _reservationApiClient.DeleteAsync(id);
 
             TempData["SuccessMessage"] = UserMessage.SuccessReservationDeleted;
             return RedirectToAction("Index");
