@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FribergCarRentals.Core\FribergCarRentals.Core.csproj" />
     <ProjectReference Include="..\FribergCarRentals.WebApi\FribergCarRentals.WebApi.csproj" />
+    <ProjectReference Include="..\FribergCarRentals\FribergCarRentals.Mvc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
