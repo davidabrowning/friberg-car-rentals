@@ -44,8 +44,8 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         [Fact]
         public async Task Post_IsConfiguredCorrectly()
         {
-            mockHttpMessageHandler.ResponseObject = new Reservation();
-            var result = await reservationApiClient.PostAsync(new Reservation());
+            mockHttpMessageHandler.ResponseObject = reservation;
+            var result = await reservationApiClient.PostAsync(reservation);
             Assert.IsType<Reservation>(result);
             Assert.Equal("/api/reservations", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Post, mockHttpMessageHandler.RequestMethod);
@@ -54,7 +54,6 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         [Fact]
         public async Task Put_IsConfiguredCorrectly()
         {
-            reservation = new();
             mockHttpMessageHandler.ResponseObject = null;
             await reservationApiClient.PutAsync(reservation);
             Assert.Equal($"/api/reservations/{reservation.Id}", mockHttpMessageHandler.RequestPath);
