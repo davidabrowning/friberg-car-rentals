@@ -13,13 +13,13 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
     public class ReservationController : Controller
     {
         private readonly IApiClient<Reservation> _reservationApiClient;
-        private readonly ICarService _carService;
+        private readonly IApiClient<Car> _carApiClient;
         private readonly IUserService _userService;
 
-        public ReservationController(IApiClient<Reservation> reservationApiClient, ICarService carService, IUserService userService)
+        public ReservationController(IApiClient<Reservation> reservationApiClient, IApiClient<Car> carApiClient, IUserService userService)
         {
             _reservationApiClient = reservationApiClient;
-            _carService = carService;
+            _carApiClient = carApiClient;
             _userService = userService;
         }
 
@@ -83,7 +83,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             {
                 CustomerId = customer.Id,
                 PreselectedCarId = preselectedCarId,
-                Cars = await _carService.GetAllAsync(),
+                Cars = await _carApiClient.GetAsync(),
             };
             return View(reservationCreateViewModel);
         }
@@ -95,7 +95,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         {
             if (!ModelState.IsValid)
             {
-                reservationCreateViewModel.Cars = await _carService.GetAllAsync();
+                reservationCreateViewModel.Cars = await _carApiClient.GetAsync();
                 return View(reservationCreateViewModel);
             }
 
@@ -106,7 +106,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            Car? car = await _carService.GetByIdAsync(reservationCreateViewModel.CarId);
+            Car? car = await _carApiClient.GetAsync(reservationCreateViewModel.CarId);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
