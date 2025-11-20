@@ -28,9 +28,9 @@ namespace FribergCarRentals.Mvc.ApiClients
             return reservation;
         }
 
-        public Task PutAsync(Reservation reservation)
+        public async Task PutAsync(Reservation reservation)
         {
-            throw new NotImplementedException();
+            await _httpClient.PutAsJsonAsync($"api/reservations/{reservation.Id}", reservation);
         }
 
         public Task DeleteAsync(int id)

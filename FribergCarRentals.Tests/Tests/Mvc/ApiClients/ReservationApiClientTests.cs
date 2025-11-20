@@ -1,6 +1,7 @@
 ﻿using FribergCarRentals.Core.Models;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.Tests.Mock.Other;
+using Microsoft.AspNetCore.Http.HttpResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,18 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
             mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
             Reservation? result = await reservationApiClient.PostAsync(reservation);
             Assert.Equal(reservation, result);
+        }
+
+        [Fact]
+        public async Task Put_UsesCorrectHttpInfo()
+        {
+            reservation = new();
+            mockHttpMessageHandler.ExpectedPath = $"/api/reservations/{reservation.Id}";
+            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Put;
+            mockHttpMessageHandler.ResponseObject = null;
+            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.NoContent;
+            await reservationApiClient.PutAsync(reservation);
+            Assert.True(true); // Checks that we arrive here with no errors previously
         }
     }
 }
