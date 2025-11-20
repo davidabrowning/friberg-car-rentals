@@ -13,8 +13,7 @@ namespace FribergCarRentals.Mvc.ApiClients
 
         public async Task<IEnumerable<Reservation>> GetAsync()
         {
-            List<Reservation> reservationList = await _httpClient.GetFromJsonAsync<List<Reservation>>("api/reservations") ?? new();
-            return reservationList;
+            return await _httpClient.GetFromJsonAsync<List<Reservation>>("api/reservations") ?? new();
         }
 
         public async Task<Reservation?> GetAsync(int id)
