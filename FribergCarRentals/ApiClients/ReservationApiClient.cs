@@ -22,9 +22,10 @@ namespace FribergCarRentals.Mvc.ApiClients
             return await _httpClient.GetFromJsonAsync<Reservation>($"api/reservations/{id}");
         }
 
-        public Task<Reservation> PostAsync(Reservation reservation)
+        public async Task<Reservation> PostAsync(Reservation reservation)
         {
-            throw new NotImplementedException();
+            await _httpClient.PostAsJsonAsync<Reservation>("api/reservations", reservation);
+            return reservation;
         }
 
         public Task PutAsync(Reservation reservation)

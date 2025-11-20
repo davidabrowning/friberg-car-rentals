@@ -11,6 +11,7 @@ namespace FribergCarRentals.Tests.Mock.Other
     public class MockHttpMessageHandler : HttpMessageHandler
     {
         public string? ExpectedPath { get; set; }
+        public HttpMethod? ExpectedMethod { get; set; }
         public Object? ResponseObject { get; set; }
         public HttpStatusCode HttpStatusCode { get; set; }
 
@@ -25,6 +26,12 @@ namespace FribergCarRentals.Tests.Mock.Other
             if (actualPath != ExpectedPath)
             {
                 throw new InvalidOperationException($"Incorrect path. Expected path: {ExpectedPath}. Actual path: {actualPath}.");
+            }
+
+            HttpMethod actualMethod = request.Method;
+            if (actualMethod != ExpectedMethod)
+            {
+                throw new InvalidOperationException($"Incorrect HttpMethod. Expected method: {ExpectedMethod}. Actual method: {actualMethod}.");
             }
 
             HttpResponseMessage httpResponseMessage = new(HttpStatusCode);

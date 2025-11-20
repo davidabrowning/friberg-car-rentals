@@ -16,6 +16,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         private MockHttpMessageHandler mockHttpMessageHandler;
         private ReservationApiClient reservationApiClient;
         private List<Reservation>? reservations;
+        private Reservation? reservation;
 
         public ReservationApiClientTests()
         {
@@ -29,6 +30,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         {
             reservations = new() { new Reservation(), new Reservation() };
             mockHttpMessageHandler.ExpectedPath = "/api/reservations";
+            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Get;
             mockHttpMessageHandler.ResponseObject = reservations;
             mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
             IEnumerable<Reservation> result = await reservationApiClient.GetAsync();
@@ -42,6 +44,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
             Reservation targetReservation = new Reservation() { Id = 456 };
             reservations = new() { otherReservation, targetReservation };
             mockHttpMessageHandler.ExpectedPath = $"/api/reservations/{targetReservation.Id}";
+            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Get;
             mockHttpMessageHandler.ResponseObject = targetReservation;
             mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
             Reservation? result = await reservationApiClient.GetAsync(targetReservation.Id);
@@ -49,6 +52,15 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         }
 
         [Fact]
-
+        public async Task Post_AddsReservationWithoutError()
+        {
+            reservation = new();
+            mockHttpMessageHandler.ExpectedPath = $"/api/reservations";
+            mockHttpMessageHandler.ExpectedMethod = HttpMethod.Post;
+            mockHttpMessageHandler.ResponseObject = reservation;
+            mockHttpMessageHandler.HttpStatusCode = HttpStatusCode.OK;
+            Reservation? result = await reservationApiClient.PostAsync(reservation);
+            Assert.Equal(reservation, result);
+        }
     }
 }
