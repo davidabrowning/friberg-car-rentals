@@ -9,15 +9,15 @@ namespace FribergCarRentals.Areas.Public.Controllers
     [Area("Public")]
     public class CarController : Controller
     {
-        private readonly ICarApiClient _carApiClient;
-        public CarController(ICarApiClient carApiClient)
+        private readonly IApiClient<Car> _carApiClient;
+        public CarController(IApiClient<Car> carApiClient)
         {
             _carApiClient = carApiClient;
         }
         public async Task<IActionResult> Index()
         {
             List<IndexCarViewModel> carIndexViewModelList = new();
-            foreach (Car car in await _carApiClient.GetAllAsync())
+            foreach (Car car in await _carApiClient.GetAsync())
             {
                 IndexCarViewModel carIndexViewModel = new()
                 {

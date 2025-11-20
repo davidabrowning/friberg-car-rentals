@@ -12,9 +12,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class CarController : Controller
     {
-        private readonly ICarApiClient _carApiClient;
+        private readonly IApiClient<Car> _carApiClient;
 
-        public CarController(ICarApiClient carApiClient)
+        public CarController(IApiClient<Car> carApiClient)
         {
             _carApiClient = carApiClient;
         }
@@ -23,7 +23,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         public async Task<IActionResult> Index()
         {
             List<IndexCarViewModel> indexCarViewModelList = new();
-            IEnumerable<Car> cars = await _carApiClient.GetAllAsync();
+            IEnumerable<Car> cars = await _carApiClient.GetAsync();
             foreach (Car car in cars)
             {
                 IndexCarViewModel indexCarViewModel = new IndexCarViewModel()
@@ -49,7 +49,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Car? car = await _carApiClient.GetByIdAsync((int)id);
+            Car? car = await _carApiClient.GetAsync((int)id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
@@ -93,7 +93,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Year = createCarViewModel.Year,
                 Description = createCarViewModel.Description,
             };
-            await _carApiClient.CreateAsync(car);
+            await _carApiClient.PostAsync(car);
 
             TempData["SuccessMessage"] = UserMessage.SuccessCarCreated + " " + car.ToString();
             return RedirectToAction("Index");
@@ -108,7 +108,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Car? car = await _carApiClient.GetByIdAsync((int)id);
+            Car? car = await _carApiClient.GetAsync((int)id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
@@ -143,7 +143,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(photosCarViewModel);
             }
 
-            Car? car = await _carApiClient.GetByIdAsync(photosCarViewModel.Id);
+            Car? car = await _carApiClient.GetAsync(photosCarViewModel.Id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
@@ -166,7 +166,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             {
                 car.PhotoUrls.Add(photo3);
             }
-            await _carApiClient.UpdateAsync(car);
+            await _carApiClient.PutAsync(car);
 
             TempData["SuccessMessage"] = UserMessage.SuccessCarPhotosUpdated + " " + car.ToString();
             return RedirectToAction("Photos");
@@ -181,7 +181,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Car? car = await _carApiClient.GetByIdAsync((int)id);
+            Car? car = await _carApiClient.GetAsync((int)id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
@@ -216,7 +216,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(editCarViewModel);
             }
 
-            Car? car = await _carApiClient.GetByIdAsync(editCarViewModel.Id);
+            Car? car = await _carApiClient.GetAsync(editCarViewModel.Id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
@@ -227,7 +227,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             car.Model = editCarViewModel.Model;
             car.Year = editCarViewModel.Year;
             car.Description = editCarViewModel.Description;
-            await _carApiClient.UpdateAsync(car);
+            await _carApiClient.PutAsync(car);
 
             TempData["SuccessMessage"] = UserMessage.SuccessCarUpdated + " " + car.ToString();
             return RedirectToAction("Index");
@@ -242,7 +242,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Car? car = await _carApiClient.GetByIdAsync((int)id);
+            Car? car = await _carApiClient.GetAsync((int)id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
@@ -265,7 +265,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Car? car = await _carApiClient.GetByIdAsync(id);
+            Car? car = await _carApiClient.GetAsync(id);
             if (car == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;

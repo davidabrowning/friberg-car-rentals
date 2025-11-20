@@ -37,7 +37,7 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IReservationService, ReservationServiceSeparated>();
 
             // Add web services to the container
-            builder.Services.AddHttpClient<ICarApiClient, CarApiClient>(client =>
+            builder.Services.AddHttpClient<IApiClient<Car>, CarApiClient>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:7175");
             });
