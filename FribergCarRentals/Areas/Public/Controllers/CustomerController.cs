@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Areas.Public.Views.Customer;
 using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.Services;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {

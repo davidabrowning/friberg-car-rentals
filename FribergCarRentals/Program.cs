@@ -1,9 +1,14 @@
 using FribergCarRentals.Data;
-using FribergCarRentals.Core.Interfaces;
 using FribergCarRentals.Core.Models;
-using FribergCarRentals.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using FribergCarRentals.WebApi.Services;
+using FribergCarRentals.Core.Interfaces.Repositories;
+using FribergCarRentals.Core.Interfaces.Other;
+using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.ApiClients;
+using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals
 {
@@ -12,7 +17,7 @@ namespace FribergCarRentals
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             // Add data layer services to the container
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -25,12 +30,18 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningServiceSeparated>();
 
             // Add service layer services to the container
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IAdminService, AdminService>();
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddScoped<ICarService, CarService>();
-            builder.Services.AddScoped<IReservationService, ReservationService>();
+            builder.Services.AddScoped<IUserService, UserServiceSeparated>();
+            builder.Services.AddScoped<IAuthService, AuthServiceSeparated>();
+            builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
+            builder.Services.AddScoped<ICustomerService, CustomerServiceSeparated>();
+            builder.Services.AddScoped<ICarService, CarServiceSeparated>();
+            builder.Services.AddScoped<IReservationService, ReservationServiceSeparated>();
+
+            // Add web services to the container
+            builder.Services.AddHttpClient<IApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
 
             // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -43,14 +54,14 @@ namespace FribergCarRentals
             // Seed roles, default admin user, and default cars
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<DatabaseSeedingServiceSeparated>();
+                IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<IDatabaseSeeder>();
                 await seedingService.SeedAsync();
             }
 
             // Run DB cleanup
             using (IServiceScope scope = app.Services.CreateScope())
             {
-                IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<DatabaseCleaningServiceSeparated>();
+                IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<IDatabaseCleaner>();
                 await cleaningService.CleanAsync();
             }
 
