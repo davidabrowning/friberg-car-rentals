@@ -8,6 +8,7 @@ using FribergCarRentals.Core.Interfaces.Other;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Mvc.ApiClients;
+using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals
 {
@@ -37,10 +38,10 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IReservationService, ReservationServiceSeparated>();
 
             // Add web services to the container
-            builder.Services.AddHttpClient<ICarApiClient, CarApiClient>(client =>
-            {
-                client.BaseAddress = new Uri("https://localhost:7175");
-            });
+            builder.Services.AddHttpClient<IApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
 
             // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)

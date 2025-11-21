@@ -3,7 +3,10 @@ using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.CustomerCenter.Views.Reservation;
 using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.WebApi.Dtos;
+using FribergCarRentals.WebApi.Mappers;
 
 namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 {
@@ -11,14 +14,14 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
     [Area("CustomerCenter")]
     public class ReservationController : Controller
     {
-        private readonly IReservationService _reservationService;
-        private readonly ICarService _carService;
+        private readonly IApiClient<ReservationDto> _reservationDtoApiClient;
+        private readonly IApiClient<CarDto> _carDtoApiClient;
         private readonly IUserService _userService;
 
-        public ReservationController(IReservationService reservationService, ICarService carService, IUserService userService)
+        public ReservationController(IApiClient<ReservationDto> reservationDtoApiClient, IApiClient<CarDto> carDtoApiClient, IUserService userService)
         {
-            _reservationService = reservationService;
-            _carService = carService;
+            _reservationDtoApiClient = reservationDtoApiClient;
+            _carDtoApiClient = carDtoApiClient;
             _userService = userService;
         }
 
@@ -82,7 +85,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
             {
                 CustomerId = customer.Id,
                 PreselectedCarId = preselectedCarId,
-                Cars = await _carService.GetAllAsync(),
+                Cars = CarMapper.ToModels(await _carDtoApiClient.GetAsync())
             };
             return View(reservationCreateViewModel);
         }
@@ -94,7 +97,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         {
             if (!ModelState.IsValid)
             {
-                reservationCreateViewModel.Cars = await _carService.GetAllAsync();
+                reservationCreateViewModel.Cars = CarMapper.ToModels(await _carDtoApiClient.GetAsync());
                 return View(reservationCreateViewModel);
             }
 
@@ -105,23 +108,24 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            Car? car = await _carService.GetByIdAsync(reservationCreateViewModel.CarId);
-            if (car == null)
+            CarDto? carDto = await _carDtoApiClient.GetAsync(reservationCreateViewModel.CarId);
+            if (carDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
             }
 
-            Reservation reservation = new()
+            ReservationDto reservationDto = new()
             {
+                Id = 0,
                 StartDate = reservationCreateViewModel.StartDate,
                 EndDate = reservationCreateViewModel.EndDate,
-                Customer = customer,
-                Car = car,
+                CustomerDto = CustomerMapper.ToDto(customer),
+                CarDto = carDto,
             };
-            await _reservationService.CreateAsync(reservation);
+            await _reservationDtoApiClient.PostAsync(reservationDto);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessReservationCreated + " " + reservation.ToString();
+            TempData["SuccessMessage"] = UserMessage.SuccessReservationCreated + " " + reservationDto.ToString();
             return RedirectToAction("Index");
         }
 
@@ -134,7 +138,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            Reservation? reservation = await _reservationService.GetByIdAsync((int)id);
+            ReservationDto? reservation = await _reservationDtoApiClient.GetAsync((int)id);
             if (reservation == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
@@ -148,7 +152,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            if (reservation.Customer != currentCustomer)
+            if (reservation.CustomerDto != CustomerMapper.ToDto(currentCustomer))
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAccessDenied;
                 return RedirectToAction("Index");
@@ -159,7 +163,7 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 Id = reservation.Id,
                 StartDate = reservation.StartDate,
                 EndDate = reservation.EndDate,
-                Car = reservation.Car,
+                Car = CarMapper.ToModel(reservation.CarDto),
             };
 
             return View(reservationDeleteViewModel);
@@ -170,14 +174,14 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Reservation? reservation = await _reservationService.GetByIdAsync(id);
+            ReservationDto? reservation = await _reservationDtoApiClient.GetAsync(id);
             if (reservation == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
                 return RedirectToAction("Index");
             }
 
-            await _reservationService.DeleteAsync(reservation.Id);
+            await _reservationDtoApiClient.DeleteAsync(reservation.Id);
 
             TempData["SuccessMessage"] = UserMessage.SuccessReservationDeleted;
             return RedirectToAction("Index");

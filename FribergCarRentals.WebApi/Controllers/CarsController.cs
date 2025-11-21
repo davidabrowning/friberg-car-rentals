@@ -15,35 +15,28 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Car>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Car>>> Get()
         {
             var cars = await _carService.GetAllAsync();
             return Ok(cars);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Car?>> GetById(int id)
+        public async Task<ActionResult<Car?>> Get(int id)
         {
             Car? car = await _carService.GetByIdAsync(id);
             return Ok(car);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateAsync(Car car)
+        public async Task<ActionResult> Post(Car car)
         {
             await _carService.CreateAsync(car);
             return Ok();
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult<Car?>> DeleteAsync(int id)
-        {
-            Car? deletedCar = await _carService.DeleteAsync(id);
-            return Ok(deletedCar);
-        }
-
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<Car?>> PutAsync(int id, Car car)
+        public async Task<ActionResult<Car?>> Put(int id, Car car)
         {
             if (id != car.Id)
             {
@@ -51,6 +44,13 @@ namespace FribergCarRentals.WebApi.Controllers
             }
             await _carService.UpdateAsync(car);
             return Ok(car);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<Car?>> Delete(int id)
+        {
+            Car? deletedCar = await _carService.DeleteAsync(id);
+            return Ok(deletedCar);
         }
     }
 }

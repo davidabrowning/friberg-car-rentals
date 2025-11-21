@@ -1,9 +1,9 @@
 ﻿using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Core.Models;
+using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.ApiClients
 {
-    public class CarApiClient : ICarApiClient
+    public class CarApiClient : IApiClient<CarDto>
     {
         private readonly HttpClient _httpClient;
         public CarApiClient(HttpClient httpClient)
@@ -11,38 +11,31 @@ namespace FribergCarRentals.Mvc.ApiClients
             _httpClient = httpClient;
         }
 
-        public async Task<Car> CreateAsync(Car car)
+        public async Task<IEnumerable<CarDto>> GetAsync()
         {
-            await _httpClient.PostAsJsonAsync<Car>("api/cars", car);
-            return car;
+            List<CarDto> carDtoList = await _httpClient.GetFromJsonAsync<List<CarDto>>("api/cars") ?? new();
+            return carDtoList;
         }
 
-        public async Task<Car?> DeleteAsync(int id)
+        public async Task<CarDto?> GetAsync(int id)
         {
-            Car? deletedCar = await _httpClient.DeleteFromJsonAsync<Car?>($"api/cars/{id}");
-            return deletedCar;
+            return await _httpClient.GetFromJsonAsync<CarDto?>($"api/cars/{id}");
         }
 
-        public async Task<IEnumerable<Car>> GetAllAsync()
+        public async Task<CarDto> PostAsync(CarDto carDto)
         {
-            List<Car> carList = await _httpClient.GetFromJsonAsync<List<Car>>("api/cars") ?? new();
-            return carList;
-        }
-        public async Task<Car?> GetByIdAsync(int id)
-        {
-            return await _httpClient.GetFromJsonAsync<Car?>($"api/cars/{id}");
+            await _httpClient.PostAsJsonAsync<CarDto>("api/cars", carDto);
+            return carDto;
         }
 
-        public async Task<bool> IdExistsAsync(int id)
+        public async Task PutAsync(CarDto carDto)
         {
-            Car? car = await GetByIdAsync(id);
-            return car != null;
+            await _httpClient.PutAsJsonAsync<CarDto>($"api/cars/{carDto.Id}", carDto);
         }
 
-        public async Task<Car> UpdateAsync(Car car)
+        public async Task DeleteAsync(int id)
         {
-            await _httpClient.PutAsJsonAsync<Car>($"api/cars/{car.Id}", car);
-            return car;
+            CarDto? deletedCarDto = await _httpClient.DeleteFromJsonAsync<CarDto?>($"api/cars/{id}");
         }
     }
 }
