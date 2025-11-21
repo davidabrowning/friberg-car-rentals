@@ -5,7 +5,7 @@
         Task<IEnumerable<T>> GetAsync();
         Task<T?> GetAsync(int id);
         Task<T> PostAsync(T t);
-        Task PutAsync(T t);
-        Task DeleteAsync(int id);
+        Task<T> PutAsync(T t);
+        Task<T?> DeleteAsync(int id);
     }
 }

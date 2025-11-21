@@ -55,7 +55,8 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         {
             ReservationDto reservationDto = new();
             _mockHttpMessageHandler.ResponseObject = null;
-            await _reservationApiClient.PutAsync(reservationDto);
+            var result = await _reservationApiClient.PutAsync(reservationDto);
+            Assert.IsType<ReservationDto>(result);
             Assert.Equal($"/api/reservations/{reservationDto.Id}", _mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Put, _mockHttpMessageHandler.RequestMethod);
         }   
@@ -65,7 +66,8 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         {
             ReservationDto reservationDto = new();
             _mockHttpMessageHandler.ResponseObject = null;
-            await _reservationApiClient.DeleteAsync(reservationDto.Id);
+            var result = await _reservationApiClient.DeleteAsync(reservationDto.Id);
+            Assert.IsType<ReservationDto>(result);
             Assert.Equal($"/api/reservations/{reservationDto.Id}", _mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Delete, _mockHttpMessageHandler.RequestMethod);
         }
