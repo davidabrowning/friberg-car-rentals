@@ -7,66 +7,66 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
 {
     public class CarApiClientTests
     {
-        private MockHttpMessageHandler mockHttpMessageHandler;
-        private CarApiClient carApiClient;
+        private MockHttpMessageHandler _mockHttpMessageHandler;
+        private CarApiClient _carApiClient;
 
         public CarApiClientTests()
         {
-            mockHttpMessageHandler = new();
-            HttpClient httpClient = new(mockHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
-            carApiClient = new(httpClient);
+            _mockHttpMessageHandler = new();
+            HttpClient httpClient = new(_mockHttpMessageHandler) { BaseAddress = new Uri("http://localhost") };
+            _carApiClient = new(httpClient);
         }
 
         [Fact]
         public async Task GetAll_IsConfiguredCorrectly()
         {
-            mockHttpMessageHandler.ResponseObject = new List<CarDto>();
-            var result = await carApiClient.GetAsync();
+            _mockHttpMessageHandler.ResponseObject = new List<CarDto>();
+            var result = await _carApiClient.GetAsync();
             Assert.IsType<List<CarDto>>(result);
-            Assert.Equal("/api/cars", mockHttpMessageHandler.RequestPath);
-            Assert.Equal(HttpMethod.Get, mockHttpMessageHandler.RequestMethod);
+            Assert.Equal("/api/cars", _mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Get, _mockHttpMessageHandler.RequestMethod);
         }
 
         [Fact]
         public async Task GetOne_IsConfiguredCorrectly()
         {
             CarDto carDto = new() { Id = 42 };
-            mockHttpMessageHandler.ResponseObject = carDto;
-            var result = await carApiClient.GetAsync(carDto.Id);
+            _mockHttpMessageHandler.ResponseObject = carDto;
+            var result = await _carApiClient.GetAsync(carDto.Id);
             Assert.IsType<CarDto>(result);
-            Assert.Equal($"/api/cars/{carDto.Id}", mockHttpMessageHandler.RequestPath);
-            Assert.Equal(HttpMethod.Get, mockHttpMessageHandler.RequestMethod);
+            Assert.Equal($"/api/cars/{carDto.Id}", _mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Get, _mockHttpMessageHandler.RequestMethod);
         }
 
         [Fact]
         public async Task Post_IsConfiguredCorrectly()
         {
             CarDto carDto = new() { Id = 42 };
-            mockHttpMessageHandler.ResponseObject = carDto;
-            var result = await carApiClient.PostAsync(carDto);
+            _mockHttpMessageHandler.ResponseObject = carDto;
+            var result = await _carApiClient.PostAsync(carDto);
             Assert.IsType<CarDto>(result);
-            Assert.Equal("/api/cars", mockHttpMessageHandler.RequestPath);
-            Assert.Equal(HttpMethod.Post, mockHttpMessageHandler.RequestMethod);
+            Assert.Equal("/api/cars", _mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Post, _mockHttpMessageHandler.RequestMethod);
         }
 
         [Fact]
         public async Task Put_IsConfiguredCorrectly()
         {
             CarDto carDto = new() { Id = 42 };
-            mockHttpMessageHandler.ResponseObject = null;
-            await carApiClient.PutAsync(carDto);
-            Assert.Equal($"/api/cars/{carDto.Id}", mockHttpMessageHandler.RequestPath);
-            Assert.Equal(HttpMethod.Put, mockHttpMessageHandler.RequestMethod);
+            _mockHttpMessageHandler.ResponseObject = null;
+            await _carApiClient.PutAsync(carDto);
+            Assert.Equal($"/api/cars/{carDto.Id}", _mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Put, _mockHttpMessageHandler.RequestMethod);
         }
 
         [Fact]
         public async Task Delete_UsesCorrectHttpInfo()
         {
             CarDto carDto = new() { Id= 42 };
-            mockHttpMessageHandler.ResponseObject = null;
-            await carApiClient.DeleteAsync(carDto.Id);
-            Assert.Equal($"/api/cars/{carDto.Id}", mockHttpMessageHandler.RequestPath);
-            Assert.Equal(HttpMethod.Delete, mockHttpMessageHandler.RequestMethod);
+            _mockHttpMessageHandler.ResponseObject = null;
+            await _carApiClient.DeleteAsync(carDto.Id);
+            Assert.Equal($"/api/cars/{carDto.Id}", _mockHttpMessageHandler.RequestPath);
+            Assert.Equal(HttpMethod.Delete, _mockHttpMessageHandler.RequestMethod);
         }
     }
 }
