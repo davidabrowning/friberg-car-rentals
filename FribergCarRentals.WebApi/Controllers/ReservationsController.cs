@@ -20,12 +20,12 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<ReservationDto>> Get()
         {
-            IEnumerable<ReservationDto> reservationDtos = new List<ReservationDto>();
+            List<ReservationDto> reservationDtos = new();
             IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
             foreach (Reservation reservation in reservations)
             {
                 ReservationDto reservationDto = ReservationMapper.ToDto(reservation);
-                reservationDtos.Append(reservationDto);
+                reservationDtos.Add(reservationDto);
             }
             return reservationDtos;
         }
