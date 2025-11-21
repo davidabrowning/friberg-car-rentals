@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.Administration.Views.Customer;
 using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -12,10 +14,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     public class CustomerController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IApiClient<CustomerDto> _customerDtoApiClient;
 
-        public CustomerController(IUserService userService)
+        public CustomerController(IUserService userService, IApiClient<CustomerDto> customerDtoApiClient)
         {
             _userService = userService;
+            _customerDtoApiClient = customerDtoApiClient;
         }
 
         // GET: Customer
@@ -90,24 +94,25 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Customer? customer = await _userService.GetCustomerByCustomerIdAsync((int)id);
-            if (customer == null)
+            // Customer? customer = await _userService.GetCustomerByCustomerIdAsync((int)id);
+            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync((int)id);
+            if (customerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
             }
 
-            string username = await _userService.GetUsernameByUserId(customer.UserId);
+            string username = await _userService.GetUsernameByUserId(customerDto.UserId);
             EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
             {
-                CustomerId = customer.Id,
-                IdentityUserId = customer.UserId,
+                CustomerId = customerDto.Id,
+                IdentityUserId = customerDto.UserId,
                 IdentityUserUsername = username,
-                FirstName = customer.FirstName,
-                LastName = customer.LastName,
-                HomeCity = customer.HomeCity,
-                HomeCountry = customer.HomeCountry,
-                ReservationIds = customer.Reservations.Select(c => c.Id).ToList(),
+                FirstName = customerDto.FirstName,
+                LastName = customerDto.LastName,
+                HomeCity = customerDto.HomeCity,
+                HomeCountry = customerDto.HomeCountry,
+                // ReservationIds = customerDto.Reservations.Select(c => c.Id).ToList(),
             };
 
             return View(editCustomerViewModel);

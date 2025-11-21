@@ -37,11 +37,11 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(CarDto carDto)
+        public async Task<ActionResult<CarDto>> Post(CarDto carDto)
         {
             Car car = CarMapper.ToModel(carDto);
             await _carService.CreateAsync(car);
-            return Ok();
+            return Ok(carDto);
         }
 
         [HttpPut("{id:int}")]
