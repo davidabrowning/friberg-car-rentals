@@ -1,7 +1,9 @@
 ﻿using FribergCarRentals.Areas.CustomerCenter.Views.Car;
 using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
+using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,24 +13,24 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
     [Area("CustomerCenter")]
     public class CarController : Controller
     {
-        private readonly ICarService _carService;
-        public CarController(ICarService carService)
+        private readonly IApiClient<CarDto> _carDtoApiClient;
+        public CarController(IApiClient<CarDto> carApiClient)
         {
-            _carService = carService;
+            _carDtoApiClient = carApiClient;
         }
         public async Task<IActionResult> Index()
         {
             List<IndexCarViewModel> indexCarViewModelList = new();
-            foreach (Car car in await _carService.GetAllAsync())
+            foreach (CarDto carDto in await _carDtoApiClient.GetAsync())
             {
                 IndexCarViewModel carIndexViewModel = new()
                 {
-                    Id = car.Id,
-                    Make = car.Make,
-                    Model = car.Model,
-                    Year = car.Year,
-                    Description = car.Description,
-                    PhotoUrl = car.PhotoUrls.ElementAtOrDefault(0) ?? string.Empty,
+                    Id = carDto.Id,
+                    Make = carDto.Make,
+                    Model = carDto.Model,
+                    Year = carDto.Year,
+                    Description = carDto.Description,
+                    PhotoUrl = carDto.PhotoUrls.ElementAtOrDefault(0) ?? string.Empty,
                 };
                 indexCarViewModelList.Add(carIndexViewModel);
             }
@@ -44,8 +46,8 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            Car? car = await _carService.GetByIdAsync((int)id);
-            if (car == null)
+            CarDto? carDto = await _carDtoApiClient.GetAsync((int)id);
+            if (carDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
                 return RedirectToAction("Index");
@@ -53,12 +55,12 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
 
             DetailsCarViewModel detailsCarViewModel = new()
             {
-                Id = car.Id,
-                Make = car.Make,
-                Model = car.Model,
-                Year = car.Year,
-                Description = car.Description,
-                PhotoUrls = car.PhotoUrls,
+                Id = carDto.Id,
+                Make = carDto.Make,
+                Model = carDto.Model,
+                Year = carDto.Year,
+                Description = carDto.Description,
+                PhotoUrls = carDto.PhotoUrls,
             };
 
             return View(detailsCarViewModel);
