@@ -31,5 +31,27 @@ namespace FribergCarRentals.WebApi.Mappers
             };
             return car;
         }
+
+        public static List<Dtos.CarDto> ToDtos(IEnumerable<Core.Models.Car> cars)
+        {
+            List<Dtos.CarDto> carDtos = new();
+            foreach (Core.Models.Car car in cars)
+            {
+                Dtos.CarDto carDto = ToDto(car);
+                carDtos.Add(carDto);
+            }
+            return carDtos;
+        }
+
+        public static List<Core.Models.Car> ToModels(IEnumerable<Dtos.CarDto> carDtos)
+        {
+            List<Core.Models.Car> cars = new();
+            foreach (Dtos.CarDto carDto in carDtos)
+            {
+                Core.Models.Car car = ToModel(carDto);
+                cars.Add(car);
+            }
+            return cars;
+        }
     }
 }

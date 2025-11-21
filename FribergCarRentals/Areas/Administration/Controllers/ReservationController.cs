@@ -26,7 +26,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             IEnumerable<ReservationDto> reservationDtos = await _reservationDtoApiClient.GetAsync();
             foreach (ReservationDto reservationDto in reservationDtos)
             {
-                Car car = new()
+                Core.Models.Car car = new()
                 {
                     Id = reservationDto.CarDto.Id,
                     Description = "Complete in ReservationController"
