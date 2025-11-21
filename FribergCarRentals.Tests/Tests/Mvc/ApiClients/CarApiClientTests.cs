@@ -53,7 +53,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         public async Task Put_IsConfiguredCorrectly()
         {
             CarDto carDto = new() { Id = 42 };
-            _mockHttpMessageHandler.ResponseObject = null;
+            _mockHttpMessageHandler.ResponseObject = new CarDto();
             var result = await _carApiClient.PutAsync(carDto);
             Assert.IsType<CarDto>(result);
             Assert.Equal($"/api/cars/{carDto.Id}", _mockHttpMessageHandler.RequestPath);
@@ -61,10 +61,10 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         }
 
         [Fact]
-        public async Task Delete_UsesCorrectHttpInfo()
+        public async Task Delete_IsConfiguredCorrectly()
         {
             CarDto carDto = new() { Id= 42 };
-            _mockHttpMessageHandler.ResponseObject = null;
+            _mockHttpMessageHandler.ResponseObject = new CarDto();
             var result = await _carApiClient.DeleteAsync(carDto.Id);
             Assert.IsType<CarDto>(result);
             Assert.Equal($"/api/cars/{carDto.Id}", _mockHttpMessageHandler.RequestPath);

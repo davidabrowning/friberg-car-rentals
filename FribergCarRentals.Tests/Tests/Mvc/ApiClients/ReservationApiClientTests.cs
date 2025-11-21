@@ -54,7 +54,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         public async Task Put_IsConfiguredCorrectly()
         {
             ReservationDto reservationDto = new();
-            _mockHttpMessageHandler.ResponseObject = null;
+            _mockHttpMessageHandler.ResponseObject = new ReservationDto();
             var result = await _reservationApiClient.PutAsync(reservationDto);
             Assert.IsType<ReservationDto>(result);
             Assert.Equal($"/api/reservations/{reservationDto.Id}", _mockHttpMessageHandler.RequestPath);
@@ -62,10 +62,10 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         }   
 
         [Fact]
-        public async Task Delete_UsesCorrectHttpInfo()
+        public async Task Delete_IsConfiguredCorrectly()
         {
             ReservationDto reservationDto = new();
-            _mockHttpMessageHandler.ResponseObject = null;
+            _mockHttpMessageHandler.ResponseObject = new ReservationDto();
             var result = await _reservationApiClient.DeleteAsync(reservationDto.Id);
             Assert.IsType<ReservationDto>(result);
             Assert.Equal($"/api/reservations/{reservationDto.Id}", _mockHttpMessageHandler.RequestPath);
