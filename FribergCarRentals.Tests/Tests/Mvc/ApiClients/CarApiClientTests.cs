@@ -1,6 +1,7 @@
 ﻿using FribergCarRentals.Core.Models;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.Tests.Mock.Other;
+using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
 {
@@ -11,6 +12,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         private CarApiClient carApiClient;
         private List<Car> cars;
         private Car car;
+        private CarDto carDto;
 
         public CarApiClientTests()
         {
@@ -45,7 +47,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         public async Task Post_IsConfiguredCorrectly()
         {
             mockHttpMessageHandler.ResponseObject = car;
-            var result = await carApiClient.PostAsync(car);
+            var result = await carApiClient.PostAsync(carDto);
             Assert.IsType<Car>(result);
             Assert.Equal("/api/cars", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Post, mockHttpMessageHandler.RequestMethod);
@@ -55,7 +57,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         public async Task Put_IsConfiguredCorrectly()
         {
             mockHttpMessageHandler.ResponseObject = null;
-            await carApiClient.PutAsync(car);
+            await carApiClient.PutAsync(carDto);
             Assert.Equal($"/api/cars/{car.Id}", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Put, mockHttpMessageHandler.RequestMethod);
         }

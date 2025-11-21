@@ -1,5 +1,7 @@
 ﻿using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
+using FribergCarRentals.WebApi.Dtos;
+using FribergCarRentals.WebApi.Mappers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +18,16 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Reservation>> Get()
+        public async Task<IEnumerable<ReservationDto>> Get()
         {
+            IEnumerable<ReservationDto> reservationDtos = new List<ReservationDto>();
             IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
-            return reservations;
+            foreach (Reservation reservation in reservations)
+            {
+                ReservationDto reservationDto = ReservationMapper.ToDto(reservation);
+                reservationDtos.Append(reservationDto);
+            }
+            return reservationDtos;
         }
 
         [HttpGet("{id:int}")]
