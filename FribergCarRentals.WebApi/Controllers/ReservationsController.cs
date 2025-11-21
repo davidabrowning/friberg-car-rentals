@@ -31,27 +31,31 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<Reservation?> Get(int id)
+        public async Task<ReservationDto?> Get(int id)
         {
             Reservation? reservation = await _reservationService.GetByIdAsync(id);
-            return reservation;
+            if (reservation == null)
+            {
+                return null;
+            }
+            return ReservationMapper.ToDto(reservation);
         }
 
         [HttpPost]
-        public async Task<Reservation> Post(Reservation reservation)
+        public async Task<ReservationDto> Post(ReservationDto reservationDto)
         {
-            await _reservationService.CreateAsync(reservation);
-            return reservation;
+            await _reservationService.CreateAsync(ReservationMapper.ToModel(reservationDto));
+            return reservationDto;
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, Reservation reservation)
+        public async Task<ActionResult> Put(int id, ReservationDto reservationDto)
         {
-            if (id != reservation.Id)
+            if (id != reservationDto.Id)
             {
                 return BadRequest("Id and reservation do not match.");
             }
-            await _reservationService.UpdateAsync(reservation);
+            await _reservationService.UpdateAsync(ReservationMapper.ToModel(reservationDto));
             return NoContent();
         }
 

@@ -13,6 +13,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         private List<Car> cars;
         private Car car;
         private CarDto carDto;
+        private List<CarDto> carDtos;
 
         public CarApiClientTests()
         {
@@ -21,14 +22,15 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
             carApiClient = new(httpClient);
             cars = new() { new Car() { Id = 27 }, new Car() { Id = 28 } };
             car = new() { Id = 42 };
+            carDto = new() { Id = 43, Description = "", Make = "", Model = "", PhotoUrls = new(), Year = 0 };
         }
 
         [Fact]
         public async Task GetAll_IsConfiguredCorrectly()
         {
-            mockHttpMessageHandler.ResponseObject = cars;
+            mockHttpMessageHandler.ResponseObject = carDtos;
             var result = await carApiClient.GetAsync();
-            Assert.IsType<List<Car>>(result);
+            Assert.IsType<List<CarDto>>(result);
             Assert.Equal("/api/cars", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Get, mockHttpMessageHandler.RequestMethod);
         }
@@ -36,19 +38,19 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         [Fact]
         public async Task GetOne_IsConfiguredCorrectly()
         {
-            mockHttpMessageHandler.ResponseObject = car;
-            var result = await carApiClient.GetAsync(car.Id);
-            Assert.IsType<Car>(result);
-            Assert.Equal($"/api/cars/{car.Id}", mockHttpMessageHandler.RequestPath);
+            mockHttpMessageHandler.ResponseObject = carDto;
+            var result = await carApiClient.GetAsync(carDto.Id);
+            Assert.IsType<CarDto>(result);
+            Assert.Equal($"/api/cars/{carDto.Id}", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Get, mockHttpMessageHandler.RequestMethod);
         }
 
         [Fact]
         public async Task Post_IsConfiguredCorrectly()
         {
-            mockHttpMessageHandler.ResponseObject = car;
+            mockHttpMessageHandler.ResponseObject = carDto;
             var result = await carApiClient.PostAsync(carDto);
-            Assert.IsType<Car>(result);
+            Assert.IsType<CarDto>(result);
             Assert.Equal("/api/cars", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Post, mockHttpMessageHandler.RequestMethod);
         }
@@ -58,7 +60,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         {
             mockHttpMessageHandler.ResponseObject = null;
             await carApiClient.PutAsync(carDto);
-            Assert.Equal($"/api/cars/{car.Id}", mockHttpMessageHandler.RequestPath);
+            Assert.Equal($"/api/cars/{carDto.Id}", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Put, mockHttpMessageHandler.RequestMethod);
         }
 
@@ -66,8 +68,8 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         public async Task Delete_UsesCorrectHttpInfo()
         {
             mockHttpMessageHandler.ResponseObject = null;
-            await carApiClient.DeleteAsync(car.Id);
-            Assert.Equal($"/api/cars/{car.Id}", mockHttpMessageHandler.RequestPath);
+            await carApiClient.DeleteAsync(carDto.Id);
+            Assert.Equal($"/api/cars/{carDto.Id}", mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Delete, mockHttpMessageHandler.RequestMethod);
         }
     }
