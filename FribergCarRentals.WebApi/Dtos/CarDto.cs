@@ -2,11 +2,11 @@
 {
     public class CarDto
     {
-        public required int Id { get; set; }
-        public required string Make { get; set; }
-        public required string Model { get; set; }
-        public required int Year { get; set; }
-        public required string Description { get; set; }
-        public required List<string> PhotoUrls { get; set; }
+        public int Id { get; set; }
+        public string Make { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+        public int Year { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public List<string> PhotoUrls { get; set; } = new();
     }
 }
