@@ -23,7 +23,7 @@ namespace FribergCarRentals
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             builder.Services.AddScoped<IRepository<Admin>, AdminRepositorySeparated>();
-            builder.Services.AddScoped<IRepository<Core.Models.Car>, CarRepositorySeparated>();
+            builder.Services.AddScoped<IRepository<Car>, CarRepositorySeparated>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepositorySeparated>();
             builder.Services.AddScoped<IRepository<Reservation>, ReservationRepositorySeparated>();
             builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingServiceSeparated>();
@@ -39,6 +39,8 @@ namespace FribergCarRentals
 
             // Add web services to the container
             builder.Services.AddHttpClient<IApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
             builder.Services.AddHttpClient<IApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
 
             // Add other services to the container
