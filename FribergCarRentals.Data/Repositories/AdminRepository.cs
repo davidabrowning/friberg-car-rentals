@@ -5,10 +5,10 @@ using FribergCarRentals.Core.Interfaces.Repositories;
 
 namespace FribergCarRentals.Data
 {
-    public class AdminRepositorySeparated : IRepository<Admin>
+    public class AdminRepository : IRepository<Admin>
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        public AdminRepositorySeparated(ApplicationDbContext applicationDbContext)
+        public AdminRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }

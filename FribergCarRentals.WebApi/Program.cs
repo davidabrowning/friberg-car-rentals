@@ -18,10 +18,10 @@ namespace FribergCarRentals.WebApi
 
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-            builder.Services.AddScoped<IRepository<Admin>, AdminRepositorySeparated>();
-            builder.Services.AddScoped<IRepository<Car>, CarRepositorySeparated>();
-            builder.Services.AddScoped<IRepository<Customer>, CustomerRepositorySeparated>();
-            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepositorySeparated>();
+            builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
+            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
+            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
             builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
             builder.Services.AddScoped<IAuthService, AuthServiceSeparated>();
             builder.Services.AddScoped<ICarService, CarServiceSeparated>();

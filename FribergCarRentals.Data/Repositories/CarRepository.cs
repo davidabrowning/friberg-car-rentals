@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Data
 {
-    public class CarRepositorySeparated : IRepository<Car>
+    public class CarRepository : IRepository<Car>
     {
         private readonly ApplicationDbContext _applicationDbContext;
-        public CarRepositorySeparated(ApplicationDbContext applicationDbContext)
+        public CarRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }
