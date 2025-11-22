@@ -14,7 +14,7 @@ namespace FribergCarRentals.Tests.Tests.WebApi.Services
         public ReservationServiceTests()
         {
             MockReservationRepository reservationRepository = new();
-            _reservationService = new ReservationServiceSeparated(reservationRepository);
+            _reservationService = new ReservationService(reservationRepository);
         }
 
         [Fact]

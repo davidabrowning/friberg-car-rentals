@@ -5,12 +5,12 @@ using FribergCarRentals.Core.Interfaces.Services;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public class UserServiceSeparated : IUserService
+    public class UserService : IUserService
     {
         private readonly IAuthService _authService;
         private readonly IAdminService _adminService;
         private readonly ICustomerService _customerService;
-        public UserServiceSeparated(IAuthService authService, IAdminService adminService, ICustomerService customerService)
+        public UserService(IAuthService authService, IAdminService adminService, ICustomerService customerService)
         {
             _authService = authService;
             _adminService = adminService;
@@ -45,7 +45,7 @@ namespace FribergCarRentals.WebApi.Services
         // Admin methods
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
-            await _authService.AddToRoleAsync(admin.UserId, AuthServiceSeparated.RoleNameAdmin);
+            await _authService.AddToRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
             await _adminService.CreateAsync(admin);
             return admin;
         }
@@ -61,14 +61,14 @@ namespace FribergCarRentals.WebApi.Services
                 return null;
             }
 
-            await _authService.RemoveFromRoleAsync(admin.UserId, AuthServiceSeparated.RoleNameAdmin);
+            await _authService.RemoveFromRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
             return await _adminService.DeleteAsync(admin.Id);
         }
 
         // Customer methods
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-            await _authService.AddToRoleAsync(customer.UserId, AuthServiceSeparated.RoleNameCustomer);
+            await _authService.AddToRoleAsync(customer.UserId, AuthService.RoleNameCustomer);
             await _customerService.CreateAsync(customer);
             return customer;
         }
@@ -80,7 +80,7 @@ namespace FribergCarRentals.WebApi.Services
                 return null;
             }
 
-            await _authService.RemoveFromRoleAsync(customer.UserId, AuthServiceSeparated.RoleNameCustomer);
+            await _authService.RemoveFromRoleAsync(customer.UserId, AuthService.RoleNameCustomer);
             await _customerService.DeleteAsync(customer.Id);
             return customer;
         }

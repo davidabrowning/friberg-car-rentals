@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public class CarServiceSeparated : BasicCRUDServiceSeparated<Car>, ICarService
+    public class CarService : BasicCRUDService<Car>, ICarService
     {
         private readonly IReservationService _reservationService;
-        public CarServiceSeparated(IRepository<Car> carRepository, IReservationService reservationService) : base(carRepository)
+        public CarService(IRepository<Car> carRepository, IReservationService reservationService) : base(carRepository)
         {
             _reservationService = reservationService;
         }

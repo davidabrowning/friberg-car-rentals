@@ -22,12 +22,12 @@ namespace FribergCarRentals.WebApi
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
             builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
-            builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
-            builder.Services.AddScoped<IAuthService, AuthServiceSeparated>();
-            builder.Services.AddScoped<ICarService, CarServiceSeparated>();
-            builder.Services.AddScoped<ICustomerService, CustomerServiceSeparated>();
-            builder.Services.AddScoped<IReservationService, ReservationServiceSeparated>();
-            builder.Services.AddScoped<IUserService, UserServiceSeparated>();
+            builder.Services.AddScoped<IAdminService, AdminService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ICarService, CarService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
