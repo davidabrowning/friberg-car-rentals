@@ -2,9 +2,7 @@
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices.Marshalling;
 
 namespace FribergCarRentals.WebApi.Controllers
 {
@@ -16,12 +14,6 @@ namespace FribergCarRentals.WebApi.Controllers
         public CustomersController(IUserService userService)
         {
             _userService = userService;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerDto>>> Get()
-        {
-            throw new NotImplementedException();
         }
 
         [HttpGet("{id:int}")]
@@ -39,19 +31,29 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomerDto>> Post(CustomerDto customerDto)
         {
-            throw new NotImplementedException();
+            Customer customer = CustomerMapper.ToModel(customerDto);
+            await _userService.CreateCustomerAsync(customer);
+            return Ok(customerDto);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<CustomerDto>> Put(int id, CustomerDto customerDto)
         {
-            throw new NotImplementedException();
+            Customer customer = CustomerMapper.ToModel(customerDto);
+            await _userService.UpdateCustomerAsync(customer);
+            return Ok(customerDto);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CustomerDto?>> Delete(int id)
         {
-            throw new NotImplementedException();
+            Customer? customer = await _userService.DeleteCustomerAsync(id);
+            if (customer == null)
+            {
+                return BadRequest("Unable to find customer with that id.");
+            }
+            CustomerDto customerDto = CustomerMapper.ToDto(customer);
+            return Ok(customerDto);
         }
     }
 }
