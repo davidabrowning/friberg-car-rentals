@@ -14,9 +14,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     public class CustomerController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IApiClient<CustomerDto> _customerDtoApiClient;
+        private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
 
-        public CustomerController(IUserService userService, IApiClient<CustomerDto> customerDtoApiClient)
+        public CustomerController(IUserService userService, ICRUDApiClient<CustomerDto> customerDtoApiClient)
         {
             _userService = userService;
             _customerDtoApiClient = customerDtoApiClient;

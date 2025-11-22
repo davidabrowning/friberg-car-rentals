@@ -12,9 +12,9 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class ReservationController : Controller
     {
-        private readonly IApiClient<ReservationDto> _reservationDtoApiClient;
+        private readonly ICRUDApiClient<ReservationDto> _reservationDtoApiClient;
 
-        public ReservationController(IApiClient<ReservationDto> reservationDtoApiClient)
+        public ReservationController(ICRUDApiClient<ReservationDto> reservationDtoApiClient)
         {
             _reservationDtoApiClient = reservationDtoApiClient;
         }
