@@ -4,9 +4,9 @@ using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public class ReservationServiceSeparated : BasicCRUDServiceSeparated<Reservation>, IReservationService
+    public class ReservationService : BasicCRUDService<Reservation>, IReservationService
     {
-        public ReservationServiceSeparated(IRepository<Reservation> reservationRepository) : base(reservationRepository)
+        public ReservationService(IRepository<Reservation> reservationRepository) : base(reservationRepository)
         {
         }
 

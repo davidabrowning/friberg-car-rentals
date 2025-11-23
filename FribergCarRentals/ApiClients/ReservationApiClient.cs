@@ -4,7 +4,7 @@ using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.ApiClients
 {
-    public class ReservationApiClient : IApiClient<ReservationDto>
+    public class ReservationApiClient : ICRUDApiClient<ReservationDto>
     {
         private readonly HttpClient _httpClient;
         public ReservationApiClient(HttpClient httpClient)

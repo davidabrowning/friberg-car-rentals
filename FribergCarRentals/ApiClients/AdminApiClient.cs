@@ -3,7 +3,7 @@ using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.ApiClients
 {
-    public class AdminApiClient : IApiClient<AdminDto>
+    public class AdminApiClient : ICRUDApiClient<AdminDto>
     {
         private readonly HttpClient _httpClient;
         public AdminApiClient(HttpClient httpClient)

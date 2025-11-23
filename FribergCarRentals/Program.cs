@@ -22,26 +22,27 @@ namespace FribergCarRentals
             // Add data layer services to the container
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-            builder.Services.AddScoped<IRepository<Admin>, AdminRepositorySeparated>();
-            builder.Services.AddScoped<IRepository<Car>, CarRepositorySeparated>();
-            builder.Services.AddScoped<IRepository<Customer>, CustomerRepositorySeparated>();
-            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepositorySeparated>();
+            builder.Services.AddScoped<IRepository<Admin>, AdminRepository>();
+            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
+            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
             builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingServiceSeparated>();
             builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningServiceSeparated>();
 
             // Add service layer services to the container
-            builder.Services.AddScoped<IUserService, UserServiceSeparated>();
-            builder.Services.AddScoped<IAuthService, AuthServiceSeparated>();
-            builder.Services.AddScoped<IAdminService, AdminServiceSeparated>();
-            builder.Services.AddScoped<ICustomerService, CustomerServiceSeparated>();
-            builder.Services.AddScoped<ICarService, CarServiceSeparated>();
-            builder.Services.AddScoped<IReservationService, ReservationServiceSeparated>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IAdminService, AdminService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<ICarService, CarService>();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
 
             // Add web services to the container
-            builder.Services.AddHttpClient<IApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<IApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<IApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<IApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<ICRUDApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<ICRUDApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<ICRUDApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<ICRUDApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IAuthApiClient, AuthApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
 
             // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)

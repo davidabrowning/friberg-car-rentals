@@ -13,8 +13,8 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
     [Area("CustomerCenter")]
     public class CarController : Controller
     {
-        private readonly IApiClient<CarDto> _carDtoApiClient;
-        public CarController(IApiClient<CarDto> carApiClient)
+        private readonly ICRUDApiClient<CarDto> _carDtoApiClient;
+        public CarController(ICRUDApiClient<CarDto> carApiClient)
         {
             _carDtoApiClient = carApiClient;
         }

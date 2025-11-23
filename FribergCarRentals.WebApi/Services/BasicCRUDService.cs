@@ -4,11 +4,11 @@ using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public abstract class BasicCRUDServiceSeparated<T> : IBasicCRUDService<T>
+    public abstract class BasicCRUDService<T> : IBasicCRUDService<T>
     {
         IRepository<T> _repository;
 
-        public BasicCRUDServiceSeparated(IRepository<T> repository)
+        public BasicCRUDService(IRepository<T> repository)
         {
             _repository = repository;
         }

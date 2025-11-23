@@ -1,6 +1,6 @@
 ﻿namespace FribergCarRentals.Core.Interfaces.ApiClients
 {
-    public interface IApiClient<T> where T : class
+    public interface ICRUDApiClient<T> where T : class
     {
         Task<IEnumerable<T>> GetAsync();
         Task<T?> GetAsync(int id);
