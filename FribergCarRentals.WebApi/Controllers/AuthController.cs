@@ -3,6 +3,7 @@ using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FribergCarRentals.WebApi.Controllers
 {
@@ -10,10 +11,14 @@ namespace FribergCarRentals.WebApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IAuthService _authService;
         private readonly IUserService _userService;
-        public AuthController(IUserService userService)
+        private readonly IJwtService _jwtService;
+        public AuthController(IAuthService authService, IUserService userService, IJwtService jwtService)
         {
+            _authService = authService;
             _userService = userService;
+            _jwtService = jwtService;
         }
 
         [HttpGet("current-user-id")]
@@ -25,15 +30,31 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet("current-user")]
-        public async Task<SignedInUserDto> GetCurrentUser()
+        public async Task<SignedInUserDto?> GetCurrentUser()
         {
-            throw new NotImplementedException();
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? username = User.Identity?.Name;
+
+            if (userId == null || username == null)
+            {
+                return null;
+            }
+            return new SignedInUserDto
+            {
+                UserId = userId,
+                Username = username
+            };
         }
 
         [HttpGet("roles")]
-        public async Task GetAuthRoles()
+        public async Task<List<string>> GetAuthRoles()
         {
-            throw new NotImplementedException();
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return new();
+            }
+            return await _authService.GetRolesAsync(userId);
         }
 
         [HttpGet("is-admin/{userId}")]
@@ -96,15 +117,25 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task Login()
+        public async Task<JwtTokenDto?> Login([FromBody] LoginDto loginDto)
         {
-            throw new NotImplementedException();
+            string? userId = await _authService.AuthenticateUserAsync(loginDto.Username, loginDto.Password);
+            if (userId == null)
+            {
+                return null;
+            }
+
+            List<string> roles = await _authService.GetRolesAsync(userId);
+            var token = _jwtService.GenerateJwtToken(userId, loginDto.Username, roles);
+
+            return new JwtTokenDto { Token = token };
         }
 
-        [HttpPost("")]
-        public async Task Register()
+        [HttpPost("register")]
+        public async Task<string?> Register([FromBody] RegisterDto registerDto)
         {
-            throw new NotImplementedException();
+            string? userId = await _authService.CreateUserWithPasswordAsync(registerDto.Username, registerDto.Password);
+            return userId;
         }
 
         [HttpPut("update-username/{userId}")]

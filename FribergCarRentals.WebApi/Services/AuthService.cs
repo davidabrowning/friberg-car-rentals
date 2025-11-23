@@ -12,13 +12,15 @@ namespace FribergCarRentals.WebApi.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private const string DefaultAdminEmail = "admin@admin.se";
         private const string DefaultPassword = "Abc123!";
-        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         public async Task<bool> IdExistsAsync(string id)
@@ -137,6 +139,44 @@ namespace FribergCarRentals.WebApi.Services
         private async Task<IdentityUser?> GetIdentityUserByUserId(string userId)
         {
             return await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
+        public async Task<string?> AuthenticateUserAsync(string username, string password)
+        {
+            IdentityUser? identityUser = await _userManager.FindByNameAsync(username);
+            if (identityUser == null)
+            {
+                return null;
+            }
+
+            SignInResult signInResult = await _signInManager.CheckPasswordSignInAsync(identityUser, password, false);
+            if (!signInResult.Succeeded)
+            {
+                return null;
+            }
+            return identityUser.Id;
+        }
+
+        public async Task<string?> CreateUserWithPasswordAsync(string username, string password)
+        {
+            IdentityUser identityUser = new() { UserName = username };
+            IdentityResult identityResult = await _userManager.CreateAsync(identityUser, password);
+            if (!identityResult.Succeeded)
+            {
+                return null;
+            }
+            return identityUser.Id;
+        }
+
+        public async Task<List<string>> GetRolesAsync(string userId)
+        {
+            IdentityUser? identityUser = await _userManager.FindByIdAsync(userId);
+            if (identityUser == null)
+            {
+                return new List<string>();
+            }
+            IEnumerable<string> roles = await _userManager.GetRolesAsync(identityUser);
+            return roles.ToList();
         }
     }
 }
