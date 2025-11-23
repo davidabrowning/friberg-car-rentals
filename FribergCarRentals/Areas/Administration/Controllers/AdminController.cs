@@ -1,7 +1,6 @@
 ﻿using FribergCarRentals.Areas.Administration.Views.Admin;
 using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
 using Microsoft.AspNetCore.Authorization;
@@ -64,11 +63,10 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Admin admin = new()
+            AdminDto adminDto = new()
             {
                 UserId = userId
             };
-            AdminDto adminDto = AdminMapper.ToDto(admin);
             await _adminDtoApiClient.PostAsync(adminDto);
 
             TempData["SuccessMessage"] = UserMessage.SuccessAdminCreated;
