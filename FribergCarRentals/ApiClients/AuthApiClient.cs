@@ -70,6 +70,33 @@ namespace FribergCarRentals.Mvc.ApiClients
             return isUser;
         }
 
+        public async Task<JwtTokenDto?> LoginAsync(string username, string password)
+        {
+            LoginDto loginDto = new LoginDto() { 
+                Username = username, 
+                Password = password 
+            };
+            HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync<LoginDto>("api/auth/login", loginDto);
+            if (httpResponseMessage == null)
+            {
+                return null;
+            }
+            return await httpResponseMessage.Content.ReadFromJsonAsync<JwtTokenDto>();
+
+        }
+
+        public async Task<string?> RegisterAsync(string username, string password)
+        {
+            RegisterDto registerDto = new() { Username = username, Password = password };
+            HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync<RegisterDto>("api/auth/register", registerDto);
+            if (httpResponseMessage == null)
+            {
+                return null;
+            }
+            string? userId = await httpResponseMessage.Content.ReadAsStringAsync();
+            return userId;
+        }
+
         public async Task UpdateUsernameAsync(string userId, string newUsername)
         {
             await _httpClient.PutAsJsonAsync<string>($"api/auth/update-username/{userId}", newUsername);

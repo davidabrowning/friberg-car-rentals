@@ -1,4 +1,6 @@
-﻿namespace FribergCarRentals.Core.Interfaces.ApiClients
+﻿using FribergCarRentals.WebApi.Dtos;
+
+namespace FribergCarRentals.Core.Interfaces.ApiClients
 {
     public interface IAuthApiClient
     {
@@ -14,5 +16,7 @@
         Task<bool> IsInRoleAsync(string userId, string roleName);
         Task<int> GetAdminIdByUserId(string userId);
         Task<int> GetCustomerIdByUserId(string userId);
+        Task<JwtTokenDto?> LoginAsync(string username, string password);
+        Task<string?> RegisterAsync(string username, string password);
     }
 }
