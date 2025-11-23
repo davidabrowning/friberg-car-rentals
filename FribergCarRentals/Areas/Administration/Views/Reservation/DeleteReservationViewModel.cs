@@ -1,6 +1,6 @@
 ﻿using FribergCarRentals.WebApi.Dtos;
 
-namespace FribergCarRentals.Areas.Administration.Views.Reservation
+namespace FribergCarRentals.Mvc.Areas.Administration.Views.Reservation
 {
     public class DeleteReservationViewModel
     {

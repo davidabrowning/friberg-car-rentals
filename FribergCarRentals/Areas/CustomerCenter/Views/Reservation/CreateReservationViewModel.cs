@@ -1,7 +1,7 @@
 ﻿using FribergCarRentals.Core.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.CustomerCenter.Views.Reservation
+namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation
 {
     public class CreateReservationViewModel : IValidatableObject
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FribergCarRentals.Areas.CustomerCenter.Controllers
+namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 {
     [Authorize(Roles = "Customer")]
     [Area("CustomerCenter")]

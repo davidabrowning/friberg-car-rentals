@@ -1,11 +1,11 @@
-﻿using FribergCarRentals.Areas.Public.Views.Customer;
+﻿using FribergCarRentals.Mvc.Areas.Public.Views.Customer;
 using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FribergCarRentals.Areas.Public.Controllers
+namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 {
     [Authorize]
     [Area("Public")]

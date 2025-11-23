@@ -1,10 +1,10 @@
-﻿using FribergCarRentals.Areas.Public.Views.Home;
+﻿using FribergCarRentals.Mvc.Areas.Public.Views.Home;
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.ViewModels;
+using FribergCarRentals.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace FribergCarRentals.Areas.Public.Controllers
+namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 {
     [Area("Public")]
     public class HomeController : Controller
