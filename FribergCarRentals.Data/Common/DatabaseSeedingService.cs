@@ -2,8 +2,6 @@
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace FribergCarRentals.Data
 {
