@@ -1,5 +1,4 @@
-﻿using FribergCarRentals.Core.Models;
-using FribergCarRentals.WebApi.Dtos;
+﻿using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Areas.Administration.Views.Reservation
 {
