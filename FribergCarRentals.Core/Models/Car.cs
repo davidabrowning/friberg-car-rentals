@@ -9,5 +9,11 @@
         public string Description { get; set; } = "";
         public List<string> PhotoUrls { get; set; } = new();
         public List<Reservation> Reservations { get; set; } = new();
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Car car &&
+                   Id == car.Id;
+        }
     }
 }
