@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FribergCarRentals.Core.Models;
-using FribergCarRentals.ViewModels;
-using System.Diagnostics;
-using FribergCarRentals.Areas.Public.Views.Home;
-using FribergCarRentals.Core.Interfaces.Services;
+﻿using FribergCarRentals.Areas.Public.Views.Home;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {

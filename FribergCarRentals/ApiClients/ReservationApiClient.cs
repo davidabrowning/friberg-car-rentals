@@ -1,5 +1,4 @@
 ﻿using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.ApiClients
