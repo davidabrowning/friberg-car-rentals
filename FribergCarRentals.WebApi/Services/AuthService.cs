@@ -6,7 +6,7 @@ using FribergCarRentals.Core.Interfaces.Services;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public class AuthServiceSeparated : IAuthService
+    public class AuthService : IAuthService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
@@ -16,7 +16,7 @@ namespace FribergCarRentals.WebApi.Services
         public const string RoleNameAdmin = "Admin";
         public const string RoleNameCustomer = "Customer";
         public const string RoleNameUser = "User";
-        public AuthServiceSeparated(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;

@@ -1,7 +1,5 @@
 ﻿using FribergCarRentals.Areas.Public.Views.Car;
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,8 +8,8 @@ namespace FribergCarRentals.Areas.Public.Controllers
     [Area("Public")]
     public class CarController : Controller
     {
-        private readonly IApiClient<CarDto> _carDtoApiClient;
-        public CarController(IApiClient<CarDto> carDtoApiClient)
+        private readonly ICRUDApiClient<CarDto> _carDtoApiClient;
+        public CarController(ICRUDApiClient<CarDto> carDtoApiClient)
         {
             _carDtoApiClient = carDtoApiClient;
         }

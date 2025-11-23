@@ -1,8 +1,6 @@
 ﻿using FribergCarRentals.Areas.CustomerCenter.Views.Car;
 using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +11,8 @@ namespace FribergCarRentals.Areas.CustomerCenter.Controllers
     [Area("CustomerCenter")]
     public class CarController : Controller
     {
-        private readonly IApiClient<CarDto> _carDtoApiClient;
-        public CarController(IApiClient<CarDto> carApiClient)
+        private readonly ICRUDApiClient<CarDto> _carDtoApiClient;
+        public CarController(ICRUDApiClient<CarDto> carApiClient)
         {
             _carDtoApiClient = carApiClient;
         }

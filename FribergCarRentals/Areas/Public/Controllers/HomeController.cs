@@ -1,19 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FribergCarRentals.Core.Models;
+﻿using FribergCarRentals.Areas.Public.Views.Home;
+using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using FribergCarRentals.Areas.Public.Views.Home;
-using FribergCarRentals.Core.Interfaces.Services;
 
 namespace FribergCarRentals.Areas.Public.Controllers
 {
     [Area("Public")]
     public class HomeController : Controller
     {
-        private readonly IUserService _userService;
-        public HomeController(IUserService userService)
+        private readonly IAuthApiClient _authApiClient;
+        public HomeController(IAuthApiClient authApiClient)
         {
-            _userService = userService;
+            _authApiClient = authApiClient;
         }
 
         // GET: Public/Home
@@ -21,7 +20,7 @@ namespace FribergCarRentals.Areas.Public.Controllers
         {
             IndexHomeViewModel homeIndexViewModel = new();
 
-            string? userId = await _userService.GetCurrentUserId();
+            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
             if (userId == null)
             {
                 homeIndexViewModel.IsSignedIn = false;
@@ -29,8 +28,8 @@ namespace FribergCarRentals.Areas.Public.Controllers
                 return View(homeIndexViewModel);
             }
 
-            Customer? customer = await _userService.GetCustomerByUserIdAsync(userId);
-            if (customer == null)
+            bool isCustomer = await _authApiClient.IsCustomerAsync(userId);
+            if (!isCustomer)
             {
                 homeIndexViewModel.IsSignedIn = true;
                 homeIndexViewModel.HasCustomerAccount = false;

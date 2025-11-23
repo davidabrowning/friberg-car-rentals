@@ -3,7 +3,7 @@ using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.ApiClients
 {
-    public class CustomerApiClient : IApiClient<CustomerDto>
+    public class CustomerApiClient : ICRUDApiClient<CustomerDto>
     {
         private readonly HttpClient _httpClient;
         public CustomerApiClient(HttpClient httpClient)
@@ -28,13 +28,14 @@ namespace FribergCarRentals.Mvc.ApiClients
             return customerDto;
         }
 
-        public async Task PutAsync(CustomerDto adminDto)
+        public async Task<CustomerDto> PutAsync(CustomerDto adminDto)
         {
             await _httpClient.PutAsJsonAsync<CustomerDto>($"api/customers/{adminDto.Id}", adminDto);
+            return adminDto;
         }
-        public async Task DeleteAsync(int id)
+        public async Task<CustomerDto?> DeleteAsync(int id)
         {
-            CustomerDto? deletedCustomerDto = await _httpClient.DeleteFromJsonAsync<CustomerDto?>($"api/customers/{id}");
+            return await _httpClient.DeleteFromJsonAsync<CustomerDto?>($"api/customers/{id}");
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FribergCarRentals.Core.Models;
-using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.Administration.Views.Admin;
+﻿using FribergCarRentals.Areas.Administration.Views.Admin;
 using FribergCarRentals.Core.Helpers;
-using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.WebApi.Dtos;
+using FribergCarRentals.WebApi.Mappers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Areas.Administration.Controllers
 {
@@ -11,11 +12,13 @@ namespace FribergCarRentals.Areas.Administration.Controllers
     [Area("Administration")]
     public class AdminController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly ICRUDApiClient<AdminDto> _adminDtoApiClient;
+        private readonly IAuthApiClient _authApiClient;
 
-        public AdminController(IUserService userService)
+        public AdminController(ICRUDApiClient<AdminDto> adminDtoApiClient, IAuthApiClient authApiClient)
         {
-            _userService = userService;
+            _adminDtoApiClient = adminDtoApiClient;
+            _authApiClient = authApiClient;
         }
 
         // GET: Admin
@@ -53,18 +56,18 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             }
 
             string userId = createAdminViewModel.IdentityUserId;
-            string? username = await _userService.GetUsernameByUserId(userId);
-            if (username == null)
+            bool isUser = await _authApiClient.IsUserAsync(userId);
+            if (!isUser)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            Admin admin = new()
+            AdminDto adminDto = new()
             {
                 UserId = userId
             };
-            await _userService.CreateAdminAsync(admin);
+            await _adminDtoApiClient.PostAsync(adminDto);
 
             TempData["SuccessMessage"] = UserMessage.SuccessAdminCreated;
             return RedirectToAction("Index");
@@ -79,8 +82,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Admin? admin = await _userService.GetAdminByAdminIdAsync((int)id);
-            if (admin == null)
+            AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
+            if (adminDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
                 return RedirectToAction("Index");
@@ -88,7 +91,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             EditAdminViewModel editAdminViewModel = new()
             {
-                AdminId = admin.Id
+                AdminId = adminDto.Id
             };
             return View(editAdminViewModel);
         }
@@ -111,14 +114,14 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return View(editAdminViewModel);
             }
 
-            Admin? admin = await _userService.GetAdminByAdminIdAsync((int)id);
-            if (admin == null)
+            AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
+            if (adminDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
                 return RedirectToAction("Index");
             }
 
-            await _userService.UpdateAdminAsync(admin);
+            await _adminDtoApiClient.PutAsync(adminDto);
 
             TempData["SuccessMessage"] = UserMessage.SuccessAdminUpdated;
             return RedirectToAction("Index");
@@ -133,8 +136,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Admin? admin = await _userService.GetAdminByAdminIdAsync((int)id);
-            if (admin == null)
+            AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
+            if (adminDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
                 return RedirectToAction("Index");
@@ -142,7 +145,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
 
             DeleteAdminViewModel deleteAdminViewModel = new DeleteAdminViewModel()
             {
-                AdminId = admin.Id,
+                AdminId = adminDto.Id,
             };
 
             return View(deleteAdminViewModel);
@@ -153,7 +156,7 @@ namespace FribergCarRentals.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _userService.DeleteAdminAsync(id);
+            await _adminDtoApiClient.DeleteAsync(id);
 
             TempData["SuccessMessage"] = UserMessage.SuccessAdminDeleted;
             return RedirectToAction("Index");

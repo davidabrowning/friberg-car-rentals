@@ -1,10 +1,9 @@
 ﻿using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.ApiClients
 {
-    public class ReservationApiClient : IApiClient<ReservationDto>
+    public class ReservationApiClient : ICRUDApiClient<ReservationDto>
     {
         private readonly HttpClient _httpClient;
         public ReservationApiClient(HttpClient httpClient)
@@ -29,14 +28,15 @@ namespace FribergCarRentals.Mvc.ApiClients
             return reservationDto;
         }
 
-        public async Task PutAsync(ReservationDto reservationDto)
+        public async Task<ReservationDto> PutAsync(ReservationDto reservationDto)
         {
             await _httpClient.PutAsJsonAsync($"api/reservations/{reservationDto.Id}", reservationDto);
+            return reservationDto;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<ReservationDto?> DeleteAsync(int id)
         {
-            await _httpClient.DeleteAsync($"api/reservations/{id}");
+            return await _httpClient.DeleteFromJsonAsync<ReservationDto>($"api/reservations/{id}");
         }
     }
 }
