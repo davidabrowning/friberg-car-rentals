@@ -28,14 +28,15 @@ namespace FribergCarRentals.Mvc.ApiClients
             return carDto;
         }
 
-        public async Task PutAsync(CarDto carDto)
+        public async Task<CarDto> PutAsync(CarDto carDto)
         {
             await _httpClient.PutAsJsonAsync<CarDto>($"api/cars/{carDto.Id}", carDto);
+            return carDto;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<CarDto?> DeleteAsync(int id)
         {
-            CarDto? deletedCarDto = await _httpClient.DeleteFromJsonAsync<CarDto?>($"api/cars/{id}");
+            return await _httpClient.DeleteFromJsonAsync<CarDto?>($"api/cars/{id}");
         }
     }
 }
