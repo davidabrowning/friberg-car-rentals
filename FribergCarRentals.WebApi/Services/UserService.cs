@@ -29,27 +29,48 @@ namespace FribergCarRentals.WebApi.Services
             return customers.FirstOrDefault(c => c.UserId == userId);
         }
 
-        public async Task<string> CreateUserAsync(string username) =>
-            await _authService.AddUserAsync(username);
-        public async Task<string?> GetCurrentUserIdAsync() =>
-            await _authService.GetCurrentSignedInUserIdAsync();
-        public async Task<bool> UsernameExistsAsync(string username) =>
-            await _authService.UsernameExistsAsync(username);
-        public async Task<bool> IsInRoleAsync(string userId, string roleName) => 
-            await _authService.IsInRoleAsync(userId, roleName);
-        public async Task<string?> UpdateUsernameAsync(string userId, string newUsername) =>
-            await _authService.UpdateUsernameAndReturnStringUserIdAsync(userId, newUsername);
-            
+        public async Task<string> CreateUserAsync(string username)
+        {
+            return await _authService.AddUserAsync(username);
+        }
+
+        public async Task<string?> GetCurrentUserIdAsync()
+        {
+            return await _authService.GetCurrentSignedInUserIdAsync();
+        }
+
+        public async Task<bool> UsernameExistsAsync(string username)
+        {
+            return await _authService.UsernameExistsAsync(username);
+        }
+
+        public async Task<bool> IsInRoleAsync(string userId, string roleName)
+        {
+            return await _authService.IsInRoleAsync(userId, roleName);
+        }
+
+        public async Task<string?> UpdateUsernameAsync(string userId, string newUsername)
+        {
+            return await _authService.UpdateUsernameAndReturnStringUserIdAsync(userId, newUsername);
+        }
+
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
             await _authService.AddToRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
             await _adminService.CreateAsync(admin);
             return admin;
         }
-        public async Task<Admin?> GetAdminByAdminIdAsync(int id) => 
-            await _adminService.GetByIdAsync(id);
-        public async Task<Admin> UpdateAdminAsync(Admin admin) => 
-            await _adminService.UpdateAsync(admin);
+
+        public async Task<Admin?> GetAdminByAdminIdAsync(int id)
+        {
+            return await _adminService.GetByIdAsync(id);
+        }
+
+        public async Task<Admin> UpdateAdminAsync(Admin admin)
+        {   
+            return await _adminService.UpdateAsync(admin);
+        }
+
         public async Task<Admin?> DeleteAdminAsync(int adminId)
         {
             Admin? admin = await GetAdminByAdminIdAsync(adminId);
@@ -68,6 +89,7 @@ namespace FribergCarRentals.WebApi.Services
             await _customerService.CreateAsync(customer);
             return customer;
         }
+
         public async Task<Customer?> DeleteCustomerAsync(int id)
         {
             Customer? customer = await GetCustomerByCustomerIdAsync(id);
@@ -80,10 +102,16 @@ namespace FribergCarRentals.WebApi.Services
             await _customerService.DeleteAsync(customer.Id);
             return customer;
         }
-        public async Task<Customer?> GetCustomerByCustomerIdAsync(int id) => 
-            await _customerService.GetByIdAsync(id);
-        public async Task<Customer> UpdateCustomerAsync(Customer customer) => 
-            await _customerService.UpdateAsync(customer);
+
+        public async Task<Customer?> GetCustomerByCustomerIdAsync(int id)
+        {
+            return await _customerService.GetByIdAsync(id);
+        }
+
+        public async Task<Customer> UpdateCustomerAsync(Customer customer)
+        {
+            return await _customerService.UpdateAsync(customer);
+        }
 
         public async Task<Customer?> GetSignedInCustomerAsync()
         {
