@@ -77,7 +77,7 @@ namespace FribergCarRentals.Mvc.ApiClients
                 Password = password 
             };
             HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync<LoginDto>("api/auth/login", loginDto);
-            if (httpResponseMessage == null)
+            if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 return null;
             }
@@ -89,7 +89,7 @@ namespace FribergCarRentals.Mvc.ApiClients
         {
             RegisterDto registerDto = new() { Username = username, Password = password };
             HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync<RegisterDto>("api/auth/register", registerDto);
-            if (httpResponseMessage == null)
+            if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 return null;
             }
