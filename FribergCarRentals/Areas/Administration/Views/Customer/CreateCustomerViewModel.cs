@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Areas.Administration.Views.Customer
+﻿namespace FribergCarRentals.Mvc.Areas.Administration.Views.Customer
 {
     public class CreateCustomerViewModel
     {

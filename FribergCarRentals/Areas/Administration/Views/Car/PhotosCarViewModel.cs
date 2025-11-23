@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.Administration.Views.Car
+namespace FribergCarRentals.Mvc.Areas.Administration.Views.Car
 {
     public class PhotosCarViewModel
     {

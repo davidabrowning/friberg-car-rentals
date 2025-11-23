@@ -10,7 +10,7 @@ using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 
-namespace FribergCarRentals
+namespace FribergCarRentals.Mvc
 {
     public class Program
     {

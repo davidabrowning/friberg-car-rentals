@@ -1,6 +1,6 @@
 ﻿using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.Areas.CustomerCenter.Views.Reservation
+namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation
 {
     public class DeleteReservationViewModel
     {

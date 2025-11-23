@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using FribergCarRentals.Areas.Administration.Views.Reservation;
+using FribergCarRentals.Mvc.Areas.Administration.Views.Reservation;
 using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 
-namespace FribergCarRentals.Areas.Administration.Controllers
+namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Administration")]
