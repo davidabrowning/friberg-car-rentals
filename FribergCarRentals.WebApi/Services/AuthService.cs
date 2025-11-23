@@ -95,7 +95,7 @@ namespace FribergCarRentals.WebApi.Services
             return userIds;
         }
 
-        public async Task<string?> GetCurrentSignedInUserId()
+        public async Task<string?> GetCurrentSignedInUserIdAsync()
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user == null)

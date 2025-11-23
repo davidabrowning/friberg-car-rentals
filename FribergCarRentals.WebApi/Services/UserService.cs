@@ -30,15 +30,15 @@ namespace FribergCarRentals.WebApi.Services
         }
 
         // User methods
-        public async Task<string> CreateUser(string username) =>
+        public async Task<string> CreateUserAsync(string username) =>
             await _authService.AddUserAsync(username);
-        public async Task<string?> GetCurrentUserId() =>
-            await _authService.GetCurrentSignedInUserId();
+        public async Task<string?> GetCurrentUserIdAsync() =>
+            await _authService.GetCurrentSignedInUserIdAsync();
         public async Task<bool> UsernameExistsAsync(string username) =>
             await _authService.UsernameExistsAsync(username);
         public async Task<bool> IsInRoleAsync(string userId, string roleName) => 
             await _authService.IsInRoleAsync(userId, roleName);
-        public async Task<string?> UpdateUsername(string userId, string newUsername) =>
+        public async Task<string?> UpdateUsernameAsync(string userId, string newUsername) =>
             await _authService.UpdateUsernameAndReturnStringUserIdAsync(userId, newUsername);
             
 
@@ -89,9 +89,9 @@ namespace FribergCarRentals.WebApi.Services
         public async Task<Customer> UpdateCustomerAsync(Customer customer) => 
             await _customerService.UpdateAsync(customer);
 
-        public async Task<Customer?> GetSignedInCustomer()
+        public async Task<Customer?> GetSignedInCustomerAsync()
         {
-            string? userId = await GetCurrentUserId();
+            string? userId = await GetCurrentUserIdAsync();
             if (userId == null)
             {
                 return null;
@@ -120,7 +120,7 @@ namespace FribergCarRentals.WebApi.Services
             return userId;
         }
 
-        public Task<string?> GetUserIdByUsername(string username)
+        public Task<string?> GetUserIdByUsernameAsync(string username)
         {
             return _authService.GetUserIdByUsernameAsync(username);
         }
@@ -130,7 +130,7 @@ namespace FribergCarRentals.WebApi.Services
             return _authService.GetAllUserIdsAsync();
         }
 
-        public Task<string?> GetUsernameByUserId(string userId)
+        public Task<string?> GetUsernameByUserIdAsync(string userId)
         {
             return _authService.GetUsernameByUserIdAsync(userId);
         }
