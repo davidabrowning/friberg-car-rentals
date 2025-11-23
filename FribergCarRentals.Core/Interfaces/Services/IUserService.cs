@@ -15,7 +15,6 @@ namespace FribergCarRentals.Core.Interfaces.Services
         Task<bool> IsInRoleAsync(string userId, string roleName);
         Task<List<string>> GetAllUserIdsAsync();
         
-
         // Admin
         Task<Admin> CreateAdminAsync(Admin admin);
         Task<Admin?> GetAdminByAdminIdAsync(int id);

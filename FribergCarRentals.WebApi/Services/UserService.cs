@@ -17,19 +17,18 @@ namespace FribergCarRentals.WebApi.Services
             _customerService = customerService;
         }
 
-        // General methods
         public async Task<Admin?> GetAdminByUserIdAsync(string userId)
         {
             IEnumerable<Admin> admins = await _adminService.GetAllAsync();
             return admins.FirstOrDefault(a => a.UserId == userId);
         }
+
         public async Task<Customer?> GetCustomerByUserIdAsync(string userId)
         {
             IEnumerable<Customer> customers = await _customerService.GetAllAsync();
             return customers.FirstOrDefault(c => c.UserId == userId);
         }
 
-        // User methods
         public async Task<string> CreateUserAsync(string username) =>
             await _authService.AddUserAsync(username);
         public async Task<string?> GetCurrentUserIdAsync() =>
@@ -41,8 +40,6 @@ namespace FribergCarRentals.WebApi.Services
         public async Task<string?> UpdateUsernameAsync(string userId, string newUsername) =>
             await _authService.UpdateUsernameAndReturnStringUserIdAsync(userId, newUsername);
             
-
-        // Admin methods
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
             await _authService.AddToRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
@@ -65,7 +62,6 @@ namespace FribergCarRentals.WebApi.Services
             return await _adminService.DeleteAsync(admin.Id);
         }
 
-        // Customer methods
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
             await _authService.AddToRoleAsync(customer.UserId, AuthService.RoleNameCustomer);
