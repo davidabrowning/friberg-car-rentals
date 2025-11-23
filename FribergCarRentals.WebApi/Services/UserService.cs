@@ -2,6 +2,7 @@
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Constants;
 
 namespace FribergCarRentals.WebApi.Services
 {
@@ -56,7 +57,7 @@ namespace FribergCarRentals.WebApi.Services
 
         public async Task<Admin> CreateAdminAsync(Admin admin)
         {
-            await _authService.AddToRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
+            await _authService.AddToRoleAsync(admin.UserId, AuthRoleName.Admin);
             await _adminService.CreateAsync(admin);
             return admin;
         }
@@ -79,13 +80,13 @@ namespace FribergCarRentals.WebApi.Services
                 return null;
             }
 
-            await _authService.RemoveFromRoleAsync(admin.UserId, AuthService.RoleNameAdmin);
+            await _authService.RemoveFromRoleAsync(admin.UserId, AuthRoleName.Admin);
             return await _adminService.DeleteAsync(admin.Id);
         }
 
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {
-            await _authService.AddToRoleAsync(customer.UserId, AuthService.RoleNameCustomer);
+            await _authService.AddToRoleAsync(customer.UserId, AuthRoleName.Customer);
             await _customerService.CreateAsync(customer);
             return customer;
         }
@@ -98,7 +99,7 @@ namespace FribergCarRentals.WebApi.Services
                 return null;
             }
 
-            await _authService.RemoveFromRoleAsync(customer.UserId, AuthService.RoleNameCustomer);
+            await _authService.RemoveFromRoleAsync(customer.UserId, AuthRoleName.Customer);
             await _customerService.DeleteAsync(customer.Id);
             return customer;
         }
