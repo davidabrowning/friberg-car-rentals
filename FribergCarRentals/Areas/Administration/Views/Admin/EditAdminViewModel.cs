@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace FribergCarRentals.Areas.Administration.Views.Admin
+namespace FribergCarRentals.Mvc.Areas.Administration.Views.Admin
 {
     public class EditAdminViewModel
     {

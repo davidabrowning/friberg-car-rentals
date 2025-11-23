@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Areas.Public.Views.Home
+﻿namespace FribergCarRentals.Mvc.Areas.Public.Views.Home
 {
     public class IndexHomeViewModel
     {

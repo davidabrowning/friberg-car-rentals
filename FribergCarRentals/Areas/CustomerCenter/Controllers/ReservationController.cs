@@ -1,4 +1,4 @@
-﻿using FribergCarRentals.Areas.CustomerCenter.Views.Reservation;
+﻿using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation;
 using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
@@ -6,7 +6,7 @@ using FribergCarRentals.WebApi.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FribergCarRentals.Areas.CustomerCenter.Controllers
+namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 {
     [Authorize(Roles = "Customer")]
     [Area("CustomerCenter")]

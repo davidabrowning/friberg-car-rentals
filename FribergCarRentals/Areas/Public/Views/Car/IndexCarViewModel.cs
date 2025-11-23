@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Areas.Public.Views.Car
+﻿namespace FribergCarRentals.Mvc.Areas.Public.Views.Car
 {
     public class IndexCarViewModel
     {

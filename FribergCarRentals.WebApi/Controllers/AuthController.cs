@@ -19,7 +19,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpGet("current-user-id")]
         public async Task<SignedInUserDto> GetCurrentSignedInUserIdAsync()
         {
-            string? currentSignedInUser = await _userService.GetCurrentUserId();
+            string? currentSignedInUser = await _userService.GetCurrentUserIdAsync();
             SignedInUserDto signedInUserDto = new() { UserId = currentSignedInUser };
             return signedInUserDto;
         }
@@ -41,7 +41,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpGet("is-user/{userId}")]
         public async Task<bool> IsUser(string userId)
         {
-            string? username = await _userService.GetUsernameByUserId(userId);
+            string? username = await _userService.GetUsernameByUserIdAsync(userId);
             return username != null;
         }
 
@@ -68,7 +68,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpGet("username/{userId}")]
         public async Task<string> GetUsernameByUserId(string userId)
         {
-            return await _userService.GetUsernameByUserId(userId);
+            return await _userService.GetUsernameByUserIdAsync(userId);
         }
 
         [HttpGet("get-all-user-ids")]
@@ -80,13 +80,13 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost("create-user")]
         public async Task CreateUser(string username)
         {
-            await _userService.CreateUser(username);
+            await _userService.CreateUserAsync(username);
         }
 
         [HttpPut("update-username/{userId}")]
         public async Task UpdateUsername(string userId, string newUsername)
         {
-            await _userService.UpdateUsername(userId, newUsername);
+            await _userService.UpdateUsernameAsync(userId, newUsername);
         }
 
         [HttpDelete("delete-user/{userId}")]

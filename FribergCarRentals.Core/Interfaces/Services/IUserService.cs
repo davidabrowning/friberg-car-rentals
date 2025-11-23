@@ -5,17 +5,16 @@ namespace FribergCarRentals.Core.Interfaces.Services
     public interface IUserService
     {
         // IdentityUser
-        Task<string> CreateUser(string username);
-        Task<string?> GetCurrentUserId();
-        Task<string?> GetUsernameByUserId(string userId);
-        Task<string?> GetUserIdByUsername(string username);
-        Task<string?> UpdateUsername(string userId, string newUsername);
+        Task<string> CreateUserAsync(string username);
+        Task<string?> GetCurrentUserIdAsync();
+        Task<string?> GetUsernameByUserIdAsync(string userId);
+        Task<string?> GetUserIdByUsernameAsync(string username);
+        Task<string?> UpdateUsernameAsync(string userId, string newUsername);
         Task<string?> DeleteUserAsync(string userId);
         Task<bool> UsernameExistsAsync(string username);
         Task<bool> IsInRoleAsync(string userId, string roleName);
         Task<List<string>> GetAllUserIdsAsync();
         
-
         // Admin
         Task<Admin> CreateAdminAsync(Admin admin);
         Task<Admin?> GetAdminByAdminIdAsync(int id);
@@ -27,7 +26,7 @@ namespace FribergCarRentals.Core.Interfaces.Services
         Task<Customer> CreateCustomerAsync(Customer customer);
         Task<Customer?> GetCustomerByCustomerIdAsync(int id);
         Task<Customer?> GetCustomerByUserIdAsync(string userId);
-        Task<Customer?> GetSignedInCustomer();
+        Task<Customer?> GetSignedInCustomerAsync();
         Task<Customer> UpdateCustomerAsync(Customer customer);
         Task<Customer?> DeleteCustomerAsync(int id);
     }

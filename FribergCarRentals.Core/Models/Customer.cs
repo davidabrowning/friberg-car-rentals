@@ -10,9 +10,10 @@
         public string HomeCountry { get; set; } = "";
         public List<Reservation> Reservations { get; set; } = new();
 
-        public override string? ToString()
+        public override bool Equals(object? obj)
         {
-            return $"Customer #{Id} {FirstName} {LastName}";
+            return obj is Customer customer &&
+                   Id == customer.Id;
         }
     }
 }

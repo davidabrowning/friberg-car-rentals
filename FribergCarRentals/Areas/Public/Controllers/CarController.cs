@@ -1,9 +1,9 @@
-﻿using FribergCarRentals.Areas.Public.Views.Car;
+﻿using FribergCarRentals.Mvc.Areas.Public.Views.Car;
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FribergCarRentals.Areas.Public.Controllers
+namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 {
     [Area("Public")]
     public class CarController : Controller

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.Administration.Views.Admin
+namespace FribergCarRentals.Mvc.Areas.Administration.Views.Admin
 {
     public class DeleteAdminViewModel
     {

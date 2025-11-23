@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergCarRentals.Areas.Public.Views.Customer
+namespace FribergCarRentals.Mvc.Areas.Public.Views.Customer
 {
     public class CreateCustomerViewModel
     {

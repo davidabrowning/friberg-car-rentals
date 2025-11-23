@@ -1,4 +1,4 @@
-﻿@using FribergCarRentals.Areas.Administration.Views.Reservation
+﻿@using FribergCarRentals.Mvc.Areas.Administration.Views.Reservation
 @model IEnumerable<IndexReservationViewModel>
 
 @{
@@ -36,10 +36,10 @@
 					@Html.DisplayFor(modelItem => item.EndDate)
 				</td>
 				<td>
-					@item.Car.Make @item.Car.Model (@item.Car.Year)
+					@item.CarDto.Make @item.CarDto.Model (@item.CarDto.Year)
 				</td>
 				<td>
-					@item.Customer.FirstName @item.Customer.LastName (@item.Customer.UserId)
+					@item.CustomerDto.FirstName @item.CustomerDto.LastName (@item.CustomerDto.UserId)
 				</td>
 				<td>
 					<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Delete</a>

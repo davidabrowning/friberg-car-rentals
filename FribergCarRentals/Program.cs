@@ -10,7 +10,7 @@ using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 
-namespace FribergCarRentals
+namespace FribergCarRentals.Mvc
 {
     public class Program
     {
@@ -26,8 +26,8 @@ namespace FribergCarRentals
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
             builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
-            builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingServiceSeparated>();
-            builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningServiceSeparated>();
+            builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingService>();
+            builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningService>();
 
             // Add service layer services to the container
             builder.Services.AddScoped<IUserService, UserService>();

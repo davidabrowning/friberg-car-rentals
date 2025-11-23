@@ -4,11 +4,11 @@ using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.Data
 {
-    public class DatabaseCleaningServiceSeparated : IDatabaseCleaner
+    public class DatabaseCleaningService : IDatabaseCleaner
     {
         private readonly IAdminService _adminService;
         private readonly ICustomerService _customerService;
-        public DatabaseCleaningServiceSeparated(IAdminService adminService, ICustomerService customerService)
+        public DatabaseCleaningService(IAdminService adminService, ICustomerService customerService)
         {
             _adminService = adminService;
             _customerService = customerService;

@@ -1,4 +1,4 @@
-﻿namespace FribergCarRentals.Areas.Administration.Views.IdentityUser
+﻿namespace FribergCarRentals.Mvc.Areas.Administration.Views.IdentityUser
 {
     public class CreateIdentityUserViewModel
     {
