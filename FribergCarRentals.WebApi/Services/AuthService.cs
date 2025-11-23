@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Constants;
 
 namespace FribergCarRentals.WebApi.Services
 {
@@ -13,9 +14,6 @@ namespace FribergCarRentals.WebApi.Services
         private readonly SignInManager<IdentityUser> _signInManager;
         private const string DefaultAdminEmail = "admin@admin.se";
         private const string DefaultPassword = "Abc123!";
-        public const string RoleNameAdmin = "Admin";
-        public const string RoleNameCustomer = "Customer";
-        public const string RoleNameUser = "User";
         public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -38,7 +36,7 @@ namespace FribergCarRentals.WebApi.Services
             IdentityUser identityUser = new IdentityUser() { UserName = username, Email = username };
             string initialPassword = DefaultPassword;
             await _userManager.CreateAsync(identityUser, initialPassword);
-            await _userManager.AddToRoleAsync(identityUser, RoleNameUser);
+            await _userManager.AddToRoleAsync(identityUser, AuthRoleName.User);
             return identityUser.Id;
         }
 
@@ -95,7 +93,7 @@ namespace FribergCarRentals.WebApi.Services
             return userIds;
         }
 
-        public async Task<string?> GetCurrentSignedInUserId()
+        public async Task<string?> GetCurrentSignedInUserIdAsync()
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user == null)

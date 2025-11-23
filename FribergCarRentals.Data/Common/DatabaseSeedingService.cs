@@ -2,17 +2,15 @@
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace FribergCarRentals.Data
 {
-    public class DatabaseSeedingServiceSeparated : IDatabaseSeeder
+    public class DatabaseSeedingService : IDatabaseSeeder
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserService _userService;
         private readonly ICarService _carService;
-        public DatabaseSeedingServiceSeparated(RoleManager<IdentityRole> roleManager, IUserService userService, ICarService carService)
+        public DatabaseSeedingService(RoleManager<IdentityRole> roleManager, IUserService userService, ICarService carService)
         {
             _roleManager = roleManager;
             _userService = userService;
@@ -40,10 +38,10 @@ namespace FribergCarRentals.Data
         private async Task SeedDefaultAdminUser()
         {
             string defaultAdminUsername = "admin@admin.se";
-            string? defaultAdminUserId = await _userService.GetUserIdByUsername(defaultAdminUsername);
+            string? defaultAdminUserId = await _userService.GetUserIdByUsernameAsync(defaultAdminUsername);
             if (defaultAdminUserId == null)
             {
-                defaultAdminUserId = await _userService.CreateUser(defaultAdminUsername);
+                defaultAdminUserId = await _userService.CreateUserAsync(defaultAdminUsername);
             }
 
             Admin? admin = await _userService.GetAdminByUserIdAsync(defaultAdminUserId);

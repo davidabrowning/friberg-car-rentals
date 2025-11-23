@@ -10,7 +10,7 @@
         Task<string?> UpdateUsernameAndReturnStringUserIdAsync(string id, string newUsername);
         Task<string?> DeleteByUserIdAsync(string id);
         Task<List<string>> GetAllUserIdsAsync();
-        Task<string?> GetCurrentSignedInUserId();
+        Task<string?> GetCurrentSignedInUserIdAsync();
         Task<bool> IsInRoleAsync(string userId, string roleName);
         Task<string?> AddToRoleAsync(string userId, string roleName);
         Task<string?> RemoveFromRoleAsync(string userId, string roleName);

@@ -10,9 +10,10 @@
         public List<string> PhotoUrls { get; set; } = new();
         public List<Reservation> Reservations { get; set; } = new();
 
-        public override string? ToString()
+        public override bool Equals(object? obj)
         {
-            return $"{Make} {Model} ({Year})";
+            return obj is Car car &&
+                   Id == car.Id;
         }
     }
 }
