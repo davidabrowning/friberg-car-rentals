@@ -27,10 +27,10 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         }
 
         // GET: Admin/Create/abcd-1234
-        [HttpGet("Administration/Admin/Create/{identityUserId}")]
-        public IActionResult Create(string? identityUserId)
+        [HttpGet("Administration/Admin/Create/{userId}")]
+        public IActionResult Create(string? userId)
         {
-            if (identityUserId == null)
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -38,7 +38,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 
             CreateAdminViewModel createAdminViewModel = new()
             {
-                IdentityUserId = identityUserId,
+                UserId = userId,
             };
             return View(createAdminViewModel);
         }
@@ -54,7 +54,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(createAdminViewModel);
             }
 
-            string userId = createAdminViewModel.IdentityUserId;
+            string userId = createAdminViewModel.UserId;
             bool isUser = await _authApiClient.IsUserAsync(userId);
             if (!isUser)
             {

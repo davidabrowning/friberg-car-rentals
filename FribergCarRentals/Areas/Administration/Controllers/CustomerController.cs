@@ -46,8 +46,8 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             string username = await _authApiClient.GetUsernameByUserIdAsync(userId);
             CreateCustomerViewModel createCustomerViewModel = new()
             {
-                IdentityUserId = userId,
-                IdentityUserUsername = username,
+                UserId = userId,
+                Username = username,
             };
             return View(createCustomerViewModel);
         }
@@ -62,7 +62,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(createCustomerViewModel);
             }
 
-            string userId = createCustomerViewModel.IdentityUserId;
+            string userId = createCustomerViewModel.UserId;
             bool isUser = await _authApiClient.IsUserAsync(userId);
             if (!isUser)
             {
@@ -104,8 +104,8 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
             {
                 CustomerId = customerDto.Id,
-                IdentityUserId = customerDto.UserId,
-                IdentityUserUsername = username,
+                UserId = customerDto.UserId,
+                Username = username,
                 FirstName = customerDto.FirstName,
                 LastName = customerDto.LastName,
                 HomeCity = customerDto.HomeCity,
@@ -170,8 +170,8 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
             {
                 CustomerId = customerDto.Id,
-                IdentityUserId = customerDto.UserId,
-                IdentityUserUsername = username,
+                UserId = customerDto.UserId,
+                Username = username,
                 FirstName = customerDto.FirstName,
                 LastName = customerDto.LastName,
                 HomeCity = customerDto.HomeCity,
