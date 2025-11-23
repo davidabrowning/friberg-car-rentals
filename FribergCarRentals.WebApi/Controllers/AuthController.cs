@@ -24,6 +24,18 @@ namespace FribergCarRentals.WebApi.Controllers
             return signedInUserDto;
         }
 
+        [HttpGet("current-user")]
+        public async Task<SignedInUserDto> GetCurrentUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpGet("roles")]
+        public async Task GetAuthRoles()
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpGet("is-admin/{userId}")]
         public async Task<bool> IsAdmin(string userId)
         {
@@ -81,6 +93,18 @@ namespace FribergCarRentals.WebApi.Controllers
         public async Task CreateUser(string username)
         {
             await _userService.CreateUserAsync(username);
+        }
+
+        [HttpPost("login")]
+        public async Task Login()
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPost("")]
+        public async Task Register()
+        {
+            throw new NotImplementedException();
         }
 
         [HttpPut("update-username/{userId}")]
