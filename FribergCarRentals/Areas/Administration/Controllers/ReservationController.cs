@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using FribergCarRentals.Areas.Administration.Views.Reservation;
 using FribergCarRentals.Core.Helpers;
@@ -26,12 +25,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
             IEnumerable<ReservationDto> reservationDtos = await _reservationDtoApiClient.GetAsync();
             foreach (ReservationDto reservationDto in reservationDtos)
             {
-                Core.Models.Car car = new()
+                CarDto carDto = new()
                 {
                     Id = reservationDto.CarDto.Id,
                     Description = "Complete in ReservationController"
                 };
-                Customer customer = new()
+                CustomerDto customerDto = new()
                 {
                     Id = reservationDto.CustomerDto.Id,
                     UserId = reservationDto.CustomerDto.UserId,
@@ -42,8 +41,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                     Id = reservationDto.Id,
                     StartDate = reservationDto.StartDate,
                     EndDate = reservationDto.EndDate,
-                    Car = car,
-                    Customer = customer,
+                    CarDto = carDto,
+                    CustomerDto = customerDto,
                 };
                 indexReservationViewModelList.Add(indexReservationViewModel);
             }
@@ -66,12 +65,12 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            Core.Models.Car car = new()
+            CarDto carDto = new()
             {
                 Id = reservationDto.CarDto.Id,
                 Description = "Complete in ReservationController"
             };
-            Customer customer = new()
+            CustomerDto customerDto = new()
             {
                 Id = reservationDto.CustomerDto.Id,
                 UserId = reservationDto.CustomerDto.UserId,
@@ -83,8 +82,8 @@ namespace FribergCarRentals.Areas.Administration.Controllers
                 Id = reservationDto.Id,
                 StartDate = reservationDto.StartDate,
                 EndDate = reservationDto.EndDate,
-                Car = car,
-                Customer = customer,
+                CarDto = carDto,
+                CustomerDto = customerDto,
             };
             return View(deleteReservationViewModel);
         }

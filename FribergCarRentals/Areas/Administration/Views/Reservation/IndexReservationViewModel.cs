@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Core.Models;
+using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Areas.Administration.Views.Reservation
 {
@@ -7,7 +8,7 @@ namespace FribergCarRentals.Areas.Administration.Views.Reservation
         public int Id { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
-        public Core.Models.Car? Car { get; set; }
-        public Core.Models.Customer? Customer { get; set; }
+        public CarDto CarDto { get; set; } = new();
+        public CustomerDto CustomerDto { get; set; } = new();
     }
 }
