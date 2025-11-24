@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Core.Interfaces.Services;
+﻿using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
@@ -18,13 +19,11 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<AdminDto?>> Get(int id)
+        public async Task<ActionResult<AdminDto>> Get(int id)
         {
             Admin? admin = await _userService.GetAdminByAdminIdAsync(id);
             if (admin == null)
-            {
                 return NotFound();
-            }
             AdminDto adminDto = AdminMapper.ToDto(admin);
             return Ok(adminDto);
         }
@@ -32,29 +31,32 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AdminDto>> Post(AdminDto adminDto)
         {
-            Admin admin = AdminMapper.ToModel(adminDto);
+            Admin admin = AdminMapper.ToNewModelWIthoutId(adminDto);
             await _userService.CreateAdminAsync(admin);
-            return Ok(adminDto);
+            AdminDto resultAdminDto = AdminMapper.ToDto(admin);
+            return Ok(resultAdminDto);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<AdminDto>> Put(int id, AdminDto adminDto)
+        public async Task<ActionResult> Put(int id, AdminDto adminDto)
         {
-            Admin admin = AdminMapper.ToModel(adminDto);
+            if (id != adminDto.Id)
+                return BadRequest(UserMessage.ErrorIdsDoNotMatch);
+            Admin? admin = await _userService.GetAdminByAdminIdAsync(id);
+            if (admin == null)
+                return NotFound();
+            AdminMapper.UpdateModel(admin, adminDto);
             await _userService.UpdateAdminAsync(admin);
-            return Ok(adminDto);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<AdminDto?>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             Admin? admin = await _userService.DeleteAdminAsync(id);
             if (admin == null)
-            {
-                return BadRequest("Unable to find customer with that id.");
-            }
-            AdminDto adminDto = AdminMapper.ToDto(admin);
-            return Ok(adminDto);
+                return NotFound();
+            return NoContent();
         }
     }
 }

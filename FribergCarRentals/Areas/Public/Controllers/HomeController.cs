@@ -1,5 +1,5 @@
 ﻿using FribergCarRentals.Mvc.Areas.Public.Views.Home;
-using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -9,10 +9,10 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
     [Area("Public")]
     public class HomeController : Controller
     {
-        private readonly IAuthApiClient _authApiClient;
-        public HomeController(IAuthApiClient authApiClient)
+        private readonly UserSession _userSession;
+        public HomeController(UserSession userSession)
         {
-            _authApiClient = authApiClient;
+            _userSession = userSession;
         }
 
         // GET: Public/Home
@@ -20,16 +20,14 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         {
             IndexHomeViewModel homeIndexViewModel = new();
 
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
+            if (!_userSession.IsSignedIn())
             {
                 homeIndexViewModel.IsSignedIn = false;
                 homeIndexViewModel.HasCustomerAccount = false;
                 return View(homeIndexViewModel);
             }
 
-            bool isCustomer = await _authApiClient.IsCustomerAsync(userId);
-            if (!isCustomer)
+            if (!_userSession.IsCustomer())
             {
                 homeIndexViewModel.IsSignedIn = true;
                 homeIndexViewModel.HasCustomerAccount = false;

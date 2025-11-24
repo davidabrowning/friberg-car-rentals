@@ -34,8 +34,14 @@
 
         public const string ErrorIdIsNull = "Error: Id is null.";
 
+        public const string ErrorIdsDoNotMatch = "Error: Ids do not match.";
+
         public const string ErrorUsernameAlreadyTaken = "Error: Username already taken.";
 
-        public const string ErrorAccessDenied = "Error: Access denied.";
+        public const string SuccessSignedIn = "Success: User signed in.";
+        public const string ErrorUnableToSignIn = "Error: Unable to sign in.";
+        public const string SuccessSignedOut = "Success: User signed out.";
+
+        public const string ErrorUnauthorized = "Error: Access denied.";
     }
 }
