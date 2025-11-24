@@ -4,8 +4,6 @@ using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation;
 using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
-using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers

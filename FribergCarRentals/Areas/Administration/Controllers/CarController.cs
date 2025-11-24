@@ -3,8 +3,6 @@ using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Mvc.Areas.Administration.Views.Car;
 using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.WebApi.Dtos;
-using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
