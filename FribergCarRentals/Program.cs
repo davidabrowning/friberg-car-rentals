@@ -26,16 +26,6 @@ namespace FribergCarRentals.Mvc
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
             builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
-            builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingService>();
-            builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningService>();
-
-            // Add service layer services to the container
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IAdminService, AdminService>();
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddScoped<ICarService, CarService>();
-            builder.Services.AddScoped<IReservationService, ReservationService>();
 
             // Add web services to the container
             builder.Services.AddHttpClient<ICRUDApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
