@@ -1,14 +1,9 @@
-using FribergCarRentals.Data;
-using FribergCarRentals.Core.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using FribergCarRentals.WebApi.Services;
-using FribergCarRentals.Core.Interfaces.Repositories;
-using FribergCarRentals.Core.Interfaces.Other;
-using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Data;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Mvc
 {
@@ -29,6 +24,7 @@ namespace FribergCarRentals.Mvc
             builder.Services.AddHttpClient<ICRUDApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
             builder.Services.AddHttpClient<ICRUDApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
             builder.Services.AddHttpClient<IUserApiClient, UserApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpContextAccessor();
 
             // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
