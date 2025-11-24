@@ -24,7 +24,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         // GET: Customer
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "IdentityUser");
+            return RedirectToAction("Index", "ApplicationUser");
         }
 
         // GET: Customer/Create/abcd-1234

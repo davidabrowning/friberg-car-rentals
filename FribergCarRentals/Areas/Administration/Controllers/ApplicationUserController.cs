@@ -1,72 +1,71 @@
 ﻿using FribergCarRentals.Core.Constants;
 using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Mvc.Areas.Administration.Views.IdentityUser;
+using FribergCarRentals.Mvc.Areas.Administration.Views.ApplicationUser;
 using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.WebApi.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 {
     [RequireAdmin]
     [Area("Administration")]
-    public class IdentityUserController : Controller
+    public class ApplicationUserController : Controller
     {
         private readonly ICRUDApiClient<AdminDto> _adminDtoApiClient;
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
         private readonly IUserApiClient _userApiClient;
 
-        public IdentityUserController(ICRUDApiClient<AdminDto> adminDtoApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
+        public ApplicationUserController(ICRUDApiClient<AdminDto> adminDtoApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
         {
             _adminDtoApiClient = adminDtoApiClient;
             _customerDtoApiClient = customerDtoApiClient;
             _userApiClient = userApiClient;
         }
 
-        // GET: IdentityUserIndexViewModels
+        // GET: ApplicationUserIndexViewModels
         public async Task<IActionResult> Index()
         {
-            List<IndexIdentityUserViewModel> indexIdentityUserViewModelList = new();
+            List<IndexApplicationUserViewModel> indexApplicationUserViewModelList = new();
             IEnumerable<UserDto> userDtos = await _userApiClient.GetAsync();
             foreach (UserDto userDto in userDtos)
             {
-                indexIdentityUserViewModelList.Add(await CreateIndexIdentityUserViewModel(userDto.UserId));
+                indexApplicationUserViewModelList.Add(await CreateIndexApplicationUserViewModel(userDto.UserId));
             }
-            return View(indexIdentityUserViewModelList);
+            return View(indexApplicationUserViewModelList);
         }
 
-        // GET: IdentityUserViewModels/Create
+        // GET: ApplicationUserViewModels/Create
         public IActionResult Create()
         {
-            CreateIdentityUserViewModel createIdentityUserViewModel = new();
-            return View(createIdentityUserViewModel);
+            CreateApplicationUserViewModel createApplicationUserViewModel = new();
+            return View(createApplicationUserViewModel);
         }
 
-        // POST: IdentityUserViewModels/Create
+        // POST: ApplicationUserViewModels/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateIdentityUserViewModel createIdentityUserViewModel)
+        public async Task<IActionResult> Create(CreateApplicationUserViewModel createApplicationUserViewModel)
         {
-            UserDto userDto = await _userApiClient.GetByUsernameAsync(createIdentityUserViewModel.Username);
+            UserDto userDto = await _userApiClient.GetByUsernameAsync(createApplicationUserViewModel.Username);
             if (userDto.UserId != null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
-                return View(createIdentityUserViewModel);
+                return View(createApplicationUserViewModel);
             }
 
             if (!ModelState.IsValid)
             {
-                return View(createIdentityUserViewModel);
+                return View(createApplicationUserViewModel);
             }
 
-            await _userApiClient.CreateUserFromUsernameAsync(createIdentityUserViewModel.Username);
+            await _userApiClient.CreateUserFromUsernameAsync(createApplicationUserViewModel.Username);
 
             TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
             return RedirectToAction("Index");
         }
 
-        // GET: IdentityUserViewModels/Edit/5
+        // GET: ApplicationUser/Edit/5
         public async Task<IActionResult> Edit(string userId)
         {
             if (userId == null)
@@ -82,22 +81,22 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            EditIdentityUserViewModel editIdentityUserViewModel = new EditIdentityUserViewModel()
+            EditApplicationUserViewModel editApplicationUserViewModel = new EditApplicationUserViewModel()
             {
-                IdentityUserId = userDto.UserId,
-                IdentityUserUsername = userDto.Username,
+                UserId = userDto.UserId,
+                Username = userDto.Username,
             };
-            return View(editIdentityUserViewModel);
+            return View(editApplicationUserViewModel);
         }
 
-        // POST: IdentityUserViewModels/Edit/5
+        // POST: ApplicationUser/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string userId, EditIdentityUserViewModel editIdentityUserViewModel)
+        public async Task<IActionResult> Edit(string userId, EditApplicationUserViewModel editApplicationUserViewModel)
         {
-            if (userId != editIdentityUserViewModel.IdentityUserId)
+            if (userId != editApplicationUserViewModel.UserId)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorIdIsInvalid;
                 return RedirectToAction("Index");
@@ -105,16 +104,16 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(editIdentityUserViewModel);
+                return View(editApplicationUserViewModel);
             }
 
-            await _userApiClient.UpdateUsernameAsync(userId, editIdentityUserViewModel.IdentityUserUsername);
+            await _userApiClient.UpdateUsernameAsync(userId, editApplicationUserViewModel.Username);
 
             TempData["SuccessMessage"] = UserMessage.SuccessUserUpdated;
             return RedirectToAction("Index");
         }
 
-        // GET: Admin/Delete/5
+        // GET: ApplicationUser/Delete/5
         public async Task<IActionResult> Delete(string? userId)
         {
             if (userId == null)
@@ -130,15 +129,15 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            DeleteIdentityUserViewModel deleteIdentityUserViewModel = new DeleteIdentityUserViewModel()
+            DeleteApplicationUserViewModel deleteApplicationUserViewModel = new DeleteApplicationUserViewModel()
             {
-                IdentityUserId = userDto.UserId,
-                IdentityUserUsername = userDto.Username,
+                UserId = userDto.UserId,
+                Username = userDto.Username,
             };
-            return View(deleteIdentityUserViewModel);
+            return View(deleteApplicationUserViewModel);
         }
 
-        // POST: Admin/DeleteAsync/5
+        // POST: ApplicationUser/DeleteAsync/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string userId)
@@ -149,27 +148,27 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             return RedirectToAction("Index");
         }
 
-        private async Task<IndexIdentityUserViewModel> CreateIndexIdentityUserViewModel(string userId)
+        private async Task<IndexApplicationUserViewModel> CreateIndexApplicationUserViewModel(string userId)
         {
             UserDto userDto = await _userApiClient.GetAsync(userId);
-            IndexIdentityUserViewModel indexIdentityUserViewModel = new()
+            IndexApplicationUserViewModel indexApplicationUserViewModel = new()
             {
-                IdentityUserId = userDto.UserId,
-                IdentityUserUsername = userDto.Username,
+                UserId = userDto.UserId,
+                Username = userDto.Username,
                 IsAdmin = userDto.AuthRoles.Where(r => r == AuthRoleName.Admin).Any(),
                 IsCustomer = userDto.AuthRoles.Where(r => r == AuthRoleName.Customer).Any(),
             };
-            if (indexIdentityUserViewModel.IsAdmin)
+            if (indexApplicationUserViewModel.IsAdmin)
             {
-                indexIdentityUserViewModel.AdminId = userDto.AdminDto.Id;
-                indexIdentityUserViewModel.AdminName = userDto.AdminDto.ToString();
+                indexApplicationUserViewModel.AdminId = userDto.AdminDto.Id;
+                indexApplicationUserViewModel.AdminName = userDto.AdminDto.ToString();
             }
-            if (indexIdentityUserViewModel.IsCustomer)
+            if (indexApplicationUserViewModel.IsCustomer)
             {
-                indexIdentityUserViewModel.CustomerId = userDto.CustomerDto.Id;
-                indexIdentityUserViewModel.CustomerName = $"{userDto.CustomerDto.FirstName} {userDto.CustomerDto.LastName}";
+                indexApplicationUserViewModel.CustomerId = userDto.CustomerDto.Id;
+                indexApplicationUserViewModel.CustomerName = $"{userDto.CustomerDto.FirstName} {userDto.CustomerDto.LastName}";
             }
-            return indexIdentityUserViewModel;
+            return indexApplicationUserViewModel;
         }
     }
 }

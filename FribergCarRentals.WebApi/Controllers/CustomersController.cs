@@ -41,7 +41,10 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != customerDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            Customer customer = CustomerMapper.ToNewModelWIthoutId(customerDto);
+            Customer? customer = await _userService.GetCustomerByCustomerIdAsync(id);
+            if (customer == null)
+                return NotFound();
+            CustomerMapper.UpdateModel(customer, customerDto);
             await _userService.UpdateCustomerAsync(customer);
             return NoContent();
         }
