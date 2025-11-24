@@ -3,7 +3,7 @@ Fail: N/A
 Success: return Ok(List<Dto>);
 
 Get(int id)
-Fail: return BadRequest("ID not found.");
+Fail: return NotFound();
 Success: return Ok(Dto);
 
 Post(Dto dto)
@@ -15,5 +15,5 @@ Fail: return BadRequest("IDs do not match.");
 Success: return NoContent();
 
 Delete(id:int)
-Fail: return BadRequest("ID not found.");
+Fail: return NotFound();
 Success: return NoContent();

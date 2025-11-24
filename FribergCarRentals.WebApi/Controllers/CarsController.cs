@@ -17,7 +17,7 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarDto>>> Get()
+        public async Task<ActionResult<List<CarDto>>> Get()
         {
             IEnumerable<Car> cars = await _carService.GetAllAsync();
             List<CarDto> carDtos = CarMapper.ToDtos(cars);
@@ -29,9 +29,7 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             Car? car = await _carService.GetByIdAsync(id);
             if (car == null)
-            {
-                return BadRequest("Car not found");
-            }
+                return NotFound();
             CarDto carDto = CarMapper.ToDto(car);
             return Ok(carDto);
         }
@@ -48,23 +46,19 @@ namespace FribergCarRentals.WebApi.Controllers
         public async Task<ActionResult<CarDto?>> Put(int id, CarDto carDto)
         {
             if (id != carDto.Id)
-            {
                 return BadRequest("Id and car do not match.");
-            }
             Car car = CarMapper.ToModel(carDto);
             await _carService.UpdateAsync(car);
-            return Ok(carDto);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CarDto?>> Delete(int id)
         {
             Car? deletedCar = await _carService.DeleteAsync(id);
-            if (deletedCar != null) {
-                return BadRequest("Car not found.");
-            }
-            CarDto deletedCarDto = CarMapper.ToDto(deletedCar);
-            return Ok(deletedCarDto);
+            if (deletedCar == null)
+                return NotFound();
+            return NoContent();
         }
     }
 }
