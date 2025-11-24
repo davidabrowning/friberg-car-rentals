@@ -38,7 +38,10 @@ namespace FribergCarRentals.Mvc.ApiClients
 
         public async Task<UserDto> GetCurrentUserAsync()
         {
-            return await _httpClient.GetFromJsonAsync<UserDto>("api/users/current-user");
+            HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("api/users/current-user");
+            if (httpResponseMessage.IsSuccessStatusCode)
+                return await httpResponseMessage.Content.ReadFromJsonAsync<UserDto>();
+            return new UserDto();
         }
 
         public async Task<JwtTokenDto?> LoginAsync(string username, string password)
