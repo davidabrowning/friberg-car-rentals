@@ -34,6 +34,8 @@
 
         public const string ErrorIdIsNull = "Error: Id is null.";
 
+        public const string ErrorIdsDoNotMatch = "Error: Ids do not match.";
+
         public const string ErrorUsernameAlreadyTaken = "Error: Username already taken.";
 
         public const string ErrorAccessDenied = "Error: Access denied.";
