@@ -17,17 +17,22 @@ namespace FribergCarRentals.WebApi.Mappers
             };
             return dto;
         }
-        public static Reservation ToModel(ReservationDto reservationDto)
+        public static Reservation ToNewModelWIthoutId(ReservationDto reservationDto)
         {
             Reservation model = new()
             {
-                Id = reservationDto.Id,
                 StartDate = reservationDto.StartDate,
                 EndDate = reservationDto.EndDate,
-                Car = CarMapper.ToModel(reservationDto.CarDto),
-                Customer = CustomerMapper.ToModel(reservationDto.CustomerDto)
+                Car = new Car() { Id = reservationDto.CarDto.Id },
+                Customer = new Customer() { Id = reservationDto.CustomerDto.Id, UserId = reservationDto.CustomerDto.UserId },
             };
             return model;
+        }
+
+        public static void UpdateModel(Reservation reservation, ReservationDto reservationDto)
+        {
+            reservation.StartDate = reservationDto.StartDate;
+            reservation.EndDate = reservationDto.EndDate;   
         }
     }
 }

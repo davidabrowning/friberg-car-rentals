@@ -18,11 +18,10 @@ namespace FribergCarRentals.WebApi.Mappers
             return carDto;
         }
 
-        public static Car ToModel(CarDto carDto)
+        public static Car ToNewModelWithoutId(CarDto carDto)
         {
             Car car = new()
             {
-                Id = carDto.Id,
                 Make = carDto.Make,
                 Model = carDto.Model,
                 Year = carDto.Year,
@@ -30,6 +29,15 @@ namespace FribergCarRentals.WebApi.Mappers
                 PhotoUrls = carDto.PhotoUrls
             };
             return car;
+        }
+
+        public static void UpdateModel(Car car, CarDto carDto)
+        {
+            car.Make = carDto.Make;
+            car.Model = carDto.Model;
+            car.Year = carDto.Year;
+            car.Description = carDto.Description;
+            car.PhotoUrls = carDto.PhotoUrls;
         }
 
         public static List<CarDto> ToDtos(IEnumerable<Car> cars)
@@ -43,12 +51,12 @@ namespace FribergCarRentals.WebApi.Mappers
             return carDtos;
         }
 
-        public static List<Car> ToModels(IEnumerable<CarDto> carDtos)
+        public static List<Car> ToNewModelsWithoutId(IEnumerable<CarDto> carDtos)
         {
             List<Car> cars = new();
             foreach (CarDto carDto in carDtos)
             {
-                Car car = ToModel(carDto);
+                Car car = ToNewModelWithoutId(carDto);
                 cars.Add(car);
             }
             return cars;

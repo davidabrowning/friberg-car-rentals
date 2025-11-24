@@ -1,13 +1,14 @@
-﻿using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Car;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Car;
+using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [RequireCustomer]
     [Area("CustomerCenter")]
     public class CarController : Controller
     {

@@ -1,6 +1,7 @@
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Data;
 using FribergCarRentals.Mvc.ApiClients;
+using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,9 @@ namespace FribergCarRentals.Mvc
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            // Add a tracker for login status
+            builder.Services.AddSingleton<UserSession, UserSession>();
 
             var app = builder.Build();
 

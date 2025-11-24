@@ -1,19 +1,18 @@
 ﻿using FribergCarRentals.Mvc.Areas.Public.Views.Home;
-using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 {
     [Area("Public")]
     public class HomeController : Controller
     {
-        private readonly IUserApiClient _userApiClient;
-        public HomeController(IUserApiClient userApiClient)
+        private readonly UserSession _userSession;
+        public HomeController(UserSession userSession)
         {
-            _userApiClient = userApiClient;
+            _userSession = userSession;
         }
 
         // GET: Public/Home
@@ -21,15 +20,14 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         {
             IndexHomeViewModel homeIndexViewModel = new();
 
-            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
-            if (userDto.UserId == null)
+            if (!_userSession.IsSignedIn())
             {
                 homeIndexViewModel.IsSignedIn = false;
                 homeIndexViewModel.HasCustomerAccount = false;
                 return View(homeIndexViewModel);
             }
 
-            if (userDto.CustomerDto == null)
+            if (!_userSession.IsCustomer())
             {
                 homeIndexViewModel.IsSignedIn = true;
                 homeIndexViewModel.HasCustomerAccount = false;

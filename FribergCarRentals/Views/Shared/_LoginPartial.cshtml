@@ -1,6 +1,39 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using FribergCarRentals.Mvc.Session
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject UserSession UserSession
+
+@if (UserSession.IsSignedIn())
+{
+	<h1>Signed in as...</h1>
+}
+else
+{
+	<h1>Not signed in</h1>
+}
+<ul class="navbar-nav">
+	@if (UserSession.IsSignedIn())
+	{
+		<li class="nav-item">
+			Hello @UserSession.UserDto.Username!
+		</li>
+		<li class="nav-item">
+			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Signout">
+				<button type="submit" class="nav-link btn btn-link text-dark">SIGNOUT</button>
+			</form>
+		</li>
+	}
+	else
+	{
+		<li class="nav-item">
+			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Signin">
+				<button type="submit" class="nav-link btn btn-link text-dark">SIGNIN</button>
+			</form>
+		</li>
+	}
+</ul>
+
 
 <ul class="navbar-nav">
 	@if (SignInManager.IsSignedIn(User))

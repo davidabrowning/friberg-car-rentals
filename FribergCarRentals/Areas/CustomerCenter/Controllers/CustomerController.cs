@@ -1,22 +1,26 @@
-﻿using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Customer;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Customer;
+using FribergCarRentals.Mvc.Attributes;
+using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [RequireCustomer]
     [Area("CustomerCenter")]
     public class CustomerController : Controller
     {
         private readonly IUserApiClient _userApiClient;
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
-        public CustomerController(IUserApiClient userApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient)
+        private readonly UserSession _userSession;
+        public CustomerController(IUserApiClient userApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, UserSession userSession)
         {
             _userApiClient = userApiClient;
             _customerDtoApiClient = customerDtoApiClient;
+            _userSession = userSession;
         }
 
         public IActionResult Index()
@@ -27,7 +31,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer/Details
         public async Task<IActionResult> Details()
         {
-            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            UserDto userDto = _userSession.UserDto;
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -49,7 +53,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer/Edit
         public async Task<IActionResult> Edit()
         {
-            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            UserDto userDto = _userSession.UserDto;
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -73,7 +77,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditCustomerViewModel editCustomerViewModel)
         {
-            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            UserDto userDto = _userSession.UserDto;
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;

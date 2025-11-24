@@ -30,7 +30,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomerDto>> Post(CustomerDto customerDto)
         {
-            Customer customer = CustomerMapper.ToModel(customerDto);
+            Customer customer = CustomerMapper.ToNewModelWIthoutId(customerDto);
             await _userService.CreateCustomerAsync(customer);
             CustomerDto resultCustomerDto = CustomerMapper.ToDto(customer);
             return Ok(resultCustomerDto);
@@ -41,7 +41,7 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != customerDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            Customer customer = CustomerMapper.ToModel(customerDto);
+            Customer customer = CustomerMapper.ToNewModelWIthoutId(customerDto);
             await _userService.UpdateCustomerAsync(customer);
             return NoContent();
         }

@@ -29,11 +29,6 @@ namespace FribergCarRentals.WebApi.Mappers
             return userDto;
         }
 
-        public static string ToUserId(UserDto userDto)
-        {
-            return userDto.UserId;
-        }
-
         public static async Task<List<UserDto>> ToDtosAsync(List<string> userIds, IUserService userService, IAuthService authService)
         {
             List<UserDto> userDtos = new();
@@ -42,16 +37,6 @@ namespace FribergCarRentals.WebApi.Mappers
                 userDtos.Add(await ToDtoAsync(userId, userService, authService));
             }
             return userDtos;
-        }
-
-        public static List<string> ToUserIds(List<UserDto> userDtos)
-        {
-            List<string> userIds = new();
-            foreach (UserDto userDto in userDtos)
-            {
-                userIds.Add(userDto.UserId);
-            }
-            return userIds;
         }
     }
 }

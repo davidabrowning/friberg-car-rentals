@@ -31,7 +31,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AdminDto>> Post(AdminDto adminDto)
         {
-            Admin admin = AdminMapper.ToModel(adminDto);
+            Admin admin = AdminMapper.ToNewModelWIthoutId(adminDto);
             await _userService.CreateAdminAsync(admin);
             AdminDto resultAdminDto = AdminMapper.ToDto(admin);
             return Ok(resultAdminDto);
@@ -42,7 +42,10 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != adminDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            Admin admin = AdminMapper.ToModel(adminDto);
+            Admin? admin = await _userService.GetAdminByAdminIdAsync(id);
+            if (admin == null)
+                return NotFound();
+            AdminMapper.UpdateModel(admin, adminDto);
             await _userService.UpdateAdminAsync(admin);
             return NoContent();
         }

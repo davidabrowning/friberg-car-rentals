@@ -44,7 +44,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ReservationDto>> Post(ReservationDto reservationDto)
         {
-            Reservation reservation = ReservationMapper.ToModel(reservationDto);
+            Reservation reservation = ReservationMapper.ToNewModelWIthoutId(reservationDto);
             await _reservationService.CreateAsync(reservation);
             ReservationDto updatedReservationDto = ReservationMapper.ToDto(reservation);
             return Ok(updatedReservationDto);
@@ -55,7 +55,7 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != reservationDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            await _reservationService.UpdateAsync(ReservationMapper.ToModel(reservationDto));
+            await _reservationService.UpdateAsync(ReservationMapper.ToNewModelWIthoutId(reservationDto));
             return NoContent();
         }
 

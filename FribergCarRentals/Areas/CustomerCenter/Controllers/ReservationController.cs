@@ -1,6 +1,8 @@
-﻿using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation;
+using FribergCarRentals.Mvc.Attributes;
+using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [RequireCustomer]
     [Area("CustomerCenter")]
     public class ReservationController : Controller
     {
@@ -16,19 +18,25 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         private readonly ICRUDApiClient<ReservationDto> _reservationDtoApiClient;
         private readonly ICRUDApiClient<CarDto> _carDtoApiClient;
         private readonly IUserApiClient _userApiClient;
+        private readonly UserSession _userSession;
 
-        public ReservationController(ICRUDApiClient<CustomerDto> customerDtoApiClient, ICRUDApiClient<ReservationDto> reservationDtoApiClient, ICRUDApiClient<CarDto> carDtoApiClient, IUserApiClient userApiClient)
+        public ReservationController(ICRUDApiClient<CustomerDto> customerDtoApiClient,
+            ICRUDApiClient<ReservationDto> reservationDtoApiClient,
+            ICRUDApiClient<CarDto> carDtoApiClient,
+            IUserApiClient userApiClient,
+            UserSession userSession)
         {
             _customerDtoApiClient = customerDtoApiClient;
             _reservationDtoApiClient = reservationDtoApiClient;
             _carDtoApiClient = carDtoApiClient;
             _userApiClient = userApiClient;
+            _userSession = userSession;
         }
 
         // GET: CustomerCenter/Reservation
         public async Task<IActionResult> Index()
         {
-            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            UserDto userDto = _userSession.UserDto;
             if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
@@ -72,7 +80,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 preselectedCarId = (int)id;
             }
 
-            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            UserDto userDto = _userSession.UserDto;
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -83,7 +91,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
             {
                 CustomerId = userDto.CustomerDto.Id,
                 PreselectedCarId = preselectedCarId,
-                Cars = CarMapper.ToModels(await _carDtoApiClient.GetAsync())
+                CarDtos = await _carDtoApiClient.GetAsync()
             };
             return View(reservationCreateViewModel);
         }
@@ -95,7 +103,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         {
             if (!ModelState.IsValid)
             {
-                reservationCreateViewModel.Cars = CarMapper.ToModels(await _carDtoApiClient.GetAsync());
+                reservationCreateViewModel.CarDtos =await _carDtoApiClient.GetAsync();
                 return View(reservationCreateViewModel);
             }
 
@@ -143,7 +151,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            UserDto userDto = _userSession.UserDto;
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -152,7 +160,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 
             if (reservation.CustomerDto.Id != userDto.CustomerDto.Id)
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorAccessDenied;
+                TempData["ErrorMessage"] = UserMessage.ErrorUnauthorized;
                 return RedirectToAction("Index");
             }
 
@@ -161,7 +169,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 Id = reservation.Id,
                 StartDate = reservation.StartDate,
                 EndDate = reservation.EndDate,
-                Car = CarMapper.ToModel(reservation.CarDto),
+                CarDto = reservation.CarDto,
             };
 
             return View(reservationDeleteViewModel);
