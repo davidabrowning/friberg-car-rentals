@@ -23,7 +23,11 @@ namespace FribergCarRentals.Mvc.ApiClients
 
         public async Task<UserDto> GetByUsernameAsync(string username)
         {
-            return await _httpClient.GetFromJsonAsync<UserDto>($"api/users/username/{username}");
+            HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync($"api/users/username/{username}");
+            if (!httpResponseMessage.IsSuccessStatusCode)
+                return new UserDto();
+            UserDto userDto = await httpResponseMessage.Content.ReadFromJsonAsync<UserDto>();
+            return userDto;
         }
 
         public async Task CreateUserFromUsernameAsync(string username)

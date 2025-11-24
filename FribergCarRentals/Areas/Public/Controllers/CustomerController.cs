@@ -71,6 +71,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
             };
 
             await _customerDtoApiClient.PostAsync(newCustomerDto);
+            await _userSession.UpdateDto();
 
             TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
             return RedirectToAction("Index");
