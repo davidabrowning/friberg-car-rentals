@@ -1,10 +1,7 @@
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Data;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentals.Mvc
 {
@@ -32,7 +29,6 @@ namespace FribergCarRentals.Mvc
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseMigrationsEndPoint();
             }
             else
             {
