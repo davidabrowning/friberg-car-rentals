@@ -6,15 +6,9 @@ namespace FribergCarRentals.Mvc.ApiClients
     public class UserApiClient : IUserApiClient
     {
         private readonly HttpClient _httpClient;
-        public UserApiClient(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+        public UserApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-
-            string? cookie = httpContextAccessor.HttpContext?.Request?.Headers["Cookie"].ToString();
-            if (cookie == null)
-            {
-                _httpClient.DefaultRequestHeaders.Add("Cookie", cookie);
-            }
         }
 
         public async Task<List<UserDto>> GetAsync()
