@@ -5,7 +5,7 @@ namespace FribergCarRentals.WebApi.Mappers
 {
     public static class CarMapper
     {
-        public static Dtos.CarDto ToDto(Core.Models.Car car)
+        public static CarDto ToDto(Car car)
         {
             Dtos.CarDto carDto = new() { 
                 Id = car.Id,
@@ -18,11 +18,10 @@ namespace FribergCarRentals.WebApi.Mappers
             return carDto;
         }
 
-        public static Core.Models.Car ToModel(Dtos.CarDto carDto)
+        public static Car ToNewModelWithoutId(CarDto carDto)
         {
-            Core.Models.Car car = new()
+            Car car = new()
             {
-                Id = carDto.Id,
                 Make = carDto.Make,
                 Model = carDto.Model,
                 Year = carDto.Year,
@@ -32,23 +31,32 @@ namespace FribergCarRentals.WebApi.Mappers
             return car;
         }
 
-        public static List<Dtos.CarDto> ToDtos(IEnumerable<Core.Models.Car> cars)
+        public static void UpdateModel(Car car, CarDto carDto)
         {
-            List<Dtos.CarDto> carDtos = new();
-            foreach (Core.Models.Car car in cars)
+            car.Make = carDto.Make;
+            car.Model = carDto.Model;
+            car.Year = carDto.Year;
+            car.Description = carDto.Description;
+            car.PhotoUrls = carDto.PhotoUrls;
+        }
+
+        public static List<CarDto> ToDtos(IEnumerable<Car> cars)
+        {
+            List<CarDto> carDtos = new();
+            foreach (Car car in cars)
             {
-                Dtos.CarDto carDto = ToDto(car);
+                CarDto carDto = ToDto(car);
                 carDtos.Add(carDto);
             }
             return carDtos;
         }
 
-        public static List<Core.Models.Car> ToModels(IEnumerable<Dtos.CarDto> carDtos)
+        public static List<Car> ToNewModelsWithoutId(IEnumerable<CarDto> carDtos)
         {
-            List<Core.Models.Car> cars = new();
-            foreach (Dtos.CarDto carDto in carDtos)
+            List<Car> cars = new();
+            foreach (CarDto carDto in carDtos)
             {
-                Core.Models.Car car = ToModel(carDto);
+                Car car = ToNewModelWithoutId(carDto);
                 cars.Add(car);
             }
             return cars;

@@ -19,11 +19,10 @@ namespace FribergCarRentals.WebApi.Mappers
             return customerDto;
         }
 
-        public static Customer ToModel(CustomerDto customerDto)
+        public static Customer ToNewModelWIthoutId(CustomerDto customerDto)
         {
             Customer customer = new()
             {
-                Id= customerDto.Id,
                 UserId = customerDto.UserId,
                 FirstName = customerDto.FirstName,
                 LastName = customerDto.LastName,
@@ -31,6 +30,15 @@ namespace FribergCarRentals.WebApi.Mappers
                 HomeCountry = customerDto.HomeCountry
             };
             return customer;
+        }
+
+        public static void UpdateModel(Customer customer, CustomerDto customerDto)
+        {
+            customer.UserId = customerDto.UserId;
+            customer.FirstName = customerDto.FirstName;
+            customer.LastName = customerDto.LastName;
+            customer.HomeCity = customerDto.HomeCity;
+            customer.HomeCountry = customerDto.HomeCountry;
         }
     }
 }

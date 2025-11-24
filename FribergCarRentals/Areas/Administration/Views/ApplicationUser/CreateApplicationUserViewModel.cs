@@ -1,6 +1,6 @@
-﻿namespace FribergCarRentals.Mvc.Areas.Administration.Views.IdentityUser
+﻿namespace FribergCarRentals.Mvc.Areas.Administration.Views.ApplicationUser
 {
-    public class CreateIdentityUserViewModel
+    public class CreateApplicationUserViewModel
     {
         public string Id { get; set; } = "";
         public string Username { get; set; } = "";

@@ -1,5 +1,5 @@
-﻿@using FribergCarRentals.Mvc.Areas.Administration.Views.IdentityUser
-@model DeleteIdentityUserViewModel
+﻿@using FribergCarRentals.Mvc.Areas.Administration.Views.ApplicationUser
+@model DeleteApplicationUserViewModel
 
 @{
     ViewData["Title"] = "Delete User";
@@ -11,21 +11,21 @@
 <div>
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdentityUserId)
+            @Html.DisplayNameFor(model => model.UserId)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdentityUserId)
+            @Html.DisplayFor(model => model.UserId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdentityUserUsername)
+            @Html.DisplayNameFor(model => model.Username)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdentityUserUsername)
+            @Html.DisplayFor(model => model.Username)
         </dd>
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="IdentityUserId" />
+        <input type="hidden" asp-for="UserId" />
         <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
         <input type="submit" value="Delete" class="btn btn-danger" />
     </form>

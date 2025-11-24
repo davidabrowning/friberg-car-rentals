@@ -1,36 +1,36 @@
-﻿using FribergCarRentals.Mvc.Areas.Administration.Views.Admin;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Areas.Administration.Views.Admin;
+using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.WebApi.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [RequireAdmin]
     [Area("Administration")]
     public class AdminController : Controller
     {
         private readonly ICRUDApiClient<AdminDto> _adminDtoApiClient;
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
 
-        public AdminController(ICRUDApiClient<AdminDto> adminDtoApiClient, IAuthApiClient authApiClient)
+        public AdminController(ICRUDApiClient<AdminDto> adminDtoApiClient, IUserApiClient userApiClient)
         {
             _adminDtoApiClient = adminDtoApiClient;
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
         }
 
         // GET: Admin
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "IdentityUser");
+            return RedirectToAction("Index", "ApplicationUser");
         }
 
         // GET: Admin/Create/abcd-1234
-        [HttpGet("Administration/Admin/Create/{identityUserId}")]
-        public IActionResult Create(string? identityUserId)
+        [HttpGet("Administration/Admin/Create/{userId}")]
+        public IActionResult Create(string? userId)
         {
-            if (identityUserId == null)
+            if (userId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -38,7 +38,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 
             CreateAdminViewModel createAdminViewModel = new()
             {
-                IdentityUserId = identityUserId,
+                UserId = userId,
             };
             return View(createAdminViewModel);
         }
@@ -54,9 +54,9 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(createAdminViewModel);
             }
 
-            string userId = createAdminViewModel.IdentityUserId;
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            string userId = createAdminViewModel.UserId;
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -64,7 +64,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 
             AdminDto adminDto = new()
             {
-                UserId = userId
+                UserId = userDto.UserId
             };
             await _adminDtoApiClient.PostAsync(adminDto);
 

@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FribergCarRentals.Mvc.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [RequireCustomer]
     [Area("CustomerCenter")]
     public class HomeController : Controller
     {

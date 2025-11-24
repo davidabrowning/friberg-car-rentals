@@ -1,5 +1,6 @@
 ﻿@using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation
 @using FribergCarRentals.Core
+@using FribergCarRentals.WebApi.Dtos
 @model CreateReservationViewModel
 
 @{
@@ -25,15 +26,15 @@
                     {
                         <option>Choose a car</option>
                     }
-                    @foreach (FribergCarRentals.Core.Models.Car car in Model.Cars)
+                    @foreach (CarDto carDto in Model.CarDtos)
                     {
-                        if (Model.PreselectedCarId == car.Id)
+                        if (Model.PreselectedCarId == carDto.Id)
                         {
-                            <option selected value="@car.Id">#@car.Id: @car.Make @car.Model (@car.Year)</option>
+                            <option selected value="@carDto.Id">#@carDto.Id: @carDto.Make @carDto.Model (@carDto.Year)</option>
                         }
                         else
                         {
-                            <option value="@car.Id">#@car.Id: @car.Make @car.Model (@car.Year)</option>
+                            <option value="@carDto.Id">#@carDto.Id: @carDto.Make @carDto.Model (@carDto.Year)</option>
                         }
                     }
                 </select>

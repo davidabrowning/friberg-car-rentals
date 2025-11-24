@@ -15,14 +15,18 @@ namespace FribergCarRentals.WebApi.Mappers
             return adminDto;
         }
 
-        public static Admin ToModel(AdminDto adminDto)
+        public static Admin ToNewModelWIthoutId(AdminDto adminDto)
         {
             Admin admin = new()
             {
-                Id = adminDto.Id,
                 UserId = adminDto.UserId
             };
             return admin;
+        }
+
+        public static void UpdateModel(Admin admin, AdminDto adminDto)
+        {
+            admin.UserId = adminDto.UserId;
         }
     }
 }

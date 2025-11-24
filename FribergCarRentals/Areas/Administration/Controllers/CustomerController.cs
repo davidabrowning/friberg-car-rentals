@@ -1,29 +1,30 @@
-﻿using FribergCarRentals.Mvc.Areas.Administration.Views.Customer;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Areas.Administration.Views.Customer;
+using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [RequireAdmin]
     [Area("Administration")]
     public class CustomerController : Controller
     {
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
 
-        public CustomerController( ICRUDApiClient<CustomerDto> customerDtoApiClient, IAuthApiClient authApiClient)
+        public CustomerController(ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
         {
             _customerDtoApiClient = customerDtoApiClient;
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
         }
 
         // GET: Customer
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "IdentityUser");
+            return RedirectToAction("Index", "ApplicationUser");
         }
 
         // GET: Customer/Create/abcd-1234
@@ -36,18 +37,17 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(userId);
             CreateCustomerViewModel createCustomerViewModel = new()
             {
-                IdentityUserId = userId,
-                IdentityUserUsername = username,
+                UserId = userDto.UserId,
+                Username = userDto.Username,
             };
             return View(createCustomerViewModel);
         }
@@ -62,16 +62,16 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(createCustomerViewModel);
             }
 
-            string userId = createCustomerViewModel.IdentityUserId;
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            string userId = createCustomerViewModel.UserId;
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 return NotFound();
             }
 
             CustomerDto customerDto = new()
             {
-                UserId = userId,
+                UserId = userDto.UserId,
                 FirstName = createCustomerViewModel.FirstName,
                 LastName = createCustomerViewModel.LastName,
                 HomeCity = createCustomerViewModel.HomeCity,
@@ -92,7 +92,6 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Customer? customer = await _userService.GetCustomerByCustomerIdAsync((int)id);
             CustomerDto? customerDto = await _customerDtoApiClient.GetAsync((int)id);
             if (customerDto == null)
             {
@@ -100,12 +99,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(customerDto.UserId);
+            UserDto userDto = await _userApiClient.GetAsync(customerDto.UserId);
+            if (userDto.UserId == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
+            }
+
             EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
             {
                 CustomerId = customerDto.Id,
-                IdentityUserId = customerDto.UserId,
-                IdentityUserUsername = username,
+                UserId = customerDto.UserId,
+                Username = userDto.Username,
                 FirstName = customerDto.FirstName,
                 LastName = customerDto.LastName,
                 HomeCity = customerDto.HomeCity,
@@ -166,12 +171,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(customerDto.UserId);
+            UserDto? userDto = await _userApiClient.GetAsync(customerDto.UserId);
+            if (userDto.UserId == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
+            }
+
             DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
             {
                 CustomerId = customerDto.Id,
-                IdentityUserId = customerDto.UserId,
-                IdentityUserUsername = username,
+                UserId = customerDto.UserId,
+                Username = userDto.Username,
                 FirstName = customerDto.FirstName,
                 LastName = customerDto.LastName,
                 HomeCity = customerDto.HomeCity,

@@ -1,14 +1,13 @@
-﻿using FribergCarRentals.Mvc.Areas.Administration.Views.Car;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Areas.Administration.Views.Car;
+using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.WebApi.Dtos;
-using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [RequireAdmin]
     [Area("Administration")]
     public class CarController : Controller
     {
@@ -120,7 +119,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             PhotosCarViewModel photosCarViewModel = new()
             {
                 Id = carDto.Id,
-                Car = CarMapper.ToModel(carDto),
+                CarDto = carDto,
                 PhotoUrl1 = carDto.PhotoUrls.ElementAtOrDefault(0),
                 PhotoUrl2 = carDto.PhotoUrls.ElementAtOrDefault(1),
                 PhotoUrl3 = carDto.PhotoUrls.ElementAtOrDefault(2),

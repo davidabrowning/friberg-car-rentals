@@ -4,20 +4,22 @@ using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FribergCarRentals.Mvc.Session;
 
 namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 {
-    [Authorize]
     [Area("Public")]
     public class CustomerController : Controller
     {
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
+        private readonly UserSession _userSession;
 
-        public CustomerController(IAuthApiClient authApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient)
+        public CustomerController(IUserApiClient userApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, UserSession userSession)
         {
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
             _customerDtoApiClient = customerDtoApiClient;
+            _userSession = userSession;
         }
 
         // GET: Public/Customer
@@ -29,15 +31,13 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         // GET: Public/Customer/Create
         public async Task<IActionResult> Create()
         {
-            string? signedInUserId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (signedInUserId == null)
+            if (!_userSession.IsSignedIn())
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index", "Home");
             }
-            int signedInCustomerId = await _authApiClient.GetCustomerIdByUserId(signedInUserId);
-            CustomerDto? signedInCustomerDto = await _customerDtoApiClient.GetAsync(signedInCustomerId);
-            if (signedInCustomerDto != null)
+
+            if (_userSession.IsCustomer())
             {
                 return RedirectToAction("Index", "Car", new { area = "CustomerCenter" });
             }
@@ -56,8 +56,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                 return View(populatedCustomerCreateVM);
             }
 
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
+            if (!_userSession.IsSignedIn())
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -65,7 +64,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 
             CustomerDto newCustomerDto = new()
             {
-                UserId = userId,
+                UserId = _userSession.UserDto.UserId,
                 FirstName = populatedCustomerCreateVM.FirstName,
                 LastName = populatedCustomerCreateVM.LastName,
                 HomeCity = populatedCustomerCreateVM.HomeCity,

@@ -1,49 +1,47 @@
-﻿using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
+using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Reservation;
+using FribergCarRentals.Mvc.Attributes;
+using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
-using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 {
-    [Authorize(Roles = "Customer")]
+    [RequireCustomer]
     [Area("CustomerCenter")]
     public class ReservationController : Controller
     {
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
         private readonly ICRUDApiClient<ReservationDto> _reservationDtoApiClient;
         private readonly ICRUDApiClient<CarDto> _carDtoApiClient;
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
+        private readonly UserSession _userSession;
 
-        public ReservationController(ICRUDApiClient<CustomerDto> customerDtoApiClient, ICRUDApiClient<ReservationDto> reservationDtoApiClient, ICRUDApiClient<CarDto> carDtoApiClient, IAuthApiClient authApiClient)
+        public ReservationController(ICRUDApiClient<CustomerDto> customerDtoApiClient,
+            ICRUDApiClient<ReservationDto> reservationDtoApiClient,
+            ICRUDApiClient<CarDto> carDtoApiClient,
+            IUserApiClient userApiClient,
+            UserSession userSession)
         {
             _customerDtoApiClient = customerDtoApiClient;
             _reservationDtoApiClient = reservationDtoApiClient;
             _carDtoApiClient = carDtoApiClient;
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
+            _userSession = userSession;
         }
 
         // GET: CustomerCenter/Reservation
         public async Task<IActionResult> Index()
         {
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
+            UserDto userDto = _userSession.UserDto;
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            if (! await _authApiClient.IsCustomerAsync(userId))
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
-                return RedirectToAction("Index");
-            }
-
-            int customerId = await _authApiClient.GetCustomerIdByUserId(userId);
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(customerId);
-            if (customerDto == null)
+            if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
@@ -51,7 +49,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 
             IEnumerable<ReservationDto> reservationDtos = await _reservationDtoApiClient.GetAsync();
             List<ReservationDto> thisCustomersReservationDtos = reservationDtos
-                .Where(r => r.CustomerDto.Id == customerDto.Id)
+                .Where(r => r.CustomerDto.Id == userDto.CustomerDto.Id)
                 .OrderByDescending(r => r.StartDate)
                 .ToList();
             List<IndexReservationViewModel> reservationIndexViewModelList = new();
@@ -80,16 +78,8 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 preselectedCarId = (int)id;
             }
 
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index");
-            }
-
-            int customerId = await _authApiClient.GetCustomerIdByUserId(userId);
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(customerId);
-            if (customerDto == null)
+            UserDto userDto = _userSession.UserDto;
+            if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
@@ -97,9 +87,9 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 
             CreateReservationViewModel reservationCreateViewModel = new()
             {
-                CustomerId = customerDto.Id,
+                CustomerId = userDto.CustomerDto.Id,
                 PreselectedCarId = preselectedCarId,
-                Cars = CarMapper.ToModels(await _carDtoApiClient.GetAsync())
+                CarDtos = await _carDtoApiClient.GetAsync()
             };
             return View(reservationCreateViewModel);
         }
@@ -111,7 +101,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         {
             if (!ModelState.IsValid)
             {
-                reservationCreateViewModel.Cars = CarMapper.ToModels(await _carDtoApiClient.GetAsync());
+                reservationCreateViewModel.CarDtos =await _carDtoApiClient.GetAsync();
                 return View(reservationCreateViewModel);
             }
 
@@ -159,23 +149,16 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            string? signedInUserId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (signedInUserId == null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index");
-            }
-            int customerId = await _authApiClient.GetCustomerIdByUserId(signedInUserId);
-            CustomerDto? signedInCustomerDto = await _customerDtoApiClient.GetAsync(customerId);
-            if (signedInCustomerDto == null)
+            UserDto userDto = _userSession.UserDto;
+            if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
             }
 
-            if (reservation.CustomerDto.Id != signedInCustomerDto.Id)
+            if (reservation.CustomerDto.Id != userDto.CustomerDto.Id)
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorAccessDenied;
+                TempData["ErrorMessage"] = UserMessage.ErrorUnauthorized;
                 return RedirectToAction("Index");
             }
 
@@ -184,7 +167,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 Id = reservation.Id,
                 StartDate = reservation.StartDate,
                 EndDate = reservation.EndDate,
-                Car = CarMapper.ToModel(reservation.CarDto),
+                CarDto = reservation.CarDto,
             };
 
             return View(reservationDeleteViewModel);

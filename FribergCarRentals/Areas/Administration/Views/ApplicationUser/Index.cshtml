@@ -1,5 +1,5 @@
-﻿@using FribergCarRentals.Mvc.Areas.Administration.Views.IdentityUser
-@model IEnumerable<IndexIdentityUserViewModel>
+﻿@using FribergCarRentals.Mvc.Areas.Administration.Views.ApplicationUser
+@model IEnumerable<IndexApplicationUserViewModel>
 
 @{
 	ViewData["Title"] = "All Users";
@@ -25,12 +25,12 @@
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (IndexIdentityUserViewModel identityUserIndexViewModel in Model)
+		@foreach (IndexApplicationUserViewModel identityUserIndexViewModel in Model)
 		{
 			<tr>
 				<td>
-					<a asp-action="Edit" asp-route-id="@identityUserIndexViewModel.IdentityUserId" class="btn btn-outline-primary">
-						@identityUserIndexViewModel.IdentityUserUsername
+					<a asp-action="Edit" asp-route-id="@identityUserIndexViewModel.UserId" class="btn btn-outline-primary">
+						@identityUserIndexViewModel.Username
 					</a>
 				</td>
 				@if (identityUserIndexViewModel.IsAdmin)
@@ -44,7 +44,7 @@
 				else
 				{
 					<td>
-						<a asp-controller="Admin" asp-action="Create" asp-route-id="@identityUserIndexViewModel.IdentityUserId" class="btn btn-outline-secondary">
+						<a asp-controller="Admin" asp-action="Create" asp-route-id="@identityUserIndexViewModel.UserId" class="btn btn-outline-secondary">
 							Make admin
 						</a>
 					</td>
@@ -60,7 +60,7 @@
 				else
 				{
 					<td>
-						<a asp-controller="Customer" asp-action="Create" asp-route-id="@identityUserIndexViewModel.IdentityUserId" class="btn btn-outline-secondary">Make customer</a>
+						<a asp-controller="Customer" asp-action="Create" asp-route-id="@identityUserIndexViewModel.UserId" class="btn btn-outline-secondary">Make customer</a>
 					</td>
 				}
 

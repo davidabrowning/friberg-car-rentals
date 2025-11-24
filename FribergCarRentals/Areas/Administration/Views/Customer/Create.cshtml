@@ -11,11 +11,11 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="IdentityUserId" value="@Model.IdentityUserId" type="hidden" />
+            <input asp-for="UserId" value="@Model.UserId" type="hidden" />
             <div class="form-group">
-                <label asp-for="IdentityUserUsername" class="control-label"></label>
-                <input asp-for="IdentityUserUsername" class="form-control" readonly placeholder="@Model.IdentityUserUsername" />
-                <span asp-validation-for="IdentityUserUsername" class="text-danger"></span>
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" readonly placeholder="@Model.Username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>

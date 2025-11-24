@@ -1,9 +1,9 @@
-﻿namespace FribergCarRentals.Mvc.Areas.Administration.Views.IdentityUser
+﻿namespace FribergCarRentals.Mvc.Areas.Administration.Views.ApplicationUser
 {
-    public class IndexIdentityUserViewModel
+    public class IndexApplicationUserViewModel
     {
-        public string IdentityUserId { get; set; } = string.Empty;
-        public string IdentityUserUsername { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
         public bool IsAdmin { get; set; }
         public int AdminId { get; set; }
         public string AdminName { get; set; } = string.Empty;

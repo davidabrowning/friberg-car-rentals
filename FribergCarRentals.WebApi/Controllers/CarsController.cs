@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Core.Interfaces.Services;
+﻿using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
@@ -17,7 +18,7 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CarDto>>> Get()
+        public async Task<ActionResult<List<CarDto>>> Get()
         {
             IEnumerable<Car> cars = await _carService.GetAllAsync();
             List<CarDto> carDtos = CarMapper.ToDtos(cars);
@@ -25,13 +26,11 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<CarDto?>> Get(int id)
+        public async Task<ActionResult<CarDto>> Get(int id)
         {
             Car? car = await _carService.GetByIdAsync(id);
             if (car == null)
-            {
-                return BadRequest("Car not found");
-            }
+                return NotFound();
             CarDto carDto = CarMapper.ToDto(car);
             return Ok(carDto);
         }
@@ -39,32 +38,32 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CarDto>> Post(CarDto carDto)
         {
-            Car car = CarMapper.ToModel(carDto);
+            Car car = CarMapper.ToNewModelWithoutId(carDto);
             await _carService.CreateAsync(car);
-            return Ok(carDto);
+            CarDto resultCarDto = CarMapper.ToDto(car);
+            return Ok(resultCarDto);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<CarDto?>> Put(int id, CarDto carDto)
+        public async Task<ActionResult> Put(int id, CarDto carDto)
         {
             if (id != carDto.Id)
-            {
-                return BadRequest("Id and car do not match.");
-            }
-            Car car = CarMapper.ToModel(carDto);
+                return BadRequest(UserMessage.ErrorIdsDoNotMatch);
+            Car? car = await _carService.GetByIdAsync(id);
+            if (car == null)
+                return NotFound();
+            CarMapper.UpdateModel(car, carDto);
             await _carService.UpdateAsync(car);
-            return Ok(carDto);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<CarDto?>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             Car? deletedCar = await _carService.DeleteAsync(id);
-            if (deletedCar != null) {
-                return BadRequest("Car not found.");
-            }
-            CarDto deletedCarDto = CarMapper.ToDto(deletedCar);
-            return Ok(deletedCarDto);
+            if (deletedCar == null)
+                return NotFound();
+            return NoContent();
         }
     }
 }

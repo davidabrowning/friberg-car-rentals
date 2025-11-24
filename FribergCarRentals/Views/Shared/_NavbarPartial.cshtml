@@ -1,12 +1,15 @@
-﻿@if (User.IsInRole("Admin"))
+﻿@using FribergCarRentals.Mvc.Session
+@inject UserSession UserSession
+
+@if (UserSession.IsAdmin())
 {
 	<partial name="_NavbarAdminPartial" />
 }
-@if (User.IsInRole("Customer"))
+@if (UserSession.IsCustomer())
 {
 	<partial name="_NavbarCustomerPartial" />
 }
-@if (!User.IsInRole("Admin") && !User.IsInRole("Customer"))
+@if (!UserSession.IsAdmin() && !UserSession.IsCustomer())
 {
 	<partial name="_NavbarPublicPartial" />
 }
