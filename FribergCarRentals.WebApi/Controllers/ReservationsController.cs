@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Core.Interfaces.Services;
+﻿using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
@@ -18,7 +19,7 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ReservationDto>> Get()
+        public async Task<ActionResult<List<ReservationDto>>> Get()
         {
             List<ReservationDto> reservationDtos = new();
             IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
@@ -27,34 +28,33 @@ namespace FribergCarRentals.WebApi.Controllers
                 ReservationDto reservationDto = ReservationMapper.ToDto(reservation);
                 reservationDtos.Add(reservationDto);
             }
-            return reservationDtos;
+            return Ok(reservationDtos);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ReservationDto?> Get(int id)
+        public async Task<ActionResult<ReservationDto>> Get(int id)
         {
             Reservation? reservation = await _reservationService.GetByIdAsync(id);
             if (reservation == null)
-            {
-                return null;
-            }
-            return ReservationMapper.ToDto(reservation);
+                return NotFound();
+            ReservationDto reservationDto = ReservationMapper.ToDto(reservation);
+            return Ok(reservationDto);
         }
 
         [HttpPost]
-        public async Task<ReservationDto> Post(ReservationDto reservationDto)
+        public async Task<ActionResult<ReservationDto>> Post(ReservationDto reservationDto)
         {
-            await _reservationService.CreateAsync(ReservationMapper.ToModel(reservationDto));
-            return reservationDto;
+            Reservation reservation = ReservationMapper.ToModel(reservationDto);
+            await _reservationService.CreateAsync(reservation);
+            ReservationDto updatedReservationDto = ReservationMapper.ToDto(reservation);
+            return Ok(updatedReservationDto);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, ReservationDto reservationDto)
         {
             if (id != reservationDto.Id)
-            {
-                return BadRequest("Id and reservation do not match.");
-            }
+                return BadRequest(UserMessage.ErrorIdsDoNotMatch);
             await _reservationService.UpdateAsync(ReservationMapper.ToModel(reservationDto));
             return NoContent();
         }
@@ -62,7 +62,9 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _reservationService.DeleteAsync(id);
+            Reservation? deletedReservation = await _reservationService.DeleteAsync(id);
+            if (deletedReservation == null)
+                return NotFound();
             return NoContent();
         }
     }

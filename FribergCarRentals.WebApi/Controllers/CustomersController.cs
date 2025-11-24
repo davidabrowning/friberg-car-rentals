@@ -52,7 +52,6 @@ namespace FribergCarRentals.WebApi.Controllers
             Customer? customer = await _userService.DeleteCustomerAsync(id);
             if (customer == null)
                 return NotFound();
-            CustomerDto customerDto = CustomerMapper.ToDto(customer);
             return NoContent();
         }
     }

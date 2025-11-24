@@ -53,7 +53,6 @@ namespace FribergCarRentals.WebApi.Controllers
             Admin? admin = await _userService.DeleteAdminAsync(id);
             if (admin == null)
                 return NotFound();
-            AdminDto adminDto = AdminMapper.ToDto(admin);
             return NoContent();
         }
     }
