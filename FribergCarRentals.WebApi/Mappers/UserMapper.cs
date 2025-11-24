@@ -33,7 +33,7 @@ namespace FribergCarRentals.WebApi.Mappers
             return userDtos;
         }
 
-        public static string ToUserIds(List<UserDto> userDtos)
+        public static List<string> ToUserIds(List<UserDto> userDtos)
         {
             List<string> userIds = new();
             foreach (UserDto userDto in userDtos)

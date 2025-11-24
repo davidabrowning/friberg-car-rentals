@@ -30,6 +30,26 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(userDtos);
         }
 
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<UserDto>> Get(string userId)
+        {
+            string username = await _userService.GetUsernameByUserIdAsync(userId);
+            if (username == null)
+                return NotFound();
+            UserDto userDto = await UserMapper.ToDtoAsync(userId, _userService, _authService);
+            return Ok(userDto);
+        }
+
+        [HttpGet("username/{username}")]
+        public async Task<ActionResult<UserDto>> GetFromUsername(string username)
+        {
+            string userId = await _userService.GetUserIdByUsernameAsync(username);
+            if (userId == null)
+                return NotFound();
+            UserDto userDto = await UserMapper.ToDtoAsync(userId, _userService, _authService);
+            return Ok(userDto);
+        }
+
         [HttpGet("current-user")]
         public ActionResult<UserDto> GetCurrentUser()
         {
@@ -42,7 +62,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(signedInUserDto);
         }
 
-        [HttpPost("create-user")]
+        [HttpPost("create-from-username")]
         public async Task<ActionResult<string>> CreateUser(string username)
         {
             await _userService.CreateUserAsync(username);
@@ -83,7 +103,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("delete-user/{userId}")]
+        [HttpDelete("{userId}")]
         public async Task<ActionResult> DeleteUser(string username)
         {
             string? deletedUserId = await _userService.DeleteUserAsync(username);

@@ -11,11 +11,11 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
     [Area("CustomerCenter")]
     public class CustomerController : Controller
     {
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
-        public CustomerController(IAuthApiClient authApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient)
+        public CustomerController(IUserApiClient userApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient)
         {
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
             _customerDtoApiClient = customerDtoApiClient;
         }
 
@@ -27,16 +27,8 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer/Details
         public async Task<IActionResult> Details()
         {
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index");
-            }
-
-            int customerId = await _authApiClient.GetCustomerIdByUserId(userId);
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(customerId);
-            if (customerDto == null)
+            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
@@ -44,11 +36,11 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 
             DetailsCustomerViewModel detailsCustomerViewModel = new()
             {
-                Id = customerDto.Id,
-                FirstName = customerDto.FirstName,
-                LastName = customerDto.LastName,
-                HomeCity = customerDto.HomeCity,
-                HomeCountry = customerDto.HomeCountry,
+                Id = userDto.CustomerDto.Id,
+                FirstName = userDto.CustomerDto.FirstName,
+                LastName = userDto.CustomerDto.LastName,
+                HomeCity = userDto.CustomerDto.HomeCity,
+                HomeCountry = userDto.CustomerDto.HomeCountry,
             };
 
             return View(detailsCustomerViewModel);
@@ -57,16 +49,8 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer/Edit
         public async Task<IActionResult> Edit()
         {
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index");
-            }
-
-            int customerId = await _authApiClient.GetCustomerIdByUserId(userId);
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(customerId);
-            if (customerDto == null)
+            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
@@ -74,11 +58,11 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
 
             EditCustomerViewModel editCustomerViewModel = new()
             {
-                Id = customerDto.Id,
-                FirstName = customerDto.FirstName,
-                LastName = customerDto.LastName,
-                HomeCity = customerDto.HomeCity,
-                HomeCountry = customerDto.HomeCountry,
+                Id = userDto.CustomerDto.Id,
+                FirstName = userDto.CustomerDto.FirstName,
+                LastName = userDto.CustomerDto.LastName,
+                HomeCity = userDto.CustomerDto.HomeCity,
+                HomeCountry = userDto.CustomerDto.HomeCountry,
             };
 
             return View(editCustomerViewModel);
@@ -89,22 +73,14 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditCustomerViewModel editCustomerViewModel)
         {
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index");
-            }
-
-            int customerId = await _authApiClient.GetCustomerIdByUserId(userId);
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(customerId);
-            if (customerDto == null)
+            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
                 return RedirectToAction("Index");
             }
 
-            if (customerDto.Id != editCustomerViewModel.Id)
+            if (userDto.CustomerDto.Id != editCustomerViewModel.Id)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorIdIsInvalid;
                 return RedirectToAction("Index");
@@ -115,11 +91,11 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 return View(editCustomerViewModel);
             }
 
-            customerDto.FirstName = editCustomerViewModel.FirstName;
-            customerDto.LastName = editCustomerViewModel.LastName;
-            customerDto.HomeCity = editCustomerViewModel.HomeCity;
-            customerDto.HomeCountry = editCustomerViewModel.HomeCountry;
-            await _customerDtoApiClient.PutAsync(customerDto);
+            userDto.CustomerDto.FirstName = editCustomerViewModel.FirstName;
+            userDto.CustomerDto.LastName = editCustomerViewModel.LastName;
+            userDto.CustomerDto.HomeCity = editCustomerViewModel.HomeCity;
+            userDto.CustomerDto.HomeCountry = editCustomerViewModel.HomeCountry;
+            await _customerDtoApiClient.PutAsync(userDto.CustomerDto);
 
             TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
             return RedirectToAction("Details");

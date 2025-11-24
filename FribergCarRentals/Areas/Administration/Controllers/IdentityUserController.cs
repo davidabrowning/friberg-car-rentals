@@ -4,6 +4,7 @@ using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FribergCarRentals.Core.Constants;
 
 namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 {
@@ -13,23 +14,23 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
     {
         private readonly ICRUDApiClient<AdminDto> _adminDtoApiClient;
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
 
-        public IdentityUserController(ICRUDApiClient<AdminDto> adminDtoApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, IAuthApiClient authApiClient)
+        public IdentityUserController(ICRUDApiClient<AdminDto> adminDtoApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
         {
             _adminDtoApiClient = adminDtoApiClient;
             _customerDtoApiClient = customerDtoApiClient;
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
         }
 
         // GET: IdentityUserIndexViewModels
         public async Task<IActionResult> Index()
         {
             List<IndexIdentityUserViewModel> indexIdentityUserViewModelList = new();
-            IEnumerable<string> userIds = await _authApiClient.GetAllUserIdsAsync();
-            foreach (string userId in userIds)
+            IEnumerable<UserDto> userDtos = await _userApiClient.GetAsync();
+            foreach (UserDto userDto in userDtos)
             {
-                indexIdentityUserViewModelList.Add(await CreateIndexIdentityUserViewModel(userId));
+                indexIdentityUserViewModelList.Add(await CreateIndexIdentityUserViewModel(userDto.UserId));
             }
             return View(indexIdentityUserViewModelList);
         }
@@ -46,8 +47,8 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateIdentityUserViewModel createIdentityUserViewModel)
         {
-            bool isUser = await _authApiClient.IsUserAsync(createIdentityUserViewModel.Username);
-            if (isUser)
+            UserDto userDto = await _userApiClient.GetByUsernameAsync(createIdentityUserViewModel.Username);
+            if (userDto.UserId != null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
                 return View(createIdentityUserViewModel);
@@ -58,7 +59,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(createIdentityUserViewModel);
             }
 
-            await _authApiClient.CreateUserAsync(createIdentityUserViewModel.Username);
+            await _userApiClient.CreateUserFromUsernameAsync(createIdentityUserViewModel.Username);
 
             TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
             return RedirectToAction("Index");
@@ -73,18 +74,17 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(userId);
             EditIdentityUserViewModel editIdentityUserViewModel = new EditIdentityUserViewModel()
             {
-                IdentityUserId = userId,
-                IdentityUserUsername = username,
+                IdentityUserId = userDto.UserId,
+                IdentityUserUsername = userDto.Username,
             };
             return View(editIdentityUserViewModel);
         }
@@ -107,7 +107,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(editIdentityUserViewModel);
             }
 
-            await _authApiClient.UpdateUsernameAsync(userId, editIdentityUserViewModel.IdentityUserUsername);
+            await _userApiClient.UpdateUsernameAsync(userId, editIdentityUserViewModel.IdentityUserUsername);
 
             TempData["SuccessMessage"] = UserMessage.SuccessUserUpdated;
             return RedirectToAction("Index");
@@ -122,18 +122,17 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(userId);
             DeleteIdentityUserViewModel deleteIdentityUserViewModel = new DeleteIdentityUserViewModel()
             {
-                IdentityUserId = userId,
-                IdentityUserUsername = username,
+                IdentityUserId = userDto.UserId,
+                IdentityUserUsername = userDto.Username,
             };
             return View(deleteIdentityUserViewModel);
         }
@@ -143,7 +142,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string userId)
         {
-            await _authApiClient.DeleteUserAsync(userId);
+            await _userApiClient.DeleteUserAsync(userId);
 
             TempData["SuccessMessage"] = UserMessage.SuccessUserDeleted;
             return RedirectToAction("Index");
@@ -151,35 +150,23 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 
         private async Task<IndexIdentityUserViewModel> CreateIndexIdentityUserViewModel(string userId)
         {
-            string username = await _authApiClient.GetUsernameByUserIdAsync(userId);
+            UserDto userDto = await _userApiClient.GetAsync(userId);
             IndexIdentityUserViewModel indexIdentityUserViewModel = new()
             {
-                IdentityUserId = userId,
-                IdentityUserUsername = username,
-                IsAdmin = await _authApiClient.IsInRoleAsync(userId, "Admin"),
-                IsCustomer = await _authApiClient.IsInRoleAsync(userId, "Customer"),
+                IdentityUserId = userDto.UserId,
+                IdentityUserUsername = userDto.Username,
+                IsAdmin = userDto.AuthRoles.Where(r => r == AuthRoleName.Admin).Any(),
+                IsCustomer = userDto.AuthRoles.Where(r => r == AuthRoleName.Customer).Any(),
             };
             if (indexIdentityUserViewModel.IsAdmin)
             {
-                bool userIsAdmin = await _authApiClient.IsAdminAsync(userId);
-                if (userIsAdmin)
-                {
-                    int adminId = await _authApiClient.GetAdminIdByUserId(userId);
-                    AdminDto adminDto = await _adminDtoApiClient.GetAsync(adminId);
-                    indexIdentityUserViewModel.AdminId = adminDto.Id;
-                    indexIdentityUserViewModel.AdminName = adminDto.Id.ToString();
-                }
+                indexIdentityUserViewModel.AdminId = userDto.AdminDto.Id;
+                indexIdentityUserViewModel.AdminName = userDto.AdminDto.ToString();
             }
             if (indexIdentityUserViewModel.IsCustomer)
             {
-                bool userIsCustomer = await _authApiClient.IsCustomerAsync(userId);
-                if (userIsCustomer)
-                {
-                    int customerId = await _authApiClient.GetCustomerIdByUserId(userId);
-                    CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(customerId);
-                    indexIdentityUserViewModel.CustomerId = customerDto.Id;
-                    indexIdentityUserViewModel.CustomerName = $"{customerDto.FirstName} {customerDto.LastName}";
-                }
+                indexIdentityUserViewModel.CustomerId = userDto.CustomerDto.Id;
+                indexIdentityUserViewModel.CustomerName = $"{userDto.CustomerDto.FirstName} {userDto.CustomerDto.LastName}";
             }
             return indexIdentityUserViewModel;
         }

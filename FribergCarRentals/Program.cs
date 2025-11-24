@@ -42,7 +42,7 @@ namespace FribergCarRentals.Mvc
             builder.Services.AddHttpClient<ICRUDApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
             builder.Services.AddHttpClient<ICRUDApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
             builder.Services.AddHttpClient<ICRUDApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<IAuthApiClient, AuthApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IUserApiClient, UserApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
 
             // Add other services to the container
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)

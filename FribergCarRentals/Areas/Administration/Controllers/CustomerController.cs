@@ -12,12 +12,12 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
     public class CustomerController : Controller
     {
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
 
-        public CustomerController( ICRUDApiClient<CustomerDto> customerDtoApiClient, IAuthApiClient authApiClient)
+        public CustomerController(ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
         {
             _customerDtoApiClient = customerDtoApiClient;
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
         }
 
         // GET: Customer
@@ -36,18 +36,17 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(userId);
             CreateCustomerViewModel createCustomerViewModel = new()
             {
-                UserId = userId,
-                Username = username,
+                UserId = userDto.UserId,
+                Username = userDto.Username,
             };
             return View(createCustomerViewModel);
         }
@@ -63,15 +62,15 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             }
 
             string userId = createCustomerViewModel.UserId;
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 return NotFound();
             }
 
             CustomerDto customerDto = new()
             {
-                UserId = userId,
+                UserId = userDto.UserId,
                 FirstName = createCustomerViewModel.FirstName,
                 LastName = createCustomerViewModel.LastName,
                 HomeCity = createCustomerViewModel.HomeCity,
@@ -92,7 +91,6 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Customer? customer = await _userService.GetCustomerByCustomerIdAsync((int)id);
             CustomerDto? customerDto = await _customerDtoApiClient.GetAsync((int)id);
             if (customerDto == null)
             {
@@ -100,12 +98,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(customerDto.UserId);
+            UserDto userDto = await _userApiClient.GetAsync(customerDto.UserId);
+            if (userDto.UserId == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
+            }
+
             EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
             {
                 CustomerId = customerDto.Id,
                 UserId = customerDto.UserId,
-                Username = username,
+                Username = userDto.Username,
                 FirstName = customerDto.FirstName,
                 LastName = customerDto.LastName,
                 HomeCity = customerDto.HomeCity,
@@ -166,12 +170,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            string username = await _authApiClient.GetUsernameByUserIdAsync(customerDto.UserId);
+            UserDto? userDto = await _userApiClient.GetAsync(customerDto.UserId);
+            if (userDto.UserId == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                return RedirectToAction("Index");
+            }
+
             DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
             {
                 CustomerId = customerDto.Id,
                 UserId = customerDto.UserId,
-                Username = username,
+                Username = userDto.Username,
                 FirstName = customerDto.FirstName,
                 LastName = customerDto.LastName,
                 HomeCity = customerDto.HomeCity,

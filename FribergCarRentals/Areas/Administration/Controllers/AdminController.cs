@@ -12,12 +12,12 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
     public class AdminController : Controller
     {
         private readonly ICRUDApiClient<AdminDto> _adminDtoApiClient;
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
 
-        public AdminController(ICRUDApiClient<AdminDto> adminDtoApiClient, IAuthApiClient authApiClient)
+        public AdminController(ICRUDApiClient<AdminDto> adminDtoApiClient, IUserApiClient userApiClient)
         {
             _adminDtoApiClient = adminDtoApiClient;
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
         }
 
         // GET: Admin
@@ -55,8 +55,8 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             }
 
             string userId = createAdminViewModel.UserId;
-            bool isUser = await _authApiClient.IsUserAsync(userId);
-            if (!isUser)
+            UserDto userDto = await _userApiClient.GetAsync(userId);
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -64,7 +64,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 
             AdminDto adminDto = new()
             {
-                UserId = userId
+                UserId = userDto.UserId
             };
             await _adminDtoApiClient.PostAsync(adminDto);
 

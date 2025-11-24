@@ -11,12 +11,12 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
     [Area("Public")]
     public class CustomerController : Controller
     {
-        private readonly IAuthApiClient _authApiClient;
+        private readonly IUserApiClient _userApiClient;
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
 
-        public CustomerController(IAuthApiClient authApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient)
+        public CustomerController(IUserApiClient userApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient)
         {
-            _authApiClient = authApiClient;
+            _userApiClient = userApiClient;
             _customerDtoApiClient = customerDtoApiClient;
         }
 
@@ -29,15 +29,15 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         // GET: Public/Customer/Create
         public async Task<IActionResult> Create()
         {
-            string? signedInUserId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (signedInUserId == null)
+            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index", "Home");
             }
-            int signedInCustomerId = await _authApiClient.GetCustomerIdByUserId(signedInUserId);
-            CustomerDto? signedInCustomerDto = await _customerDtoApiClient.GetAsync(signedInCustomerId);
-            if (signedInCustomerDto != null)
+
+            // Check if already a customer
+            if (userDto.CustomerDto != null)
             {
                 return RedirectToAction("Index", "Car", new { area = "CustomerCenter" });
             }
@@ -56,8 +56,8 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                 return View(populatedCustomerCreateVM);
             }
 
-            string? userId = await _authApiClient.GetCurrentSignedInUserIdAsync();
-            if (userId == null)
+            UserDto userDto = await _userApiClient.GetCurrentUserAsync();
+            if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index");
@@ -65,7 +65,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 
             CustomerDto newCustomerDto = new()
             {
-                UserId = userId,
+                UserId = userDto.UserId,
                 FirstName = populatedCustomerCreateVM.FirstName,
                 LastName = populatedCustomerCreateVM.LastName,
                 HomeCity = populatedCustomerCreateVM.HomeCity,
