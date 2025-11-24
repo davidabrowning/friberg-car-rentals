@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Core.Interfaces.Services;
+﻿using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
@@ -17,13 +18,11 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<CustomerDto?>> Get(int id)
+        public async Task<ActionResult<CustomerDto>> Get(int id)
         {
             Customer? customer = await _userService.GetCustomerByCustomerIdAsync(id);
             if (customer == null)
-            {
                 return NotFound();
-            }
             CustomerDto customerDto = CustomerMapper.ToDto(customer);
             return Ok(customerDto);
         }
@@ -33,27 +32,28 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             Customer customer = CustomerMapper.ToModel(customerDto);
             await _userService.CreateCustomerAsync(customer);
-            return Ok(customerDto);
+            CustomerDto resultCustomerDto = CustomerMapper.ToDto(customer);
+            return Ok(resultCustomerDto);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<CustomerDto>> Put(int id, CustomerDto customerDto)
+        public async Task<ActionResult> Put(int id, CustomerDto customerDto)
         {
+            if (id != customerDto.Id)
+                return BadRequest(UserMessage.ErrorIdsDoNotMatch);
             Customer customer = CustomerMapper.ToModel(customerDto);
             await _userService.UpdateCustomerAsync(customer);
-            return Ok(customerDto);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<CustomerDto?>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             Customer? customer = await _userService.DeleteCustomerAsync(id);
             if (customer == null)
-            {
-                return BadRequest("Unable to find customer with that id.");
-            }
+                return NotFound();
             CustomerDto customerDto = CustomerMapper.ToDto(customer);
-            return Ok(customerDto);
+            return NoContent();
         }
     }
 }
