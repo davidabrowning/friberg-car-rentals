@@ -33,7 +33,7 @@ namespace FribergCarRentals.Mvc.ApiClients
 
         public async Task<string?> GetCurrentSignedInUserIdAsync()
         {
-            SignedInUserDto signedInUserDto = await _httpClient.GetFromJsonAsync<SignedInUserDto>("api/auth/current-user-id");
+            UserDto signedInUserDto = await _httpClient.GetFromJsonAsync<UserDto>("api/auth/current-user-id");
             return signedInUserDto.UserId;
         }
 

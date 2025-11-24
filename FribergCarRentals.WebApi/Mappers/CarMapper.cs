@@ -5,7 +5,7 @@ namespace FribergCarRentals.WebApi.Mappers
 {
     public static class CarMapper
     {
-        public static Dtos.CarDto ToDto(Core.Models.Car car)
+        public static CarDto ToDto(Car car)
         {
             Dtos.CarDto carDto = new() { 
                 Id = car.Id,
@@ -18,9 +18,9 @@ namespace FribergCarRentals.WebApi.Mappers
             return carDto;
         }
 
-        public static Core.Models.Car ToModel(Dtos.CarDto carDto)
+        public static Car ToModel(CarDto carDto)
         {
-            Core.Models.Car car = new()
+            Car car = new()
             {
                 Id = carDto.Id,
                 Make = carDto.Make,
@@ -32,23 +32,23 @@ namespace FribergCarRentals.WebApi.Mappers
             return car;
         }
 
-        public static List<Dtos.CarDto> ToDtos(IEnumerable<Core.Models.Car> cars)
+        public static List<CarDto> ToDtos(IEnumerable<Car> cars)
         {
-            List<Dtos.CarDto> carDtos = new();
-            foreach (Core.Models.Car car in cars)
+            List<CarDto> carDtos = new();
+            foreach (Car car in cars)
             {
-                Dtos.CarDto carDto = ToDto(car);
+                CarDto carDto = ToDto(car);
                 carDtos.Add(carDto);
             }
             return carDtos;
         }
 
-        public static List<Core.Models.Car> ToModels(IEnumerable<Dtos.CarDto> carDtos)
+        public static List<Car> ToModels(IEnumerable<CarDto> carDtos)
         {
-            List<Core.Models.Car> cars = new();
-            foreach (Dtos.CarDto carDto in carDtos)
+            List<Car> cars = new();
+            foreach (CarDto carDto in carDtos)
             {
-                Core.Models.Car car = ToModel(carDto);
+                Car car = ToModel(carDto);
                 cars.Add(car);
             }
             return cars;

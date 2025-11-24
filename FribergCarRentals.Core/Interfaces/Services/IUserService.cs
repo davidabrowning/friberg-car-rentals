@@ -1,4 +1,5 @@
 ﻿using FribergCarRentals.Core.Models;
+using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Core.Interfaces.Services
 {
