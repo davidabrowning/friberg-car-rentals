@@ -1,14 +1,6 @@
 ﻿@using FribergCarRentals.Mvc.Session
 @inject UserSession UserSession
 
-@if (UserSession.IsSignedIn())
-{
-	<h1>Signed in as...</h1>
-}
-else
-{
-	<h1>Not signed in</h1>
-}
 <ul class="navbar-nav">
 	@if (UserSession.IsSignedIn())
 	{
@@ -17,7 +9,7 @@ else
 		</li>
 		<li class="nav-item">
 			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Signout">
-				<button type="submit" class="nav-link btn btn-link text-dark">SIGNOUT</button>
+				<button type="submit" class="nav-link btn btn-link text-dark">Log out</button>
 			</form>
 		</li>
 	}
@@ -25,7 +17,7 @@ else
 	{
 		<li class="nav-item">
 			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Signin">
-				<button type="submit" class="nav-link btn btn-link text-dark">SIGNIN</button>
+				<button type="submit" class="nav-link btn btn-link text-dark">Log in</button>
 			</form>
 		</li>
 	}

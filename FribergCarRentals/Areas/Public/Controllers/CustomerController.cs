@@ -33,8 +33,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         {
             if (!_userSession.IsSignedIn())
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Signin", "Session");
             }
 
             if (_userSession.IsCustomer())
