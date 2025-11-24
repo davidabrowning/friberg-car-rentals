@@ -1,4 +1,5 @@
 
+using FribergCarRentals.Core.Interfaces.Other;
 using FribergCarRentals.Core.Interfaces.Repositories;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
@@ -13,7 +14,7 @@ namespace FribergCarRentals.WebApi
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -30,6 +31,8 @@ namespace FribergCarRentals.WebApi
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningService>();
+            builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingService>();
 
             // Identity login
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -60,6 +63,20 @@ namespace FribergCarRentals.WebApi
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
+
+            // Seed roles, default admin user, and default cars
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<IDatabaseSeeder>();
+                await seedingService.SeedAsync();
+            }
+
+            // Run DB cleanup
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<IDatabaseCleaner>();
+                await cleaningService.CleanAsync();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

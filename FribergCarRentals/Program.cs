@@ -52,20 +52,6 @@ namespace FribergCarRentals.Mvc
 
             var app = builder.Build();
 
-            // Seed roles, default admin user, and default cars
-            using (IServiceScope scope = app.Services.CreateScope())
-            {
-                IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<IDatabaseSeeder>();
-                await seedingService.SeedAsync();
-            }
-
-            // Run DB cleanup
-            using (IServiceScope scope = app.Services.CreateScope())
-            {
-                IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<IDatabaseCleaner>();
-                await cleaningService.CleanAsync();
-            }
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
