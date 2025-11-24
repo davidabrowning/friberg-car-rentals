@@ -5,9 +5,6 @@
 	@if (UserSession.IsSignedIn())
 	{
 		<li class="nav-item">
-			Hello @UserSession.UserDto.Username!
-		</li>
-		<li class="nav-item">
 			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Signout">
 				<button type="submit" class="nav-link btn btn-link text-dark">Log out</button>
 			</form>
