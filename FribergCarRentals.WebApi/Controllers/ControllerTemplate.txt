@@ -1,0 +1,19 @@
+﻿Get()
+Fail: N/A
+Success: return Ok(List<Dto>);
+
+Get(int id)
+Fail: return BadRequest("ID not found.");
+Success: return Ok(Dto);
+
+Post(Dto dto)
+Fail: N/A
+Success: return Ok(Dto)
+
+Put(int id, Dto dto)
+Fail: return BadRequest("IDs do not match.");
+Success: return NoContent();
+
+Delete(id:int)
+Fail: return BadRequest("ID not found.");
+Success: return NoContent();
