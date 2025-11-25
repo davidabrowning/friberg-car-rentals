@@ -2,8 +2,8 @@
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Mvc.Areas.Administration.Views.Customer;
 using FribergCarRentals.Mvc.Attributes;
+using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
@@ -14,11 +14,13 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
     {
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
         private readonly IUserApiClient _userApiClient;
+        private readonly UserSession _userSession;
 
-        public CustomerController(ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
+        public CustomerController(ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient, UserSession userSession)
         {
             _customerDtoApiClient = customerDtoApiClient;
             _userApiClient = userApiClient;
+            _userSession = userSession;
         }
 
         // GET: Customer

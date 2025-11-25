@@ -13,9 +13,13 @@ namespace FribergCarRentals.WebApi.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly IReservationService _reservationService;
-        public ReservationsController(IReservationService reservationService)
+        private readonly ICarService _carService;
+        private readonly ICustomerService _customerService;
+        public ReservationsController(IReservationService reservationService, ICarService carService, ICustomerService customerService)
         {
             _reservationService = reservationService;
+            _carService = carService;
+            _customerService = customerService;
         }
 
         [HttpGet]
@@ -44,7 +48,14 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ReservationDto>> Post(ReservationDto reservationDto)
         {
-            Reservation reservation = ReservationMapper.ToNewModelWIthoutId(reservationDto);
+            Car? car = await _carService.GetByIdAsync(reservationDto.CarDto.Id);
+            if (car == null)
+                return BadRequest(UserMessage.ErrorCarIsNull);
+            Customer? customer = await _customerService.GetByIdAsync(reservationDto.CustomerDto.Id);
+            if (customer == null)
+                return BadRequest(UserMessage.ErrorCustomerIsNull);
+
+            Reservation reservation = ReservationMapper.ToNewModelWIthoutId(reservationDto, car, customer);
             await _reservationService.CreateAsync(reservation);
             ReservationDto updatedReservationDto = ReservationMapper.ToDto(reservation);
             return Ok(updatedReservationDto);
@@ -55,7 +66,14 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != reservationDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            await _reservationService.UpdateAsync(ReservationMapper.ToNewModelWIthoutId(reservationDto));
+            Car? car = await _carService.GetByIdAsync(reservationDto.CarDto.Id);
+            if (car == null)
+                return BadRequest(UserMessage.ErrorCarIsNull);
+            Customer? customer = await _customerService.GetByIdAsync(reservationDto.CustomerDto.Id);
+            if (customer == null)
+                return BadRequest(UserMessage.ErrorCustomerIsNull);
+
+            await _reservationService.UpdateAsync(ReservationMapper.ToNewModelWIthoutId(reservationDto, car, customer));
             return NoContent();
         }
 

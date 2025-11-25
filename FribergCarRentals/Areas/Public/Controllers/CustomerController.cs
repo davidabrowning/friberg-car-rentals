@@ -33,8 +33,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         {
             if (!_userSession.IsSignedIn())
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Signin", "Session");
             }
 
             if (_userSession.IsCustomer())
@@ -72,6 +71,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
             };
 
             await _customerDtoApiClient.PostAsync(newCustomerDto);
+            await _userSession.UpdateDto();
 
             TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
             return RedirectToAction("Index");

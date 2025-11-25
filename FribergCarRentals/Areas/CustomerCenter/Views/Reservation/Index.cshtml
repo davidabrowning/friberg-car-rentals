@@ -21,7 +21,7 @@
 				@Html.DisplayNameFor(model => model.EndDate)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.Car)
+				@Html.DisplayNameFor(model => model.CarDto)
 			</th>
 			<th></th>
 		</tr>
@@ -37,10 +37,10 @@
 					@Html.DisplayFor(modelItem => item.EndDate)
 				</td>
 				<td>
-					@item.Car.Make @item.Car.Model (@item.Car.Year)
+					@item.CarDto.Make @item.CarDto.Model (@item.CarDto.Year)
 				</td>
 				<td>
-					<a asp-controller="Car" asp-action="Details" asp-route-id="@item.Car.Id" class="btn btn-outline-secondary">
+					<a asp-controller="Car" asp-action="Details" asp-route-id="@item.CarDto.Id" class="btn btn-outline-secondary">
 						View car details
 					</a>
 					@if (item.StartDate > DateOnly.FromDateTime(DateTime.Now))

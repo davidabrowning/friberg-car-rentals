@@ -25,24 +25,13 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             IEnumerable<ReservationDto> reservationDtos = await _reservationDtoApiClient.GetAsync();
             foreach (ReservationDto reservationDto in reservationDtos)
             {
-                CarDto carDto = new()
-                {
-                    Id = reservationDto.CarDto.Id,
-                    Description = "Complete in ReservationController"
-                };
-                CustomerDto customerDto = new()
-                {
-                    Id = reservationDto.CustomerDto.Id,
-                    UserId = reservationDto.CustomerDto.UserId,
-                    FirstName = "Complete in ReservationController"
-                };
                 IndexReservationViewModel indexReservationViewModel = new IndexReservationViewModel()
                 {
                     Id = reservationDto.Id,
                     StartDate = reservationDto.StartDate,
                     EndDate = reservationDto.EndDate,
-                    CarDto = carDto,
-                    CustomerDto = customerDto,
+                    CarDto = reservationDto.CarDto,
+                    CustomerDto = reservationDto.CustomerDto,
                 };
                 indexReservationViewModelList.Add(indexReservationViewModel);
             }

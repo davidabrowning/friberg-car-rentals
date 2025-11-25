@@ -60,8 +60,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                     Id = reservationDto.Id,
                     StartDate = reservationDto.StartDate,
                     EndDate = reservationDto.EndDate,
-                    // Car = reservationDto.Car,
-                    Car = new()
+                    CarDto = reservationDto.CarDto,
                 };
                 reservationIndexViewModelList.Add(reservationViewModel);
             }
@@ -129,7 +128,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
             };
             await _reservationDtoApiClient.PostAsync(reservationDto);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessReservationCreated + " " + reservationDto.ToString();
+            TempData["SuccessMessage"] = $"{UserMessage.SuccessReservationCreated} Enjoy the {reservationDto.CarDto.Year} {reservationDto.CarDto.Make} {reservationDto.CarDto.Model}!";
             return RedirectToAction("Index");
         }
 
