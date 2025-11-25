@@ -25,6 +25,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             IEnumerable<ReservationDto> reservationDtos = await _reservationDtoApiClient.GetAsync();
             foreach (ReservationDto reservationDto in reservationDtos)
             {
+
                 CarDto carDto = new()
                 {
                     Id = reservationDto.CarDto.Id,
@@ -41,8 +42,8 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                     Id = reservationDto.Id,
                     StartDate = reservationDto.StartDate,
                     EndDate = reservationDto.EndDate,
-                    CarDto = carDto,
-                    CustomerDto = customerDto,
+                    CarDto = reservationDto.CarDto,
+                    CustomerDto = reservationDto.CustomerDto,
                 };
                 indexReservationViewModelList.Add(indexReservationViewModel);
             }
