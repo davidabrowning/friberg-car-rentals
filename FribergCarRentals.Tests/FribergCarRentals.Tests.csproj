@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<Folder Include="Tests\Data\" />
+		<Folder Include="Tests\WebApi\Controllers\" />
 	</ItemGroup>
 
 </Project>
