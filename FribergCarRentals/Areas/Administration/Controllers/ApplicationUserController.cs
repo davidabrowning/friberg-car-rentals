@@ -161,7 +161,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             if (indexApplicationUserViewModel.IsAdmin)
             {
                 indexApplicationUserViewModel.AdminId = userDto.AdminDto.Id;
-                indexApplicationUserViewModel.AdminName = userDto.AdminDto.ToString();
+                indexApplicationUserViewModel.AdminName = userDto.AdminDto.Id.ToString();
             }
             if (indexApplicationUserViewModel.IsCustomer)
             {
