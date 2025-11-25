@@ -6,6 +6,6 @@
         Task<T?> GetAsync(int id);
         Task<T> PostAsync(T t);
         Task<T> PutAsync(T t);
-        Task<T?> DeleteAsync(int id);
+        Task DeleteAsync(int id);
     }
 }
