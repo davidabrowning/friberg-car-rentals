@@ -1,8 +1,6 @@
-﻿using FribergCarRentals.Data;
-using FribergCarRentals.Core.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using FribergCarRentals.Core.Constants;
 using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Constants;
+using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {
