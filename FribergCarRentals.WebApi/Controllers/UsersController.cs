@@ -1,8 +1,6 @@
 ﻿using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
