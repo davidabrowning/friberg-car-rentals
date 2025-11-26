@@ -3,7 +3,7 @@ using FribergCarRentals.Core.Interfaces.Services;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public abstract class BasicCRUDService<T> : IBasicCRUDService<T>
+    public abstract class BasicCRUDService<T> : ICrudService<T>
     {
         IRepository<T> _repository;
 

@@ -9,9 +9,9 @@ namespace FribergCarRentals.WebApi.Services
     public class UserService : IUserService
     {
         private readonly IAuthService _authService;
-        private readonly IBasicCRUDService<Admin> _adminService;
-        private readonly IBasicCRUDService<Customer> _customerService;
-        public UserService(IAuthService authService, IBasicCRUDService<Admin> adminService, IBasicCRUDService<Customer> customerService)
+        private readonly ICrudService<Admin> _adminService;
+        private readonly ICrudService<Customer> _customerService;
+        public UserService(IAuthService authService, ICrudService<Admin> adminService, ICrudService<Customer> customerService)
         {
             _authService = authService;
             _adminService = adminService;
