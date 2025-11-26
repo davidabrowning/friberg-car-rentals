@@ -48,18 +48,6 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(userDto);
         }
 
-        [HttpGet("current-user")]
-        public ActionResult<UserDto> GetCurrentUser()
-        {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string? username = User.Identity?.Name;
-
-            if (userId == null || username == null)
-                return NotFound();
-            UserDto signedInUserDto = new(){ UserId = userId, Username = username };
-            return Ok(signedInUserDto);
-        }
-
         [HttpPost("create-from-username")]
         public async Task<ActionResult<string>> CreateUser(string username)
         {
