@@ -1,5 +1,6 @@
 ﻿using FribergCarRentals.Core.Interfaces.Repositories;
 using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {

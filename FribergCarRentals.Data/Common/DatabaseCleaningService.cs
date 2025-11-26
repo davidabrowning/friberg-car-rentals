@@ -6,9 +6,9 @@ namespace FribergCarRentals.Data
 {
     public class DatabaseCleaningService : IDatabaseCleaner
     {
-        private readonly IBasicCRUDService<Admin> _adminService;
-        private readonly IBasicCRUDService<Customer> _customerService;
-        public DatabaseCleaningService(IBasicCRUDService<Admin> adminService, IBasicCRUDService<Customer> customerService)
+        private readonly IAdminService _adminService;
+        private readonly ICustomerService _customerService;
+        public DatabaseCleaningService(IAdminService adminService, ICustomerService customerService)
         {
             _adminService = adminService;
             _customerService = customerService;
