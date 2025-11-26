@@ -65,7 +65,7 @@ namespace FribergCarRentals.Data
                 Make = "Jeep",
                 Model = "Cherokee",
                 Year = 1996,
-                Description = "My first car",
+                Description = "David's first car",
                 PhotoUrls = new()
                 {
                     "https://upload.wikimedia.org/wikipedia/commons/d/d4/1985_Jeep_Cherokee_%2814930366019%29_%28cropped%29.jpg",
@@ -110,7 +110,7 @@ namespace FribergCarRentals.Data
                 Make = "Volvo",
                 Model = "C70",
                 Year = 2002,
-                Description = "Mom's car",
+                Description = "Cecilia's first car",
                 PhotoUrls = new()
                 {
                     "https://upload.wikimedia.org/wikipedia/commons/0/0c/1999-2002_Volvo_C70_convertible_01.jpg",
