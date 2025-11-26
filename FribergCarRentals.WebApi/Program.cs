@@ -25,7 +25,7 @@ namespace FribergCarRentals.WebApi
             builder.Services.AddScoped<IRepository<Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
             builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
-            builder.Services.AddScoped<ICrudService<Admin>>();
+            builder.Services.AddScoped<IBasicCRUDService<Admin>>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICarService, CarService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();

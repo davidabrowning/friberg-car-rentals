@@ -1,6 +1,6 @@
 ﻿namespace FribergCarRentals.Core.Interfaces.Services
 {
-    public interface ICrudService<T>
+    public interface IBasicCRUDService<T>
     {
         Task<T> CreateAsync(T t);
         Task<T?> DeleteAsync(int id);
