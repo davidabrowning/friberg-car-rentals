@@ -28,7 +28,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CarDto>> Get(int id)
         {
-            Car? car = await _carService.GetByIdAsync(id);
+            Car? car = await _carService.GetAsync(id);
             if (car == null)
                 return NotFound();
             CarDto carDto = CarMapper.ToDto(car);
@@ -49,7 +49,7 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != carDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            Car? car = await _carService.GetByIdAsync(id);
+            Car? car = await _carService.GetAsync(id);
             if (car == null)
                 return NotFound();
             CarMapper.UpdateModel(car, carDto);

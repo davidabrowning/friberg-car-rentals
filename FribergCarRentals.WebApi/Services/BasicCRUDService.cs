@@ -4,7 +4,7 @@ using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public abstract class BasicCRUDService<T> : IBasicCRUDService<T>
+    public abstract class BasicCRUDService<T> : ICrudService<T>
     {
         IRepository<T> _repository;
 
@@ -19,7 +19,7 @@ namespace FribergCarRentals.WebApi.Services
         }
         public virtual async Task<T?> DeleteAsync(int id)
         {
-            T? t = await GetByIdAsync(id);
+            T? t = await GetAsync(id);
             if (t == null)
             {
                 return t;
@@ -34,7 +34,7 @@ namespace FribergCarRentals.WebApi.Services
             return await _repository.GetAllAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> GetAsync(int id)
         {
             return await _repository.GetByIdAsync(id);
         }

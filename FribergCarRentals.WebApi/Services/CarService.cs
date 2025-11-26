@@ -14,7 +14,7 @@ namespace FribergCarRentals.WebApi.Services
 
         public async override Task<Car?> DeleteAsync(int id)
         {
-            Car? car = await GetByIdAsync(id);
+            Car? car = await GetAsync(id);
             if (car == null)
                 return null;
             await _reservationService.DeleteByCarAsync(car);

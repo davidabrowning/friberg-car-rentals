@@ -21,7 +21,7 @@ namespace FribergCarRentals.Tests.Mock.WebApi.Services
 
         public async Task<Reservation?> DeleteAsync(int id)
         {
-            Reservation? reservation = await GetByIdAsync(id);
+            Reservation? reservation = await GetAsync(id);
             if (reservation == null) {
                 return null;
             }
@@ -57,7 +57,7 @@ namespace FribergCarRentals.Tests.Mock.WebApi.Services
             return Task.FromResult(result);
         }
 
-        public Task<Reservation?> GetByIdAsync(int id)
+        public Task<Reservation?> GetAsync(int id)
         {
             Reservation? result = _reservations.Where(r => r.Id == id).FirstOrDefault();
             return Task.FromResult(result);
@@ -65,13 +65,13 @@ namespace FribergCarRentals.Tests.Mock.WebApi.Services
 
         public Task<bool> IdExistsAsync(int id)
         {
-            bool result = GetByIdAsync(id) != null;
+            bool result = GetAsync(id) != null;
             return Task.FromResult(result);
         }
 
         public async Task<Reservation> UpdateAsync(Reservation reservation)
         {
-            Reservation? oldReservation = await GetByIdAsync(reservation.Id);
+            Reservation? oldReservation = await GetAsync(reservation.Id);
             _reservations.Remove(oldReservation);
             _reservations.Add(reservation);
             return reservation;

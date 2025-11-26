@@ -38,7 +38,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ReservationDto>> Get(int id)
         {
-            Reservation? reservation = await _reservationService.GetByIdAsync(id);
+            Reservation? reservation = await _reservationService.GetAsync(id);
             if (reservation == null)
                 return NotFound();
             ReservationDto reservationDto = ReservationMapper.ToDto(reservation);
@@ -48,10 +48,10 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ReservationDto>> Post(ReservationDto reservationDto)
         {
-            Car? car = await _carService.GetByIdAsync(reservationDto.CarDto.Id);
+            Car? car = await _carService.GetAsync(reservationDto.CarDto.Id);
             if (car == null)
                 return BadRequest(UserMessage.ErrorCarIsNull);
-            Customer? customer = await _customerService.GetByIdAsync(reservationDto.CustomerDto.Id);
+            Customer? customer = await _customerService.GetAsync(reservationDto.CustomerDto.Id);
             if (customer == null)
                 return BadRequest(UserMessage.ErrorCustomerIsNull);
 
@@ -66,10 +66,10 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != reservationDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            Car? car = await _carService.GetByIdAsync(reservationDto.CarDto.Id);
+            Car? car = await _carService.GetAsync(reservationDto.CarDto.Id);
             if (car == null)
                 return BadRequest(UserMessage.ErrorCarIsNull);
-            Customer? customer = await _customerService.GetByIdAsync(reservationDto.CustomerDto.Id);
+            Customer? customer = await _customerService.GetAsync(reservationDto.CustomerDto.Id);
             if (customer == null)
                 return BadRequest(UserMessage.ErrorCustomerIsNull);
 

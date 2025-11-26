@@ -2,7 +2,7 @@
 
 namespace FribergCarRentals.Core.Interfaces.Services
 {
-    public interface ICarService : IBasicCRUDService<Car>
+    public interface ICarService : ICrudService<Car>
     {
     }
 }

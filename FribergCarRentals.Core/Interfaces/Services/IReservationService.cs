@@ -2,7 +2,7 @@
 
 namespace FribergCarRentals.Core.Interfaces.Services
 {
-    public interface IReservationService : IBasicCRUDService<Reservation>
+    public interface IReservationService : ICrudService<Reservation>
     {
         Task<IEnumerable<Reservation>> GetByCarAsync(Car car);
         Task<IEnumerable<Reservation>> DeleteByCarAsync(Car car);

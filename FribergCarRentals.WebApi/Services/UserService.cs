@@ -57,7 +57,7 @@ namespace FribergCarRentals.WebApi.Services
 
         public async Task<Admin?> GetAdminByAdminIdAsync(int id)
         {
-            return await _adminService.GetByIdAsync(id);
+            return await _adminService.GetAsync(id);
         }
 
         public async Task<Admin> UpdateAdminAsync(Admin admin)
@@ -99,7 +99,7 @@ namespace FribergCarRentals.WebApi.Services
 
         public async Task<Customer?> GetCustomerByCustomerIdAsync(int id)
         {
-            return await _customerService.GetByIdAsync(id);
+            return await _customerService.GetAsync(id);
         }
 
         public async Task<Customer> UpdateCustomerAsync(Customer customer)
