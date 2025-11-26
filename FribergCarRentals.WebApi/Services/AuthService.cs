@@ -95,21 +95,6 @@ namespace FribergCarRentals.WebApi.Services
             return userIds;
         }
 
-        public async Task<string?> GetCurrentSignedInUserIdAsync()
-        {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null)
-            {
-                return null;
-            }
-            IdentityUser? identityUser = await _userManager.GetUserAsync(user);
-            if (identityUser == null)
-            {
-                return null;
-            }
-            return identityUser.Id;
-        }
-
         public async Task<bool> IsInRoleAsync(string userId, string roleName)
         {
             IdentityUser? identityUser = await GetIdentityUserByUserId(userId);

@@ -33,11 +33,6 @@ namespace FribergCarRentals.WebApi.Services
             return await _authService.AddUserAsync(username);
         }
 
-        public async Task<string?> GetCurrentUserIdAsync()
-        {
-            return await _authService.GetCurrentSignedInUserIdAsync();
-        }
-
         public async Task<bool> UsernameExistsAsync(string username)
         {
             return await _authService.UsernameExistsAsync(username);
@@ -110,18 +105,6 @@ namespace FribergCarRentals.WebApi.Services
         public async Task<Customer> UpdateCustomerAsync(Customer customer)
         {
             return await _customerService.UpdateAsync(customer);
-        }
-
-        public async Task<Customer?> GetSignedInCustomerAsync()
-        {
-            string? userId = await GetCurrentUserIdAsync();
-            if (userId == null)
-            {
-                return null;
-            }
-
-            Customer? customer = await GetCustomerByUserIdAsync(userId);
-            return customer;
         }
 
         public async Task<string?> DeleteUserAsync(string userId)

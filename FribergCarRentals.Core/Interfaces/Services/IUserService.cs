@@ -7,7 +7,6 @@ namespace FribergCarRentals.Core.Interfaces.Services
     {
         // IdentityUser
         Task<string> CreateUserAsync(string username);
-        Task<string?> GetCurrentUserIdAsync();
         Task<string?> GetUsernameByUserIdAsync(string userId);
         Task<string?> GetUserIdByUsernameAsync(string username);
         Task<string?> UpdateUsernameAsync(string userId, string newUsername);
@@ -27,7 +26,6 @@ namespace FribergCarRentals.Core.Interfaces.Services
         Task<Customer> CreateCustomerAsync(Customer customer);
         Task<Customer?> GetCustomerByCustomerIdAsync(int id);
         Task<Customer?> GetCustomerByUserIdAsync(string userId);
-        Task<Customer?> GetSignedInCustomerAsync();
         Task<Customer> UpdateCustomerAsync(Customer customer);
         Task<Customer?> DeleteCustomerAsync(int id);
     }
