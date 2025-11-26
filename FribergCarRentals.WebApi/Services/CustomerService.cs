@@ -18,13 +18,7 @@ namespace FribergCarRentals.WebApi.Services
             if (customer == null) {
                 return null;
             }
-
-            IEnumerable<Reservation> reservations = await _reservationService.GetByCustomerAsync(customer);
-            foreach (Reservation reservation in reservations)
-            {
-                await _reservationService.DeleteAsync(reservation.Id);
-            }
-
+            await _reservationService.DeleteByCustomerAsync(customer);
             return await base.DeleteAsync(id);
         }
     }

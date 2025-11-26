@@ -23,5 +23,25 @@ namespace FribergCarRentals.WebApi.Services
             IEnumerable<Reservation> myReservations = allReservations.Where(r => r.Car == car);
             return myReservations;
         }
+
+        public async Task<IEnumerable<Reservation>> DeleteByCarAsync(Car car)
+        {
+            IEnumerable<Reservation> reservations = await GetByCarAsync(car);
+            foreach (Reservation reservation in reservations)
+            {
+                await DeleteAsync(reservation.Id);
+            }
+            return reservations;
+        }
+
+        public async Task<IEnumerable<Reservation>> DeleteByCustomerAsync(Customer customer)
+        {
+            IEnumerable<Reservation> reservations = await GetByCustomerAsync(customer);
+            foreach (Reservation reservation in reservations)
+            {
+                await DeleteAsync(reservation.Id);
+            }
+            return reservations;
+        }
     }
 }

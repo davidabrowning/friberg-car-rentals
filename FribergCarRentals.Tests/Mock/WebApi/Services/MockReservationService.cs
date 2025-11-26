@@ -29,6 +29,16 @@ namespace FribergCarRentals.Tests.Mock.WebApi.Services
             return reservation;
         }
 
+        public Task<IEnumerable<Reservation>> DeleteByCarAsync(Car car)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Reservation>> DeleteByCustomerAsync(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IEnumerable<Reservation>> GetAllAsync()
         {
             IEnumerable<Reservation> result = _reservations.ToList();

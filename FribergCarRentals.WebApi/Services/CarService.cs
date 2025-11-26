@@ -1,7 +1,6 @@
 ﻿using FribergCarRentals.Core.Interfaces.Repositories;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
-using System.Threading.Tasks;
 
 namespace FribergCarRentals.WebApi.Services
 {
@@ -17,16 +16,8 @@ namespace FribergCarRentals.WebApi.Services
         {
             Car? car = await GetByIdAsync(id);
             if (car == null)
-            {
                 return null;
-            }
-
-            IEnumerable<Reservation> reservations = await _reservationService.GetByCarAsync(car);
-            foreach (Reservation reservation in reservations)
-            {
-                await _reservationService.DeleteAsync(reservation.Id);
-            }
-
+            await _reservationService.DeleteByCarAsync(car);
             return await base.DeleteAsync(id);
         }
     }
