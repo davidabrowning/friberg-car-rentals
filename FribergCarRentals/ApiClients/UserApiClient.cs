@@ -30,11 +30,6 @@ namespace FribergCarRentals.Mvc.ApiClients
             return userDto;
         }
 
-        public async Task CreateUserFromUsernameAsync(string username)
-        {
-            await _httpClient.PostAsJsonAsync("api/users/create-from-username", username);
-        }
-
         public async Task DeleteUserAsync(string userId)
         {
             await _httpClient.DeleteAsync($"api/users/{userId}");

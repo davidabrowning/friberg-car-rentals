@@ -2,8 +2,8 @@
 
 namespace FribergCarRentals.Core.Interfaces.Services
 {
-    public interface ICustomerService : IBasicCRUDService<Customer>
+    public interface ICustomerService : ICrudService<Customer>
     {
-        Task<Customer?> DeleteCustomerByIdentityUserIdAsync(string identityUserId);
+        Task<Customer?> GetAsync(string userId);
     }
 }

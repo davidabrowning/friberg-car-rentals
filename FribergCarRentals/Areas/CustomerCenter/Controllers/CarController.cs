@@ -59,7 +59,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 Model = carDto.Model,
                 Year = carDto.Year,
                 Description = carDto.Description,
-                PhotoUrls = carDto.PhotoUrls,
+                PhotoUrls = carDto.PhotoUrls.ToList(),
             };
 
             return View(detailsCarViewModel);

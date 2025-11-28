@@ -17,7 +17,7 @@ namespace FribergCarRentals.WebApi.Mappers
             };
             return dto;
         }
-        public static Reservation ToNewModelWIthoutId(ReservationDto reservationDto, Car car, Customer customer)
+        public static Reservation ToNewModelWithoutId(ReservationDto reservationDto, Car car, Customer customer)
         {
             Reservation model = new()
             {

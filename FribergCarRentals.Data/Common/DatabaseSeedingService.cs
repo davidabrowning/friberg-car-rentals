@@ -1,4 +1,6 @@
-﻿using FribergCarRentals.Core.Interfaces.Other;
+﻿using FribergCarRentals.Core.Constants;
+using FribergCarRentals.Core.Interfaces.Facades;
+using FribergCarRentals.Core.Interfaces.Other;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using Microsoft.AspNetCore.Identity;
@@ -7,14 +9,10 @@ namespace FribergCarRentals.Data
 {
     public class DatabaseSeedingService : IDatabaseSeeder
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IUserService _userService;
-        private readonly ICarService _carService;
-        public DatabaseSeedingService(RoleManager<IdentityRole> roleManager, IUserService userService, ICarService carService)
+        private IApplicationFacade _applicationFacade;
+        public DatabaseSeedingService(IApplicationFacade applicationFacade)
         {
-            _roleManager = roleManager;
-            _userService = userService;
-            _carService = carService;
+            _applicationFacade = applicationFacade;
         }
         public async Task SeedAsync()
         {
@@ -25,12 +23,12 @@ namespace FribergCarRentals.Data
 
         private async Task SeedRoles()
         {
-            string[] roles = { "Admin", "Customer", "User" };
-            foreach (var role in roles)
+            List<string> roleNames = new() { AuthRoleName.Admin, AuthRoleName.Customer, AuthRoleName.User };
+            foreach (string roleName in roleNames)
             {
-                if (!await _roleManager.RoleExistsAsync(role))
+                if (!await _applicationFacade.RoleExistsAsync(roleName))
                 {
-                    await _roleManager.CreateAsync(new IdentityRole(role));
+                    await _applicationFacade.CreateRoleAsync(roleName);
                 }
             }
         }
@@ -38,23 +36,24 @@ namespace FribergCarRentals.Data
         private async Task SeedDefaultAdminUser()
         {
             string defaultAdminUsername = "admin@admin.se";
-            string? defaultAdminUserId = await _userService.GetUserIdByUsernameAsync(defaultAdminUsername);
+            string defaultAdminPassword = "Abc123!";
+            string? defaultAdminUserId = await _applicationFacade.GetUserIdAsync(defaultAdminUsername);
             if (defaultAdminUserId == null)
             {
-                defaultAdminUserId = await _userService.CreateUserAsync(defaultAdminUsername);
+                defaultAdminUserId = await _applicationFacade.CreateApplicationUserAsync(defaultAdminUsername, defaultAdminPassword);
             }
 
-            Admin? admin = await _userService.GetAdminByUserIdAsync(defaultAdminUserId);
+            Admin? admin = await _applicationFacade.GetAdminAsync(defaultAdminUserId);
             if (admin == null)
             {
                 admin = new Admin() { UserId = defaultAdminUserId };
-                await _userService.CreateAdminAsync(admin);
+                await _applicationFacade.CreateAdminAsync(admin);
             }
         }
 
         private async Task SeedDefaultCars()
         {
-            IEnumerable<Car> allCars = await _carService.GetAllAsync();
+            IEnumerable<Car> allCars = await _applicationFacade.GetAllCarsAsync();
             if (allCars.Count() > 0)
             {
                 return;
@@ -65,7 +64,7 @@ namespace FribergCarRentals.Data
                 Make = "Jeep",
                 Model = "Cherokee",
                 Year = 1996,
-                Description = "My first car",
+                Description = "David's first car",
                 PhotoUrls = new()
                 {
                     "https://upload.wikimedia.org/wikipedia/commons/d/d4/1985_Jeep_Cherokee_%2814930366019%29_%28cropped%29.jpg",
@@ -73,7 +72,7 @@ namespace FribergCarRentals.Data
                 },
                 Reservations = new()
             };
-            await _carService.CreateAsync(defaultCar1);
+            await _applicationFacade.CreateCarAsync(defaultCar1);
 
             Car defaultCar2 = new()
             {
@@ -88,7 +87,7 @@ namespace FribergCarRentals.Data
                 },
                 Reservations = new()
             };
-            await _carService.CreateAsync(defaultCar2);
+            await _applicationFacade.CreateCarAsync(defaultCar2);
 
             Car defaultCar3 = new()
             {
@@ -103,21 +102,21 @@ namespace FribergCarRentals.Data
                 },
                 Reservations = new()
             };
-            await _carService.CreateAsync(defaultCar3);
+            await _applicationFacade.CreateCarAsync(defaultCar3);
 
             Car defaultCar4 = new()
             {
                 Make = "Volvo",
                 Model = "C70",
                 Year = 2002,
-                Description = "Mom's car",
+                Description = "Cecilia's first car",
                 PhotoUrls = new()
                 {
                     "https://upload.wikimedia.org/wikipedia/commons/0/0c/1999-2002_Volvo_C70_convertible_01.jpg",
                 },
                 Reservations = new()
             };
-            await _carService.CreateAsync(defaultCar4);
+            await _applicationFacade.CreateCarAsync(defaultCar4);
         }
     }
 }

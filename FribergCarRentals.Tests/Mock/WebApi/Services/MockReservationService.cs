@@ -1,12 +1,5 @@
 ﻿using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
-using FribergCarRentals.Tests.Mock.Data.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FribergCarRentals.Tests.Mock.WebApi.Services
 {
@@ -21,12 +14,22 @@ namespace FribergCarRentals.Tests.Mock.WebApi.Services
 
         public async Task<Reservation?> DeleteAsync(int id)
         {
-            Reservation? reservation = await GetByIdAsync(id);
+            Reservation? reservation = await GetAsync(id);
             if (reservation == null) {
                 return null;
             }
             _reservations.Remove(reservation);
             return reservation;
+        }
+
+        public Task<IEnumerable<Reservation>> DeleteByCarAsync(Car car)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Reservation>> DeleteByCustomerAsync(Customer customer)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<IEnumerable<Reservation>> GetAllAsync()
@@ -47,7 +50,7 @@ namespace FribergCarRentals.Tests.Mock.WebApi.Services
             return Task.FromResult(result);
         }
 
-        public Task<Reservation?> GetByIdAsync(int id)
+        public Task<Reservation?> GetAsync(int id)
         {
             Reservation? result = _reservations.Where(r => r.Id == id).FirstOrDefault();
             return Task.FromResult(result);
@@ -55,13 +58,13 @@ namespace FribergCarRentals.Tests.Mock.WebApi.Services
 
         public Task<bool> IdExistsAsync(int id)
         {
-            bool result = GetByIdAsync(id) != null;
+            bool result = GetAsync(id) != null;
             return Task.FromResult(result);
         }
 
         public async Task<Reservation> UpdateAsync(Reservation reservation)
         {
-            Reservation? oldReservation = await GetByIdAsync(reservation.Id);
+            Reservation? oldReservation = await GetAsync(reservation.Id);
             _reservations.Remove(oldReservation);
             _reservations.Add(reservation);
             return reservation;

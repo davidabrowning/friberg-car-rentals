@@ -1,5 +1,5 @@
 ﻿using FribergCarRentals.Core.Helpers;
-using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Interfaces.Facades;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
@@ -11,16 +11,16 @@ namespace FribergCarRentals.WebApi.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly IUserService _userService;
-        public CustomersController(IUserService userService)
+        private readonly IApplicationFacade _applicationFacade;
+        public CustomersController(IApplicationFacade applicationFacade)
         {
-            _userService = userService;
+            _applicationFacade = applicationFacade;
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CustomerDto>> Get(int id)
         {
-            Customer? customer = await _userService.GetCustomerByCustomerIdAsync(id);
+            Customer? customer = await _applicationFacade.GetCustomerAsync(id);
             if (customer == null)
                 return NotFound();
             CustomerDto customerDto = CustomerMapper.ToDto(customer);
@@ -30,8 +30,8 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomerDto>> Post(CustomerDto customerDto)
         {
-            Customer customer = CustomerMapper.ToNewModelWIthoutId(customerDto);
-            await _userService.CreateCustomerAsync(customer);
+            Customer customer = CustomerMapper.ToNewModelWithoutId(customerDto);
+            await _applicationFacade.CreateCustomerAsync(customer);
             CustomerDto resultCustomerDto = CustomerMapper.ToDto(customer);
             return Ok(resultCustomerDto);
         }
@@ -41,18 +41,18 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != customerDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            Customer? customer = await _userService.GetCustomerByCustomerIdAsync(id);
+            Customer? customer = await _applicationFacade.GetCustomerAsync(id);
             if (customer == null)
                 return NotFound();
             CustomerMapper.UpdateModel(customer, customerDto);
-            await _userService.UpdateCustomerAsync(customer);
+            await _applicationFacade.UpdateCustomerAsync(customer);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            Customer? customer = await _userService.DeleteCustomerAsync(id);
+            Customer? customer = await _applicationFacade.DeleteCustomerAsync(id);
             if (customer == null)
                 return NotFound();
             return NoContent();

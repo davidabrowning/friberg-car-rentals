@@ -3,8 +3,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using FribergCarRentals.Core.Interfaces.Services;
+using Microsoft.Extensions.Configuration;
 
-namespace FribergCarRentals.WebApi.Services
+namespace FribergCarRentals.Services.Services
 {
     public class JwtService : IJwtService
     {
@@ -13,7 +14,7 @@ namespace FribergCarRentals.WebApi.Services
         {
             _configuration = configuration;
         }
-        public string GenerateJwtToken(string userId, string username, List<string> roles)
+        public string GenerateJwtToken(string userId, string username, IEnumerable<string> roles)
         {
             List<Claim> claims = new()
             {

@@ -35,36 +35,6 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
             return View(indexApplicationUserViewModelList);
         }
 
-        // GET: ApplicationUserViewModels/Create
-        public IActionResult Create()
-        {
-            CreateApplicationUserViewModel createApplicationUserViewModel = new();
-            return View(createApplicationUserViewModel);
-        }
-
-        // POST: ApplicationUserViewModels/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateApplicationUserViewModel createApplicationUserViewModel)
-        {
-            UserDto userDto = await _userApiClient.GetByUsernameAsync(createApplicationUserViewModel.Username);
-            if (userDto.UserId != null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
-                return View(createApplicationUserViewModel);
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(createApplicationUserViewModel);
-            }
-
-            await _userApiClient.CreateUserFromUsernameAsync(createApplicationUserViewModel.Username);
-
-            TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
-            return RedirectToAction("Index");
-        }
-
         // GET: ApplicationUser/Edit/5
         public async Task<IActionResult> Edit(string userId)
         {

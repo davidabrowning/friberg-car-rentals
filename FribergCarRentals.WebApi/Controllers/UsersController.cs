@@ -1,10 +1,8 @@
-﻿using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Models;
+﻿using FribergCarRentals.Core.Interfaces.Facades;
+using FribergCarRentals.Services.ApplicationModels;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace FribergCarRentals.WebApi.Controllers
 {
@@ -12,74 +10,58 @@ namespace FribergCarRentals.WebApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IAuthService _authService;
-        private readonly IUserService _userService;
-        private readonly IJwtService _jwtService;
-        public UsersController(IAuthService authService, IUserService userService, IJwtService jwtService)
+        private readonly IApplicationFacade _applicationFacade;
+        public UsersController(IApplicationFacade applicationFacade)
         {
-            _authService = authService;
-            _userService = userService;
-            _jwtService = jwtService;
+            _applicationFacade = applicationFacade;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> Get()
+        public async Task<ActionResult<IEnumerable<UserDto>>> Get()
         {
-            List<string> userIds = await _userService.GetAllUserIdsAsync();
-            List<UserDto> userDtos = await UserMapper.ToDtosAsync(userIds, _userService, _authService);
+            IEnumerable<string> userIds = await _applicationFacade.GetAllUserIdsAsync();
+            List<UserInfoModel> userInfoModels = new();
+            foreach (string userId in userIds)
+            {
+                UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+                if (userInfoModel != null)
+                    userInfoModels.Add(userInfoModel);
+            }
+            IEnumerable<UserDto> userDtos = UserMapper.ToDtosAsync(userInfoModels);
             return Ok(userDtos);
         }
 
         [HttpGet("{userId}")]
         public async Task<ActionResult<UserDto>> Get(string userId)
         {
-            string username = await _userService.GetUsernameByUserIdAsync(userId);
-            if (username == null)
+            UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+            if (userInfoModel == null)
                 return NotFound();
-            UserDto userDto = await UserMapper.ToDtoAsync(userId, _userService, _authService);
+            UserDto userDto = UserMapper.ToDtoAsync(userInfoModel);
             return Ok(userDto);
         }
 
         [HttpGet("username/{username}")]
         public async Task<ActionResult<UserDto>> GetFromUsername(string username)
         {
-            string userId = await _userService.GetUserIdByUsernameAsync(username);
+            string? userId = await _applicationFacade.GetUserIdAsync(username);
             if (userId == null)
                 return NotFound();
-            UserDto userDto = await UserMapper.ToDtoAsync(userId, _userService, _authService);
+            UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+            if (userInfoModel == null) 
+                return NotFound();
+            UserDto userDto = UserMapper.ToDtoAsync(userInfoModel);
             return Ok(userDto);
-        }
-
-        [HttpGet("current-user")]
-        public ActionResult<UserDto> GetCurrentUser()
-        {
-            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            string? username = User.Identity?.Name;
-
-            if (userId == null || username == null)
-                return NotFound();
-            UserDto signedInUserDto = new(){ UserId = userId, Username = username };
-            return Ok(signedInUserDto);
-        }
-
-        [HttpPost("create-from-username")]
-        public async Task<ActionResult<string>> CreateUser(string username)
-        {
-            await _userService.CreateUserAsync(username);
-            string? userId = await _userService.GetUserIdByUsernameAsync(username);
-            if (userId == null)
-                return NotFound();
-            return Ok(userId);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<JwtTokenDto>> Login([FromBody] LoginDto loginDto)
         {
-            string? userId = await _authService.AuthenticateUserAsync(loginDto.Username, loginDto.Password);
+            string? userId = await _applicationFacade.AuthenticateAsync(loginDto.Username, loginDto.Password);
             if (userId == null)
                 return NotFound();
-            List<string> roles = await _authService.GetRolesAsync(userId);
-            string token = _jwtService.GenerateJwtToken(userId, loginDto.Username, roles);
+            IEnumerable<string> roles = await _applicationFacade.GetRolesAsync(userId);
+            string token = _applicationFacade.GenerateJwtToken(userId, loginDto.Username, roles);
             JwtTokenDto jwtTokenDto = new() { Token = token };
             return Ok(jwtTokenDto);
         }
@@ -87,18 +69,21 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
-            string? userId = await _authService.CreateUserWithPasswordAsync(registerDto.Username, registerDto.Password);
+            string? userId = await _applicationFacade.CreateApplicationUserAsync(registerDto.Username, registerDto.Password);
             if (userId == null)
                 return NotFound();
-            UserDto userDto = await UserMapper.ToDtoAsync(userId, _userService, _authService);
+            UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+            if (userInfoModel == null) 
+                return NotFound();
+            UserDto userDto = UserMapper.ToDtoAsync(userInfoModel);
             return Ok(userDto);
         }
 
         [HttpPut("update-username/{userId}")]
         public async Task<ActionResult> UpdateUsername(string userId, string newUsername)
         {
-            string? updatedUserId = await _userService.UpdateUsernameAsync(userId, newUsername);
-            if (updatedUserId == null) 
+            string? updatedUserId = await _applicationFacade.UpdateUsernameAsync(userId, newUsername);
+            if (updatedUserId == null)
                 return NotFound();
             return NoContent();
         }
@@ -106,10 +91,24 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpDelete("{userId}")]
         public async Task<ActionResult> DeleteUser(string username)
         {
-            string? deletedUserId = await _userService.DeleteUserAsync(username);
-            if (deletedUserId == null)
+            string? userId = await _applicationFacade.GetUserIdAsync(username);
+            if (userId == null)
                 return NotFound();
+            await _applicationFacade.DeleteApplicationUserAsync(username);
             return NoContent();
+        }
+
+        private async Task<UserInfoModel?> BuildUserInfoModelAsync(string userId)
+        {
+            UserInfoModel userInfoModel = new()
+            {
+                UserId = userId,
+                Username = await _applicationFacade.GetUsernameAsync(userId),
+                AuthRoles = await _applicationFacade.GetRolesAsync(userId),
+                Admin = await _applicationFacade.GetAdminAsync(userId),
+                Customer = await _applicationFacade.GetCustomerAsync(userId),
+            };
+            return userInfoModel;
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using FribergCarRentals.Core.Models;
+﻿using FribergCarRentals.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Constants;
 
-namespace FribergCarRentals.WebApi.Services
+namespace FribergCarRentals.Services.Services
 {
     public class AuthService : IAuthService
     {
@@ -13,8 +12,6 @@ namespace FribergCarRentals.WebApi.Services
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private const string DefaultAdminEmail = "admin@admin.se";
-        private const string DefaultPassword = "Abc123!";
         public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -33,54 +30,38 @@ namespace FribergCarRentals.WebApi.Services
             return await _userManager.Users.AnyAsync(u => u.UserName == username);
         }
 
-        public async Task<string> AddUserAsync(string username)
-        {
-            IdentityUser identityUser = new IdentityUser() { UserName = username, Email = username };
-            string initialPassword = DefaultPassword;
-            await _userManager.CreateAsync(identityUser, initialPassword);
-            await _userManager.AddToRoleAsync(identityUser, AuthRoleName.User);
-            return identityUser.Id;
-        }
-
-        public async Task<string?> GetUsernameByUserIdAsync(string userId)
+        public async Task<string?> GetUsernameAsync(string userId)
         {
             IdentityUser? identityUser = await GetIdentityUserByUserId(userId);
             if (identityUser == null)
-            {
                 return null;
-            }
             return identityUser.UserName;
         }
 
-        public async Task<string?> GetUserIdByUsernameAsync(string username)
+        public async Task<string?> GetUserIdAsync(string username)
         {
             IdentityUser? identityUser = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (identityUser == null)
-            {
                 return null;
-            }
             return identityUser.Id;
         }
 
-        public async Task<string?> UpdateUsernameAndReturnStringUserIdAsync(string userId, string newUsername)
+        public async Task<string?> UpdateUsernameAsync(string userId, string newUsername)
         {
             IdentityUser? identityUser = await GetIdentityUserByUserId(userId);
             if (identityUser == null)
-            {
                 return null;
-            }
 
             await _userManager.SetUserNameAsync(identityUser, newUsername);
             return userId;
         }
 
-        public async Task<string?> DeleteByUserIdAsync(string userId)
+        public async Task<string?> DeleteAsync(string userId)
         {
             IdentityUser? identityUser = await _userManager.Users.Where(iu => iu.Id == userId).FirstOrDefaultAsync();
-            if (identityUser != null)
-            {
-                await _userManager.DeleteAsync(identityUser);
-            }
+            if (identityUser == null)
+                return null;
+            await _userManager.DeleteAsync(identityUser);
             return userId;
         }
 
@@ -93,21 +74,6 @@ namespace FribergCarRentals.WebApi.Services
                 userIds.Add(identityUser.Id);
             }
             return userIds;
-        }
-
-        public async Task<string?> GetCurrentSignedInUserIdAsync()
-        {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null)
-            {
-                return null;
-            }
-            IdentityUser? identityUser = await _userManager.GetUserAsync(user);
-            if (identityUser == null)
-            {
-                return null;
-            }
-            return identityUser.Id;
         }
 
         public async Task<bool> IsInRoleAsync(string userId, string roleName)
@@ -123,6 +89,8 @@ namespace FribergCarRentals.WebApi.Services
         public async Task<string?> AddToRoleAsync(string userId, string roleName)
         {
             IdentityUser? identityUser = await GetIdentityUserByUserId(userId);
+            if (identityUser == null)
+                return null;
             await _userManager.AddToRoleAsync(identityUser, roleName);
             await _signInManager.RefreshSignInAsync(identityUser);
             return userId;
@@ -131,6 +99,8 @@ namespace FribergCarRentals.WebApi.Services
         public async Task<string?> RemoveFromRoleAsync(string userId, string roleName)
         {
             IdentityUser? identityUser = await GetIdentityUserByUserId(userId);
+            if (identityUser == null)
+                return null;
             await _userManager.RemoveFromRoleAsync(identityUser, roleName);
             await _signInManager.RefreshSignInAsync(identityUser);
             return userId;
@@ -168,6 +138,19 @@ namespace FribergCarRentals.WebApi.Services
             return identityUser.Id;
         }
 
+        public async Task<List<string>> GetAllRolesAsync()
+        {
+            List<IdentityRole> identityRoles = await _roleManager.Roles.ToListAsync();
+            List<string> roleNames = new();
+            foreach (IdentityRole identityRole in identityRoles)
+            {
+                if (identityRole.Name == null)
+                    continue;
+                roleNames.Add(identityRole.Name);
+            }
+            return roleNames;
+        }
+
         public async Task<List<string>> GetRolesAsync(string userId)
         {
             IdentityUser? identityUser = await _userManager.FindByIdAsync(userId);
@@ -177,6 +160,20 @@ namespace FribergCarRentals.WebApi.Services
             }
             IEnumerable<string> roles = await _userManager.GetRolesAsync(identityUser);
             return roles.ToList();
+        }
+
+        public Task<bool> RoleExistsAsync(string roleName)
+        {
+            return _roleManager.RoleExistsAsync(roleName);
+        }
+
+        public async Task<string?> CreateRoleAsync(string roleName)
+        {
+            IdentityRole identityRole = new(roleName);
+            IdentityResult identityResult = await _roleManager.CreateAsync(identityRole);
+            if (!identityResult.Succeeded)
+                return null;
+            return roleName;
         }
     }
 }

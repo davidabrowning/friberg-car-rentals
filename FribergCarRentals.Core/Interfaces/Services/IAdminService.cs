@@ -2,8 +2,8 @@
 
 namespace FribergCarRentals.Core.Interfaces.Services
 {
-    public interface IAdminService : IBasicCRUDService<Admin>
+    public interface IAdminService : ICrudService<Admin>
     {
-        Task<Admin?> DeleteAdminByIdentityUserIdAsync(string identityUserId);
+        Task<Admin?> GetAsync(string userId);
     }
 }

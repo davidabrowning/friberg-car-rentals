@@ -1,40 +1,37 @@
-﻿using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Models;
+﻿using FribergCarRentals.Services.ApplicationModels;
 using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.WebApi.Mappers
 {
     public static class UserMapper
     {
-        public static async Task<UserDto> ToDtoAsync(string userId, IUserService userService, IAuthService authService)
+        public static UserDto ToDtoAsync(UserInfoModel userInfoModel)
         {
             AdminDto adminDto = new();
-            Admin? admin = await userService.GetAdminByUserIdAsync(userId);
-            if (admin != null)
-                adminDto = AdminMapper.ToDto(admin);
+            if (userInfoModel.Admin != null)
+                adminDto = AdminMapper.ToDto(userInfoModel.Admin);
 
             CustomerDto customerDto = new();
-            Customer? customer = await userService.GetCustomerByUserIdAsync(userId);
-            if (customer != null)
-                customerDto = CustomerMapper.ToDto(customer);
+            if (userInfoModel.Customer != null)
+                customerDto = CustomerMapper.ToDto(userInfoModel.Customer);
 
             UserDto userDto = new()
             {
-                UserId = userId,
-                Username = await userService.GetUsernameByUserIdAsync(userId) ?? null,
-                AuthRoles = await authService.GetRolesAsync(userId),
+                UserId = userInfoModel.UserId,
+                Username = userInfoModel.Username,
+                AuthRoles = userInfoModel.AuthRoles,
                 AdminDto = adminDto,
                 CustomerDto = customerDto,
             };
             return userDto;
         }
 
-        public static async Task<List<UserDto>> ToDtosAsync(List<string> userIds, IUserService userService, IAuthService authService)
+        public static List<UserDto> ToDtosAsync(List<UserInfoModel> userInfoModels)
         {
             List<UserDto> userDtos = new();
-            foreach (string userId in userIds)
+            foreach (UserInfoModel userInfoModel in userInfoModels)
             {
-                userDtos.Add(await ToDtoAsync(userId, userService, authService));
+                userDtos.Add(ToDtoAsync(userInfoModel));
             }
             return userDtos;
         }
