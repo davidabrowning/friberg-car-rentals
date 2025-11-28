@@ -1,9 +1,7 @@
-﻿using FribergCarRentals.Core.Interfaces.Repositories;
-using FribergCarRentals.Core.Interfaces.Services;
+﻿using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.Tests.Mock.Data.Repositories;
 using FribergCarRentals.WebApi.Services;
-using Microsoft.IdentityModel.Tokens;
 
 namespace FribergCarRentals.Tests.Tests.WebApi.Services
 {

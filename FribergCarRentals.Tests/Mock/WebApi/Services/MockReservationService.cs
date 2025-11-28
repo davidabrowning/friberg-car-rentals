@@ -1,12 +1,5 @@
 ﻿using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
-using FribergCarRentals.Tests.Mock.Data.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FribergCarRentals.Tests.Mock.WebApi.Services
 {

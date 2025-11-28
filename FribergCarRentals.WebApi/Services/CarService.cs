@@ -4,21 +4,10 @@ using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public class CarService : BasicCRUDService<Car>, ICarService
+    public class CarService : BasicCrudService<Car>, ICarService
     {
-        private readonly IReservationService _reservationService;
-        public CarService(IRepository<Car> carRepository, IReservationService reservationService) : base(carRepository)
+        public CarService(IRepository<Car> carRepository) : base(carRepository)
         {
-            _reservationService = reservationService;
-        }
-
-        public async override Task<Car?> DeleteAsync(int id)
-        {
-            Car? car = await GetAsync(id);
-            if (car == null)
-                return null;
-            await _reservationService.DeleteByCarAsync(car);
-            return await base.DeleteAsync(id);
         }
     }
 }

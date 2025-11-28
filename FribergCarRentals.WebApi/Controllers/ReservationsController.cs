@@ -1,9 +1,8 @@
 ﻿using FribergCarRentals.Core.Helpers;
-using FribergCarRentals.Core.Interfaces.Services;
+using FribergCarRentals.Core.Interfaces.Facades;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.WebApi.Controllers
@@ -12,21 +11,17 @@ namespace FribergCarRentals.WebApi.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        private readonly IReservationService _reservationService;
-        private readonly ICarService _carService;
-        private readonly ICustomerService _customerService;
-        public ReservationsController(IReservationService reservationService, ICarService carService, ICustomerService customerService)
+        IApplicationFacade _applicationFacade;
+        public ReservationsController(IApplicationFacade applicationFacade)
         {
-            _reservationService = reservationService;
-            _carService = carService;
-            _customerService = customerService;
+            _applicationFacade = applicationFacade;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<ReservationDto>>> Get()
         {
             List<ReservationDto> reservationDtos = new();
-            IEnumerable<Reservation> reservations = await _reservationService.GetAllAsync();
+            IEnumerable<Reservation> reservations = await _applicationFacade.GetAllReservationsAsync();
             foreach (Reservation reservation in reservations)
             {
                 ReservationDto reservationDto = ReservationMapper.ToDto(reservation);
@@ -38,7 +33,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ReservationDto>> Get(int id)
         {
-            Reservation? reservation = await _reservationService.GetAsync(id);
+            Reservation? reservation = await _applicationFacade.GetReservationAsync(id);
             if (reservation == null)
                 return NotFound();
             ReservationDto reservationDto = ReservationMapper.ToDto(reservation);
@@ -48,15 +43,15 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ReservationDto>> Post(ReservationDto reservationDto)
         {
-            Car? car = await _carService.GetAsync(reservationDto.CarDto.Id);
+            Car? car = await _applicationFacade.GetCarAsync(reservationDto.CarDto.Id);
             if (car == null)
                 return BadRequest(UserMessage.ErrorCarIsNull);
-            Customer? customer = await _customerService.GetAsync(reservationDto.CustomerDto.Id);
+            Customer? customer = await _applicationFacade.GetCustomerAsync(reservationDto.CustomerDto.Id);
             if (customer == null)
                 return BadRequest(UserMessage.ErrorCustomerIsNull);
 
             Reservation reservation = ReservationMapper.ToNewModelWIthoutId(reservationDto, car, customer);
-            await _reservationService.CreateAsync(reservation);
+            await _applicationFacade.CreateReservationAsync(reservation);
             ReservationDto updatedReservationDto = ReservationMapper.ToDto(reservation);
             return Ok(updatedReservationDto);
         }
@@ -66,21 +61,22 @@ namespace FribergCarRentals.WebApi.Controllers
         {
             if (id != reservationDto.Id)
                 return BadRequest(UserMessage.ErrorIdsDoNotMatch);
-            Car? car = await _carService.GetAsync(reservationDto.CarDto.Id);
+            Car? car = await _applicationFacade.GetCarAsync(reservationDto.CarDto.Id);
             if (car == null)
                 return BadRequest(UserMessage.ErrorCarIsNull);
-            Customer? customer = await _customerService.GetAsync(reservationDto.CustomerDto.Id);
+            Customer? customer = await _applicationFacade.GetCustomerAsync(reservationDto.CustomerDto.Id);
             if (customer == null)
                 return BadRequest(UserMessage.ErrorCustomerIsNull);
 
-            await _reservationService.UpdateAsync(ReservationMapper.ToNewModelWIthoutId(reservationDto, car, customer));
+            Reservation reservation = ReservationMapper.ToNewModelWIthoutId(reservationDto, car, customer);
+            await _applicationFacade.UpdateReservationAsync(reservation);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            Reservation? deletedReservation = await _reservationService.DeleteAsync(id);
+            Reservation? deletedReservation = await _applicationFacade.DeleteReservationAsync(id);
             if (deletedReservation == null)
                 return NotFound();
             return NoContent();

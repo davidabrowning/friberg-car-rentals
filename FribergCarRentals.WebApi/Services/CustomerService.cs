@@ -1,25 +1,20 @@
-﻿using FribergCarRentals.Core.Interfaces.Repositories;
+﻿using FribergCarRentals.Core.Constants;
+using FribergCarRentals.Core.Interfaces.Repositories;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public class CustomerService : BasicCRUDService<Customer>, ICustomerService
+    public class CustomerService : BasicCrudService<Customer>, ICustomerService
     {
-        private readonly IReservationService _reservationService;
-        public CustomerService(IRepository<Customer> customerRepository, IReservationService reservationServices) : base(customerRepository)
+        public CustomerService(IRepository<Customer> customerRepository) : base(customerRepository)
         {
-            _reservationService = reservationServices;
         }
 
-        public override async Task<Customer?> DeleteAsync(int id)
+        public async Task<Customer?> GetAsync(string userId)
         {
-            Customer? customer = await GetAsync(id);
-            if (customer == null) {
-                return null;
-            }
-            await _reservationService.DeleteByCustomerAsync(customer);
-            return await base.DeleteAsync(id);
+            IEnumerable<Customer> customers = await GetAllAsync();
+            return customers.FirstOrDefault(a => a.UserId == userId);
         }
     }
 }

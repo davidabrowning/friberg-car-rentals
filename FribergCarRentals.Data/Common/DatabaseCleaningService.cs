@@ -1,17 +1,15 @@
-﻿using FribergCarRentals.Core.Interfaces.Other;
-using FribergCarRentals.Core.Interfaces.Services;
+﻿using FribergCarRentals.Core.Interfaces.Facades;
+using FribergCarRentals.Core.Interfaces.Other;
 using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.Data
 {
     public class DatabaseCleaningService : IDatabaseCleaner
     {
-        private readonly IAdminService _adminService;
-        private readonly ICustomerService _customerService;
-        public DatabaseCleaningService(IAdminService adminService, ICustomerService customerService)
+        IApplicationFacade _applicationFacade;
+        public DatabaseCleaningService(IApplicationFacade applicationFacade)
         {
-            _adminService = adminService;
-            _customerService = customerService;
+            _applicationFacade = applicationFacade;
         }
         public async Task CleanAsync()
         {
@@ -20,23 +18,23 @@ namespace FribergCarRentals.Data
         }
         private async Task RemoveAdminsWithoutIdentityUsers()
         {
-            IEnumerable<Admin> admins = await _adminService.GetAllAsync();
+            IEnumerable<Admin> admins = await _applicationFacade.GetAllAdminsAsync();
             foreach (Admin admin in admins)
             {
                 if (admin.UserId == null)
                 {
-                    await _adminService.DeleteAsync(admin.Id);
+                    await _applicationFacade.DeleteAdminAsync(admin.Id);
                 }
             }
         }
         private async Task RemoveCustomersWithoutIdentityUsers()
         {
-            IEnumerable<Customer> customers = await _customerService.GetAllAsync();
+            IEnumerable<Customer> customers = await _applicationFacade.GetAllCustomersAsync();
             foreach (Customer customer in customers)
             {
                 if (customer.UserId == null)
                 {
-                    await _customerService.DeleteAsync(customer.Id);
+                    await _applicationFacade.DeleteCustomerAsync(customer.Id);
                 }
             }
         }

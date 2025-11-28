@@ -4,15 +4,15 @@ using FribergCarRentals.Core.Models;
 
 namespace FribergCarRentals.WebApi.Services
 {
-    public abstract class BasicCRUDService<T> : ICrudService<T>
+    public abstract class BasicCrudService<T> : ICrudService<T>
     {
         IRepository<T> _repository;
 
-        public BasicCRUDService(IRepository<T> repository)
+        public BasicCrudService(IRepository<T> repository)
         {
             _repository = repository;
         }
-        public async Task<T> CreateAsync(T t)
+        public virtual async Task<T> CreateAsync(T t)
         {
             await _repository.AddAsync(t);
             return t;
@@ -44,7 +44,7 @@ namespace FribergCarRentals.WebApi.Services
             return await _repository.IdExistsAsync(id);
         }
 
-        public async Task<T> UpdateAsync(T t)
+        public virtual async Task<T> UpdateAsync(T t)
         {
             await _repository.UpdateAsync(t);
             return t;

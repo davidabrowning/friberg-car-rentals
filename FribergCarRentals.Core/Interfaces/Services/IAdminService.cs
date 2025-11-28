@@ -4,5 +4,6 @@ namespace FribergCarRentals.Core.Interfaces.Services
 {
     public interface IAdminService : ICrudService<Admin>
     {
+        Task<Admin?> GetAsync(string userId);
     }
 }

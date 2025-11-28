@@ -1,9 +1,11 @@
 
+using FribergCarRentals.Core.Interfaces.Facades;
 using FribergCarRentals.Core.Interfaces.Other;
 using FribergCarRentals.Core.Interfaces.Repositories;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.Data;
+using FribergCarRentals.WebApi.Facades;
 using FribergCarRentals.WebApi.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,7 @@ namespace FribergCarRentals.WebApi
             builder.Services.AddScoped<ICarService, CarService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
-            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IApplicationFacade, ApplicationFacade>();
             builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningService>();
             builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingService>();
 
