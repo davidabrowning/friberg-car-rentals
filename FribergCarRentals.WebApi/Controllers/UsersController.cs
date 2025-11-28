@@ -1,9 +1,7 @@
 ﻿using FribergCarRentals.Core.Interfaces.Facades;
-using FribergCarRentals.Core.Models;
 using FribergCarRentals.Services.ApplicationModels;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.WebApi.Controllers
@@ -19,9 +17,9 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> Get()
+        public async Task<ActionResult<IEnumerable<UserDto>>> Get()
         {
-            List<string> userIds = await _applicationFacade.GetAllUserIdsAsync();
+            IEnumerable<string> userIds = await _applicationFacade.GetAllUserIdsAsync();
             List<UserInfoModel> userInfoModels = new();
             foreach (string userId in userIds)
             {
@@ -29,7 +27,7 @@ namespace FribergCarRentals.WebApi.Controllers
                 if (userInfoModel != null)
                     userInfoModels.Add(userInfoModel);
             }
-            List<UserDto> userDtos = UserMapper.ToDtosAsync(userInfoModels);
+            IEnumerable<UserDto> userDtos = UserMapper.ToDtosAsync(userInfoModels);
             return Ok(userDtos);
         }
 
@@ -62,7 +60,7 @@ namespace FribergCarRentals.WebApi.Controllers
             string? userId = await _applicationFacade.AuthenticateAsync(loginDto.Username, loginDto.Password);
             if (userId == null)
                 return NotFound();
-            List<string> roles = await _applicationFacade.GetRolesAsync(userId);
+            IEnumerable<string> roles = await _applicationFacade.GetRolesAsync(userId);
             string token = _applicationFacade.GenerateJwtToken(userId, loginDto.Username, roles);
             JwtTokenDto jwtTokenDto = new() { Token = token };
             return Ok(jwtTokenDto);

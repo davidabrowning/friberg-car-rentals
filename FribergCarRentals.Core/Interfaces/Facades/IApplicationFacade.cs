@@ -51,16 +51,16 @@ namespace FribergCarRentals.Core.Interfaces.Facades
         Task<string?> GetUserIdAsync(string username);
         Task<string?> UpdateUsernameAsync(string userId, string newUsername);
         Task<string?> DeleteApplicationUserAsync(string userId);
-        Task<List<string>> GetAllUserIdsAsync();
+        Task<IEnumerable<string>> GetAllUserIdsAsync();
         Task<bool> RoleExistsAsync(string roleName);
-        Task<List<string>> GetAllRolesAsync();
-        Task<List<string>> GetRolesAsync(string userId);
+        Task<IEnumerable<string>> GetAllRolesAsync();
+        Task<IEnumerable<string>> GetRolesAsync(string userId);
         Task<string?> CreateRoleAsync(string roleName);
         Task<bool> IsInRoleAsync(string userId, string roleName);
         Task<string?> AddToRoleAsync(string userId, string roleName);
         Task<string?> RemoveFromRoleAsync(string userId, string roleName);
 
         // Jwt
-        string GenerateJwtToken(string userId, string username, List<string> roles);
+        string GenerateJwtToken(string userId, string username, IEnumerable<string> roles);
     }
 }

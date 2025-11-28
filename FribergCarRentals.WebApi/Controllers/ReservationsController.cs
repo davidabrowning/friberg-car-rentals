@@ -18,7 +18,7 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ReservationDto>>> Get()
+        public async Task<ActionResult<IEnumerable<ReservationDto>>> Get()
         {
             List<ReservationDto> reservationDtos = new();
             IEnumerable<Reservation> reservations = await _applicationFacade.GetAllReservationsAsync();
