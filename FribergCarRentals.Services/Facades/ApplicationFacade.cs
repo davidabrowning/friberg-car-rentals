@@ -3,7 +3,7 @@ using FribergCarRentals.Core.Interfaces.Facades;
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.WebApi.Facades
+namespace FribergCarRentals.Services.Facades
 {
     public class ApplicationFacade : IApplicationFacade
     {

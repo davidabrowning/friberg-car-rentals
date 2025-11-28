@@ -2,7 +2,7 @@
 using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
 
-namespace FribergCarRentals.WebApi.Services
+namespace FribergCarRentals.Services.Services
 {
     public class AdminService : BasicCrudService<Admin>, IAdminService
     {

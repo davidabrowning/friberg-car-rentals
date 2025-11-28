@@ -1,9 +1,9 @@
 ﻿using FribergCarRentals.Core.Interfaces.Services;
 using FribergCarRentals.Core.Models;
+using FribergCarRentals.Services.Services;
 using FribergCarRentals.Tests.Mock.Data.Repositories;
-using FribergCarRentals.WebApi.Services;
 
-namespace FribergCarRentals.Tests.Tests.WebApi.Services
+namespace FribergCarRentals.Tests.Tests.Services.Services
 {
     public class ReservationServiceTests
     {

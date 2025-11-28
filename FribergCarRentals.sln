@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergCarRentals.WebApi", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergCarRentals.Tests", "FribergCarRentals.Tests\FribergCarRentals.Tests.csproj", "{9BE197F3-A17D-4F54-B847-ABEAC1AA4117}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergCarRentals.Services", "FribergCarRentals.Services\FribergCarRentals.Services.csproj", "{7B7C38FC-3688-4D96-9F09-26107A0ECE96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{9BE197F3-A17D-4F54-B847-ABEAC1AA4117}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BE197F3-A17D-4F54-B847-ABEAC1AA4117}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BE197F3-A17D-4F54-B847-ABEAC1AA4117}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B7C38FC-3688-4D96-9F09-26107A0ECE96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B7C38FC-3688-4D96-9F09-26107A0ECE96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B7C38FC-3688-4D96-9F09-26107A0ECE96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B7C38FC-3688-4D96-9F09-26107A0ECE96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
