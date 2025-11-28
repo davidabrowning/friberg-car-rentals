@@ -30,7 +30,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomerDto>> Post(CustomerDto customerDto)
         {
-            Customer customer = CustomerMapper.ToNewModelWIthoutId(customerDto);
+            Customer customer = CustomerMapper.ToNewModelWithoutId(customerDto);
             await _applicationFacade.CreateCustomerAsync(customer);
             CustomerDto resultCustomerDto = CustomerMapper.ToDto(customer);
             return Ok(resultCustomerDto);

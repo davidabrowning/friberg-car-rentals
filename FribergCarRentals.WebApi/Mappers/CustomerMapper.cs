@@ -19,7 +19,7 @@ namespace FribergCarRentals.WebApi.Mappers
             return customerDto;
         }
 
-        public static Customer ToNewModelWIthoutId(CustomerDto customerDto)
+        public static Customer ToNewModelWithoutId(CustomerDto customerDto)
         {
             Customer customer = new()
             {

@@ -50,7 +50,7 @@ namespace FribergCarRentals.WebApi.Controllers
             if (customer == null)
                 return BadRequest(UserMessage.ErrorCustomerIsNull);
 
-            Reservation reservation = ReservationMapper.ToNewModelWIthoutId(reservationDto, car, customer);
+            Reservation reservation = ReservationMapper.ToNewModelWithoutId(reservationDto, car, customer);
             await _applicationFacade.CreateReservationAsync(reservation);
             ReservationDto updatedReservationDto = ReservationMapper.ToDto(reservation);
             return Ok(updatedReservationDto);
@@ -68,7 +68,7 @@ namespace FribergCarRentals.WebApi.Controllers
             if (customer == null)
                 return BadRequest(UserMessage.ErrorCustomerIsNull);
 
-            Reservation reservation = ReservationMapper.ToNewModelWIthoutId(reservationDto, car, customer);
+            Reservation reservation = ReservationMapper.ToNewModelWithoutId(reservationDto, car, customer);
             await _applicationFacade.UpdateReservationAsync(reservation);
             return NoContent();
         }
