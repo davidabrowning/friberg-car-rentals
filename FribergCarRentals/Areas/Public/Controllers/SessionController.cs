@@ -64,7 +64,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                 return View(populatedRegisterViewModel);
             }
 
-            _userSession.UserDto = userDto;
+            _userSession.UserDto = await _userApiClient.GetByUsernameAsync(username);
             TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
             return RedirectToAction("Index", "Home");
         }
