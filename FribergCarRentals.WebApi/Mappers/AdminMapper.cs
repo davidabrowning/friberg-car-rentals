@@ -15,7 +15,7 @@ namespace FribergCarRentals.WebApi.Mappers
             return adminDto;
         }
 
-        public static Admin ToNewModelWIthoutId(AdminDto adminDto)
+        public static Admin ToNewModelWithoutId(AdminDto adminDto)
         {
             Admin admin = new()
             {

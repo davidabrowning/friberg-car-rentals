@@ -30,7 +30,7 @@ namespace FribergCarRentals.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AdminDto>> Post(AdminDto adminDto)
         {
-            Admin admin = AdminMapper.ToNewModelWIthoutId(adminDto);
+            Admin admin = AdminMapper.ToNewModelWithoutId(adminDto);
             await _applicationFacade.CreateAdminAsync(admin);
             AdminDto resultAdminDto = AdminMapper.ToDto(admin);
             return Ok(resultAdminDto);
