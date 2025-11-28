@@ -1,7 +1,6 @@
 ﻿using FribergCarRentals.Core.Constants;
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
-using System.Threading.Tasks;
 
 namespace FribergCarRentals.Mvc.Session
 {
