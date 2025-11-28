@@ -14,7 +14,7 @@ namespace FribergCarRentals.Services.Services
         {
             _configuration = configuration;
         }
-        public string GenerateJwtToken(string userId, string username, List<string> roles)
+        public string GenerateJwtToken(string userId, string username, IEnumerable<string> roles)
         {
             List<Claim> claims = new()
             {

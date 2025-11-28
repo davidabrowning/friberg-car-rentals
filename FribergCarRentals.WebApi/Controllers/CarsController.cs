@@ -18,10 +18,10 @@ namespace FribergCarRentals.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CarDto>>> Get()
+        public async Task<ActionResult<IEnumerable<CarDto>>> Get()
         {
             IEnumerable<Car> cars = await _applicationFacade.GetAllCarsAsync();
-            List<CarDto> carDtos = CarMapper.ToDtos(cars);
+            IEnumerable<CarDto> carDtos = CarMapper.ToDtos(cars);
             return Ok(carDtos);
         }
 
