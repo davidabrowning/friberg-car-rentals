@@ -1,41 +1,37 @@
-﻿using FribergCarRentals.Core.Interfaces.Facades;
-using FribergCarRentals.Core.Interfaces.Services;
-using FribergCarRentals.Core.Models;
+﻿using FribergCarRentals.Services.ApplicationModels;
 using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.WebApi.Mappers
 {
     public static class UserMapper
     {
-        public static async Task<UserDto> ToDtoAsync(string userId, IApplicationFacade applicationFacade)
+        public static UserDto ToDtoAsync(UserInfoModel userInfoModel)
         {
             AdminDto adminDto = new();
-            Admin? admin = await applicationFacade.GetAdminAsync(userId);
-            if (admin != null)
-                adminDto = AdminMapper.ToDto(admin);
+            if (userInfoModel.Admin != null)
+                adminDto = AdminMapper.ToDto(userInfoModel.Admin);
 
             CustomerDto customerDto = new();
-            Customer? customer = await applicationFacade.GetCustomerAsync(userId);
-            if (customer != null)
-                customerDto = CustomerMapper.ToDto(customer);
+            if (userInfoModel.Customer != null)
+                customerDto = CustomerMapper.ToDto(userInfoModel.Customer);
 
             UserDto userDto = new()
             {
-                UserId = userId,
-                Username = await applicationFacade.GetUsernameAsync(userId) ?? null,
-                AuthRoles = await applicationFacade.GetRolesAsync(userId),
+                UserId = userInfoModel.UserId,
+                Username = userInfoModel.Username,
+                AuthRoles = userInfoModel.AuthRoles,
                 AdminDto = adminDto,
                 CustomerDto = customerDto,
             };
             return userDto;
         }
 
-        public static async Task<List<UserDto>> ToDtosAsync(List<string> userIds, IApplicationFacade applicationFacade)
+        public static List<UserDto> ToDtosAsync(List<UserInfoModel> userInfoModels)
         {
             List<UserDto> userDtos = new();
-            foreach (string userId in userIds)
+            foreach (UserInfoModel userInfoModel in userInfoModels)
             {
-                userDtos.Add(await ToDtoAsync(userId, applicationFacade));
+                userDtos.Add(ToDtoAsync(userInfoModel));
             }
             return userDtos;
         }

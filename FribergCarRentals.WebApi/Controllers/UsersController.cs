@@ -1,6 +1,9 @@
 ﻿using FribergCarRentals.Core.Interfaces.Facades;
+using FribergCarRentals.Core.Models;
+using FribergCarRentals.Services.ApplicationModels;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.WebApi.Controllers
@@ -19,17 +22,24 @@ namespace FribergCarRentals.WebApi.Controllers
         public async Task<ActionResult<List<UserDto>>> Get()
         {
             List<string> userIds = await _applicationFacade.GetAllUserIdsAsync();
-            List<UserDto> userDtos = await UserMapper.ToDtosAsync(userIds, _applicationFacade);
+            List<UserInfoModel> userInfoModels = new();
+            foreach (string userId in userIds)
+            {
+                UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+                if (userInfoModel != null)
+                    userInfoModels.Add(userInfoModel);
+            }
+            List<UserDto> userDtos = UserMapper.ToDtosAsync(userInfoModels);
             return Ok(userDtos);
         }
 
         [HttpGet("{userId}")]
         public async Task<ActionResult<UserDto>> Get(string userId)
         {
-            string? username = await _applicationFacade.GetUsernameAsync(userId);
-            if (username == null)
+            UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+            if (userInfoModel == null)
                 return NotFound();
-            UserDto userDto = await UserMapper.ToDtoAsync(userId, _applicationFacade);
+            UserDto userDto = UserMapper.ToDtoAsync(userInfoModel);
             return Ok(userDto);
         }
 
@@ -39,7 +49,10 @@ namespace FribergCarRentals.WebApi.Controllers
             string? userId = await _applicationFacade.GetUserIdAsync(username);
             if (userId == null)
                 return NotFound();
-            UserDto userDto = await UserMapper.ToDtoAsync(userId, _applicationFacade);
+            UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+            if (userInfoModel == null) 
+                return NotFound();
+            UserDto userDto = UserMapper.ToDtoAsync(userInfoModel);
             return Ok(userDto);
         }
 
@@ -61,7 +74,10 @@ namespace FribergCarRentals.WebApi.Controllers
             string? userId = await _applicationFacade.CreateApplicationUserAsync(registerDto.Username, registerDto.Password);
             if (userId == null)
                 return NotFound();
-            UserDto userDto = await UserMapper.ToDtoAsync(userId, _applicationFacade);
+            UserInfoModel? userInfoModel = await BuildUserInfoModelAsync(userId);
+            if (userInfoModel == null) 
+                return NotFound();
+            UserDto userDto = UserMapper.ToDtoAsync(userInfoModel);
             return Ok(userDto);
         }
 
@@ -82,6 +98,19 @@ namespace FribergCarRentals.WebApi.Controllers
                 return NotFound();
             await _applicationFacade.DeleteApplicationUserAsync(username);
             return NoContent();
+        }
+
+        private async Task<UserInfoModel?> BuildUserInfoModelAsync(string userId)
+        {
+            UserInfoModel userInfoModel = new()
+            {
+                UserId = userId,
+                Username = await _applicationFacade.GetUsernameAsync(userId),
+                AuthRoles = await _applicationFacade.GetRolesAsync(userId),
+                Admin = await _applicationFacade.GetAdminAsync(userId),
+                Customer = await _applicationFacade.GetCustomerAsync(userId),
+            };
+            return userInfoModel;
         }
     }
 }

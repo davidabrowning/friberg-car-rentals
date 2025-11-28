@@ -2,7 +2,7 @@
 
 namespace FribergCarRentals.Services.ApplicationModels
 {
-    internal class UserInfoModel
+    public class UserInfoModel
     {
         public required string UserId;
         public required string Username;
