@@ -5,20 +5,8 @@
 	ViewData["Title"] = "Home";
 }
 
-@if (Model.IsSignedIn && !Model.HasCustomerAccount)
-{
-	<div class="text-center">
-		<h1 class="display-4">User Registration</h1>
-		<a class="btn btn-primary" asp-area="Public" asp-controller="Customer" asp-action="Create">
-			Create customer account
-		</a>
-	</div>
-}
-else
-{
-	<p class="alert alert-info">
-		Note: A default admin user is created with username "admin@admin.se" and password "Abc123!". You may log in 
-		with this admin account. Or, you may register as a new customer with the Register link in the top-right menu.
-	</p>
-	<partial name="_HomeSplashPartial" />
-}
+<p class="alert alert-info">
+	Note: A default admin user is created with username "admin@admin.se" and password "Abc123!". You may log in
+	with this admin account. Or, you may register as a new customer with the Register link in the top-right menu.
+</p>
+<partial name="_HomeSplashPartial" />

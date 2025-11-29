@@ -1,10 +1,9 @@
-﻿using FribergCarRentals.Mvc.Session;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using FribergCarRentals.Mvc.Areas.Public.Views.Session;
-using FribergCarRentals.WebApi.Dtos;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Mvc.Areas.Public.Views.Session;
+using FribergCarRentals.Mvc.Session;
+using FribergCarRentals.WebApi.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 {
@@ -26,13 +25,56 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // GET: Public/Register
+        public IActionResult Register()
+        {
+            if (_userSession.IsSignedIn())
+                return RedirectToAction("Index", "Home");
+
+            RegisterViewModel emptyVM = new();
+            return View(emptyVM);
+        }
+
+        // POST: Public/Register
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel populatedRegisterViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(populatedRegisterViewModel);
+            }
+
+            string username = populatedRegisterViewModel.Username;
+            string password = populatedRegisterViewModel.Password;
+
+            UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
+            if (userDto.UserId != null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
+                return View(populatedRegisterViewModel);
+            }
+
+            await _userApiClient.RegisterAsync(username, password);
+
+            JwtTokenDto? jwtTokenDto = await _userApiClient.LoginAsync(username, password);
+            if (jwtTokenDto == null)
+            {
+                TempData["ErrorMessage"] = UserMessage.ErrorUnableToSignIn;
+                return View(populatedRegisterViewModel);
+            }
+
+            _userSession.UserDto = await _userApiClient.GetByUsernameAsync(username);
+            TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
+            return RedirectToAction("Index", "Home");
+        }
+
         // GET: Public/Signin
+        [HttpGet]
         public IActionResult Signin()
         {
             if (_userSession.IsSignedIn())
-            {
                 return RedirectToAction("Index", "Home");
-            }
 
             SigninViewModel emptyVM = new();
             return View(emptyVM);
@@ -54,8 +96,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
             UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
             if (userDto.UserId == null)
             {
-                await _userApiClient.RegisterAsync(username, password);
-                TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
+                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
                 return RedirectToAction("Index", "Home");
             }
 
