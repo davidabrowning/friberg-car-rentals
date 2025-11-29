@@ -26,7 +26,7 @@ namespace FribergCarRentals.WebApi.Mappers
                 Model = carDto.Model,
                 Year = carDto.Year,
                 Description = carDto.Description,
-                PhotoUrls = carDto.PhotoUrls
+                PhotoUrls = carDto.PhotoUrls.ToList()
             };
             return car;
         }
@@ -37,7 +37,7 @@ namespace FribergCarRentals.WebApi.Mappers
             car.Model = carDto.Model;
             car.Year = carDto.Year;
             car.Description = carDto.Description;
-            car.PhotoUrls = carDto.PhotoUrls;
+            car.PhotoUrls = carDto.PhotoUrls.ToList();
         }
 
         public static List<CarDto> ToDtos(IEnumerable<Car> cars)

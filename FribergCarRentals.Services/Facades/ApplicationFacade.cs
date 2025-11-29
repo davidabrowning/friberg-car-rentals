@@ -231,7 +231,7 @@ namespace FribergCarRentals.Services.Facades
             return await _authService.DeleteAsync(userId);
         }
 
-        public async Task<List<string>> GetAllUserIdsAsync()
+        public async Task<IEnumerable<string>> GetAllUserIdsAsync()
         {
             return await _authService.GetAllUserIdsAsync();
         }
@@ -241,12 +241,12 @@ namespace FribergCarRentals.Services.Facades
             return await _authService.RoleExistsAsync(roleName);
         }
 
-        public async Task<List<string>> GetAllRolesAsync()
+        public async Task<IEnumerable<string>> GetAllRolesAsync()
         {
             return await _authService.GetAllRolesAsync();
         }
 
-        public async Task<List<string>> GetRolesAsync(string userId)
+        public async Task<IEnumerable<string>> GetRolesAsync(string userId)
         {
             return await _authService.GetRolesAsync(userId);
         }
@@ -275,7 +275,7 @@ namespace FribergCarRentals.Services.Facades
 
         #region Jwt
 
-        public string GenerateJwtToken(string userId, string username, List<string> roles)
+        public string GenerateJwtToken(string userId, string username, IEnumerable<string> roles)
         {
             return _jwtService.GenerateJwtToken(userId, username, roles);
         }

@@ -62,7 +62,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 Model = carDto.Model,
                 Year = carDto.Year,
                 Description = carDto.Description,
-                PhotoUrls = carDto.PhotoUrls,
+                PhotoUrls = carDto.PhotoUrls.ToList(),
                 // ReservationIds = carDto.Reservations.Select(r => r.Id).ToList(),
             };
             return View(detailsCarViewModel);
@@ -92,7 +92,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 Model = createCarViewModel.Model,
                 Year = createCarViewModel.Year,
                 Description = createCarViewModel.Description,
-                PhotoUrls = new()
+                PhotoUrls = new List<string>()
             };
             await _carDtoApiClient.PostAsync(carDto);
 
@@ -151,22 +151,23 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            carDto.PhotoUrls = new List<string>();
+            List<string> photoUrls = new();
             string photo1 = photosCarViewModel.PhotoUrl1 ?? "".Trim();
             string photo2 = photosCarViewModel.PhotoUrl2 ?? "".Trim();
             string photo3 = photosCarViewModel.PhotoUrl3 ?? "".Trim();
             if (photo1 != "")
             {
-                carDto.PhotoUrls.Add(photo1);
+                photoUrls.Add(photo1);
             }
             if (photo2 != "")
             {
-                carDto.PhotoUrls.Add(photo2);
+                photoUrls.Add(photo2);
             }
             if (photo3 != "")
             {
-                carDto.PhotoUrls.Add(photo3);
+                photoUrls.Add(photo3);
             }
+            carDto.PhotoUrls = photoUrls;
             await _carDtoApiClient.PutAsync(carDto);
 
             TempData["SuccessMessage"] = UserMessage.SuccessCarPhotosUpdated + " " + carDto.ToString();
