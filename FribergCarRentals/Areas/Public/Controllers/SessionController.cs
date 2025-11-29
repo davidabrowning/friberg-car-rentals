@@ -70,6 +70,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         }
 
         // GET: Public/Signin
+        [HttpGet]
         public IActionResult Signin()
         {
             if (_userSession.IsSignedIn())

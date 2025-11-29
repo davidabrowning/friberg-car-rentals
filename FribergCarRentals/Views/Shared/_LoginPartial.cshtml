@@ -5,22 +5,16 @@
 	@if (UserSession.IsSignedIn())
 	{
 		<li class="nav-item">
-			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Signout">
-				<button type="submit" class="nav-link btn btn-link text-dark">Log out</button>
-			</form>
+			<a class="nav-link btn btn-link text-dark" asp-area="Public" asp-controller="Session" asp-action="Signout">Log out</a>
 		</li>
 	}
 	else
 	{
 		<li class="nav-item">
-			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Signin">
-				<button type="submit" class="nav-link btn btn-link text-dark">Sign in</button>
-			</form>
+			<a class="nav-link btn btn-link text-dark" asp-area="Public" asp-controller="Session" asp-action="Signin">Sign in</a>
 		</li>
 		<li class="nav-item">
-			<form class="form-inline" asp-area="Public" asp-controller="Session" asp-action="Register">
-				<button type="submit" class="nav-link btn btn-link text-dark">Register</button>
-			</form>
+			<a class="nav-link btn btn-link text-dark" asp-area="Public" asp-controller="Session" asp-action="Register">Register</a>
 		</li>
 	}
 </ul>
