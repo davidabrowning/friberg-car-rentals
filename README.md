@@ -1,7 +1,9 @@
 # FribergCarRentals
-Author: David Browning
-School: YH Akademin
-Class: Advanced C# Programming
+- Author: David Browning
+- School: YH Akademin
+- Program: .NET systems development
+- Term: Fall 2025
+- Class: Advanced C# Programming
 
 ## Project Overview
 A service for renting cars in Sweden. Users log in and reserve cars for date ranges. Admins can add new cars and edit other users's profiles.
