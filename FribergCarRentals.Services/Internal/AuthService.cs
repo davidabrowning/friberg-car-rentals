@@ -8,13 +8,11 @@ namespace FribergCarRentals.Services.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+        public AuthService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
-            _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
@@ -92,7 +90,6 @@ namespace FribergCarRentals.Services.Services
             if (identityUser == null)
                 return null;
             await _userManager.AddToRoleAsync(identityUser, roleName);
-            await _signInManager.RefreshSignInAsync(identityUser);
             return userId;
         }
 
@@ -102,7 +99,6 @@ namespace FribergCarRentals.Services.Services
             if (identityUser == null)
                 return null;
             await _userManager.RemoveFromRoleAsync(identityUser, roleName);
-            await _signInManager.RefreshSignInAsync(identityUser);
             return userId;
         }
 
