@@ -16,25 +16,13 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         }
 
         // GET: Public/Home
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            IndexHomeViewModel homeIndexViewModel = new();
-
-            if (!_userSession.IsSignedIn())
-            {
-                homeIndexViewModel.IsSignedIn = false;
-                homeIndexViewModel.HasCustomerAccount = false;
-                return View(homeIndexViewModel);
-            }
-
-            if (!_userSession.IsCustomer())
-            {
-                homeIndexViewModel.IsSignedIn = true;
-                homeIndexViewModel.HasCustomerAccount = false;
-                return View(homeIndexViewModel);
-            }
-
-            return RedirectToAction("Index", "Home", new { area = "CustomerCenter" });
+            if (_userSession.IsCustomer())
+                return RedirectToAction("Index", "Home", new { area = "CustomerCenter" });
+            if (_userSession.IsSignedIn())
+                return RedirectToAction("Create", "Customer");
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

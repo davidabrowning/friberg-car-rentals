@@ -1,5 +1,4 @@
-﻿
-namespace FribergCarRentals.Core.Models
+﻿namespace FribergCarRentals.Core.Models
 {
     public class Reservation
     {

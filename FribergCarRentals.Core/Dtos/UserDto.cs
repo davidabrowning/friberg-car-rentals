@@ -4,7 +4,7 @@
     {
         public string? UserId { get; set; }
         public string? Username { get; set; }
-        public IEnumerable<string>? AuthRoles { get; set; }
+        public IEnumerable<string> AuthRoles { get; set; } = new List<string>();
         public AdminDto? AdminDto { get; set; }
         public CustomerDto? CustomerDto { get; set; }
     }

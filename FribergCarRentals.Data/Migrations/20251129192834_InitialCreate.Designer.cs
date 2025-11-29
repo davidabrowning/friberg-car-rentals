@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FribergCarRentals.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250621203100_Remove CarViewModel from DbContext")]
-    partial class RemoveCarViewModelfromDbContext
+    [Migration("20251129192834_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace FribergCarRentals.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FribergCarRentals.Models.Admin", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Admin", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,17 +33,16 @@ namespace FribergCarRentals.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("IdentityUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdentityUserId");
 
                     b.ToTable("Admins");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Car", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Car", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,7 +74,7 @@ namespace FribergCarRentals.Data.Migrations
                     b.ToTable("Cars");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Customer", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,21 +94,20 @@ namespace FribergCarRentals.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("IdentityUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdentityUserId");
-
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Reservation", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Reservation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -117,10 +115,10 @@ namespace FribergCarRentals.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CarId")
+                    b.Property<int?>("CarId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("EndDate")
@@ -340,37 +338,15 @@ namespace FribergCarRentals.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Admin", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Reservation", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
-                        .WithMany()
-                        .HasForeignKey("IdentityUserId");
-
-                    b.Navigation("IdentityUser");
-                });
-
-            modelBuilder.Entity("FribergCarRentals.Models.Customer", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
-                        .WithMany()
-                        .HasForeignKey("IdentityUserId");
-
-                    b.Navigation("IdentityUser");
-                });
-
-            modelBuilder.Entity("FribergCarRentals.Models.Reservation", b =>
-                {
-                    b.HasOne("FribergCarRentals.Models.Car", "Car")
+                    b.HasOne("FribergCarRentals.Core.Models.Car", "Car")
                         .WithMany("Reservations")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CarId");
 
-                    b.HasOne("FribergCarRentals.Models.Customer", "Customer")
+                    b.HasOne("FribergCarRentals.Core.Models.Customer", "Customer")
                         .WithMany("Reservations")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.Navigation("Car");
 
@@ -428,12 +404,12 @@ namespace FribergCarRentals.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Car", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Car", b =>
                 {
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("FribergCarRentals.Models.Customer", b =>
+            modelBuilder.Entity("FribergCarRentals.Core.Models.Customer", b =>
                 {
                     b.Navigation("Reservations");
                 });
