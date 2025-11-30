@@ -1,7 +1,6 @@
 ﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
-using System.Net;
 
 namespace FribergCarRentals.Mvc.ApiClients
 {
@@ -18,15 +17,21 @@ namespace FribergCarRentals.Mvc.ApiClients
             HttpResponseMessage response = await _httpClient.GetAsync("api/cars");
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToFetchData);
-            return await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>();
+            IEnumerable<CarDto>? cars = await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>();
+            if (cars == null)
+                throw new InvalidDataException(UserMessage.ErrorCarIsNull);
+            return cars;
         }
 
-        public async Task<CarDto?> GetAsync(int id)
+        public async Task<CarDto> GetAsync(int id)
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"api/cars/{id}");
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToFetchData);
-            return await response.Content.ReadFromJsonAsync<CarDto>();
+            CarDto? carDto = await response.Content.ReadFromJsonAsync<CarDto>();
+            if (carDto == null)
+                throw new InvalidDataException(UserMessage.ErrorCarIsNull);
+            return carDto;
         }
 
         public async Task<CarDto> PostAsync(CarDto carDto)
