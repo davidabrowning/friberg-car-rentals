@@ -16,32 +16,45 @@ namespace FribergCarRentals.Mvc.ApiClients
         {
             HttpResponseMessage response = await _httpClient.GetAsync("api/admins");
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchData);
-            return await response.Content.ReadFromJsonAsync<IEnumerable<AdminDto>>();
+                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
+            IEnumerable<AdminDto>? admins = await response.Content.ReadFromJsonAsync<IEnumerable<AdminDto>>();
+            if (admins == null)
+                throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
+            return admins;
         }
 
         public async Task<AdminDto> GetAsync(int id)
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"api/admins/{id}");
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchData);
-            return await response.Content.ReadFromJsonAsync<AdminDto>();
+                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
+            AdminDto? adminDto = await response.Content.ReadFromJsonAsync<AdminDto>();
+            if (adminDto == null)
+                throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
+            return adminDto;
         }
 
-        public async Task<AdminDto> PostAsync(AdminDto adminDto)
+        public async Task<AdminDto> PostAsync(AdminDto carDto)
         {
-            await _httpClient.PostAsJsonAsync<AdminDto>("api/admins", adminDto);
-            return adminDto;
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/admins", carDto);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
+            return carDto;
         }
 
         public async Task<AdminDto> PutAsync(AdminDto adminDto)
         {
-            await _httpClient.PutAsJsonAsync<AdminDto>($"api/admins/{adminDto.Id}", adminDto);
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/admins/{adminDto.Id}", adminDto);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
             return adminDto;
         }
+
         public async Task DeleteAsync(int id)
         {
-            await _httpClient.DeleteAsync($"api/admins/{id}");
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"api/admins/{id}");
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
         }
     }
 }

@@ -17,10 +17,10 @@ namespace FribergCarRentals.Mvc.ApiClients
             HttpResponseMessage response = await _httpClient.GetAsync("api/cars");
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
-            IEnumerable<CarDto>? cars = await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>();
-            if (cars == null)
+            IEnumerable<CarDto>? dtos = await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>();
+            if (dtos == null)
                 throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
-            return cars;
+            return dtos;
         }
 
         public async Task<CarDto> GetAsync(int id)
@@ -28,10 +28,10 @@ namespace FribergCarRentals.Mvc.ApiClients
             HttpResponseMessage response = await _httpClient.GetAsync($"api/cars/{id}");
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
-            CarDto? carDto = await response.Content.ReadFromJsonAsync<CarDto>();
-            if (carDto == null)
+            CarDto? dto = await response.Content.ReadFromJsonAsync<CarDto>();
+            if (dto == null)
                 throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
-            return carDto;
+            return dto;
         }
 
         public async Task<CarDto> PostAsync(CarDto carDto)
