@@ -44,7 +44,8 @@
 
         public const string ErrorUnauthorized = "Error: Access denied.";
 
-        public const string ErrorUnableToFetchData = "Error: Unable to fetch data.";
-        public const string ErrorUnableToSendData = "Error: Unable to send data.";
+        public const string ErrorUnableToFetchDataFromApi = "Error: Unable to fetch data.";
+        public const string ErrorUnableToSendDataToApi = "Error: Unable to send data.";
+        public const string ErrorResultIsNullfromApi = "Error: Result from API is null.";
     }
 }

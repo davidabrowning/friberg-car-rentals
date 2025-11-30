@@ -16,10 +16,10 @@ namespace FribergCarRentals.Mvc.ApiClients
         {
             HttpResponseMessage response = await _httpClient.GetAsync("api/cars");
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchData);
+                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
             IEnumerable<CarDto>? cars = await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>();
             if (cars == null)
-                throw new InvalidDataException(UserMessage.ErrorCarIsNull);
+                throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
             return cars;
         }
 
@@ -27,26 +27,26 @@ namespace FribergCarRentals.Mvc.ApiClients
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"api/cars/{id}");
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchData);
+                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
             CarDto? carDto = await response.Content.ReadFromJsonAsync<CarDto>();
             if (carDto == null)
-                throw new InvalidDataException(UserMessage.ErrorCarIsNull);
+                throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
             return carDto;
         }
 
         public async Task<CarDto> PostAsync(CarDto carDto)
         {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync<CarDto>("api/cars", carDto);
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/cars", carDto);
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException(UserMessage.ErrorUnableToSendData);
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
             return carDto;
         }
 
         public async Task<CarDto> PutAsync(CarDto carDto)
         {
-            HttpResponseMessage response = await _httpClient.PutAsJsonAsync<CarDto>($"api/cars/{carDto.Id}", carDto);
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/cars/{carDto.Id}", carDto);
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException(UserMessage.ErrorUnableToSendData);
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
             return carDto;
         }
 
@@ -54,7 +54,7 @@ namespace FribergCarRentals.Mvc.ApiClients
         {
             HttpResponseMessage response = await _httpClient.DeleteAsync($"api/cars/{id}");
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException(UserMessage.ErrorUnableToSendData);
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
         }
     }
 }
