@@ -7,6 +7,8 @@ namespace FribergCarRentals.Mvc.ApiClients
     public class AdminApiClient : ICRUDApiClient<AdminDto>
     {
         private readonly HttpClient _httpClient;
+        private const string _apiPath = "api/cars";
+
         public AdminApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -14,45 +16,45 @@ namespace FribergCarRentals.Mvc.ApiClients
 
         public async Task<IEnumerable<AdminDto>> GetAsync()
         {
-            HttpResponseMessage response = await _httpClient.GetAsync("api/admins");
+            HttpResponseMessage response = await _httpClient.GetAsync(_apiPath);
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
-            IEnumerable<AdminDto>? admins = await response.Content.ReadFromJsonAsync<IEnumerable<AdminDto>>();
-            if (admins == null)
+            IEnumerable<AdminDto>? dtos = await response.Content.ReadFromJsonAsync<IEnumerable<AdminDto>>();
+            if (dtos == null)
                 throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
-            return admins;
+            return dtos;
         }
 
         public async Task<AdminDto> GetAsync(int id)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"api/admins/{id}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"{_apiPath}/{id}");
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
-            AdminDto? adminDto = await response.Content.ReadFromJsonAsync<AdminDto>();
-            if (adminDto == null)
+            AdminDto? dto = await response.Content.ReadFromJsonAsync<AdminDto>();
+            if (dto == null)
                 throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
-            return adminDto;
+            return dto;
         }
 
-        public async Task<AdminDto> PostAsync(AdminDto carDto)
+        public async Task<AdminDto> PostAsync(AdminDto dto)
         {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/admins", carDto);
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_apiPath, dto);
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
-            return carDto;
+            return dto;
         }
 
-        public async Task<AdminDto> PutAsync(AdminDto adminDto)
+        public async Task<AdminDto> PutAsync(AdminDto dto)
         {
-            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/admins/{adminDto.Id}", adminDto);
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_apiPath}/{dto.Id}", dto);
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
-            return adminDto;
+            return dto;
         }
 
         public async Task DeleteAsync(int id)
         {
-            HttpResponseMessage response = await _httpClient.DeleteAsync($"api/admins/{id}");
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"{_apiPath}/{id}");
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
         }
