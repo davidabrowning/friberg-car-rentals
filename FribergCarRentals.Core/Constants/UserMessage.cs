@@ -41,6 +41,7 @@
         public const string SuccessSignedIn = "Success: User signed in.";
         public const string ErrorUnableToSignIn = "Error: Unable to sign in.";
         public const string SuccessSignedOut = "Success: User signed out.";
+        public const string ErrorUnableToRegister = "Error: Unable to register.";
 
         public const string ErrorUnauthorized = "Error: Access denied.";
 
