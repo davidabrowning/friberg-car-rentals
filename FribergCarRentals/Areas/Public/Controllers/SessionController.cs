@@ -48,25 +48,33 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
             string username = populatedRegisterViewModel.Username;
             string password = populatedRegisterViewModel.Password;
 
-            UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
-            if (userDto.UserId != null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
-                return View(populatedRegisterViewModel);
+                UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
+                if (userDto.UserId != null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
+                    return View(populatedRegisterViewModel);
+                }
+
+                await _userApiClient.RegisterAsync(username, password);
+
+                JwtTokenDto? jwtTokenDto = await _userApiClient.LoginAsync(username, password);
+                if (jwtTokenDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUnableToSignIn;
+                    return View(populatedRegisterViewModel);
+                }
+
+                _userSession.UserDto = await _userApiClient.GetByUsernameAsync(username);
+                TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
+                return RedirectToAction("Index", "Home");
             }
-
-            await _userApiClient.RegisterAsync(username, password);
-
-            JwtTokenDto? jwtTokenDto = await _userApiClient.LoginAsync(username, password);
-            if (jwtTokenDto == null)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUnableToSignIn;
-                return View(populatedRegisterViewModel);
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
             }
-
-            _userSession.UserDto = await _userApiClient.GetByUsernameAsync(username);
-            TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
-            return RedirectToAction("Index", "Home");
         }
 
         // GET: Public/Signin
@@ -93,23 +101,31 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
             string username = populatedSigninViewModel.Username;
             string password = populatedSigninViewModel.Password;
 
-            UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
-            if (userDto.UserId == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
+                if (userDto.UserId == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                    return RedirectToAction("Index", "Home");
+                }
+
+                JwtTokenDto? jwtTokenDto = await _userApiClient.LoginAsync(username, password);
+                if (jwtTokenDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUnableToSignIn;
+                    return View(populatedSigninViewModel);
+                }
+
+                _userSession.UserDto = userDto;
+                TempData["SuccessMessage"] = UserMessage.SuccessSignedIn;
                 return RedirectToAction("Index", "Home");
             }
-
-            JwtTokenDto? jwtTokenDto = await _userApiClient.LoginAsync(username, password);
-            if(jwtTokenDto == null)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUnableToSignIn;
-                return View(populatedSigninViewModel);
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
             }
-
-            _userSession.UserDto = userDto;
-            TempData["SuccessMessage"] = UserMessage.SuccessSignedIn;
-            return RedirectToAction("Index", "Home");
         }
 
         // GET: Public/Signout

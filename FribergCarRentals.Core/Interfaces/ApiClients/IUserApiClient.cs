@@ -4,7 +4,7 @@ namespace FribergCarRentals.Core.Interfaces.ApiClients
 {
     public interface IUserApiClient
     {
-        Task<List<UserDto>> GetAsync();
+        Task<IEnumerable<UserDto>> GetAsync();
         Task<UserDto> GetAsync(string userId);
         Task<UserDto> GetByUsernameAsync(string username);
         Task<JwtTokenDto> LoginAsync(string username, string password);

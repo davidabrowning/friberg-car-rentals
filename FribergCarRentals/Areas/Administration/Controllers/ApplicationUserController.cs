@@ -27,10 +27,17 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         public async Task<IActionResult> Index()
         {
             List<IndexApplicationUserViewModel> indexApplicationUserViewModelList = new();
-            IEnumerable<UserDto> userDtos = await _userApiClient.GetAsync();
-            foreach (UserDto userDto in userDtos)
+            try
             {
-                indexApplicationUserViewModelList.Add(await CreateIndexApplicationUserViewModel(userDto.UserId));
+                IEnumerable<UserDto> userDtos = await _userApiClient.GetAsync();
+                foreach (UserDto userDto in userDtos)
+                {
+                    indexApplicationUserViewModelList.Add(await CreateIndexApplicationUserViewModel(userDto.UserId));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
             }
             return View(indexApplicationUserViewModelList);
         }
@@ -44,19 +51,27 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            UserDto userDto = await _userApiClient.GetAsync(userId);
-            if (userDto.UserId == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                UserDto userDto = await _userApiClient.GetAsync(userId);
+                if (userDto.UserId == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                EditApplicationUserViewModel editApplicationUserViewModel = new EditApplicationUserViewModel()
+                {
+                    UserId = userDto.UserId,
+                    Username = userDto.Username,
+                };
+                return View(editApplicationUserViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            EditApplicationUserViewModel editApplicationUserViewModel = new EditApplicationUserViewModel()
-            {
-                UserId = userDto.UserId,
-                Username = userDto.Username,
-            };
-            return View(editApplicationUserViewModel);
         }
 
         // POST: ApplicationUser/Edit/5
@@ -77,10 +92,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(editApplicationUserViewModel);
             }
 
-            await _userApiClient.UpdateUsernameAsync(userId, editApplicationUserViewModel.Username);
+            try
+            {
+                await _userApiClient.UpdateUsernameAsync(userId, editApplicationUserViewModel.Username);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessUserUpdated;
-            return RedirectToAction("Index");
+                TempData["SuccessMessage"] = UserMessage.SuccessUserUpdated;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: ApplicationUser/Delete/5
@@ -92,19 +115,27 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            UserDto userDto = await _userApiClient.GetAsync(userId);
-            if (userDto.UserId == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                UserDto userDto = await _userApiClient.GetAsync(userId);
+                if (userDto.UserId == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                DeleteApplicationUserViewModel deleteApplicationUserViewModel = new DeleteApplicationUserViewModel()
+                {
+                    UserId = userDto.UserId,
+                    Username = userDto.Username,
+                };
+                return View(deleteApplicationUserViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            DeleteApplicationUserViewModel deleteApplicationUserViewModel = new DeleteApplicationUserViewModel()
-            {
-                UserId = userDto.UserId,
-                Username = userDto.Username,
-            };
-            return View(deleteApplicationUserViewModel);
         }
 
         // POST: ApplicationUser/DeleteAsync/5
@@ -112,10 +143,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string userId)
         {
-            await _userApiClient.DeleteUserAsync(userId);
+            try
+            {
+                await _userApiClient.DeleteUserAsync(userId);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessUserDeleted;
-            return RedirectToAction("Index");
+                TempData["SuccessMessage"] = UserMessage.SuccessUserDeleted;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         private async Task<IndexApplicationUserViewModel> CreateIndexApplicationUserViewModel(string userId)
