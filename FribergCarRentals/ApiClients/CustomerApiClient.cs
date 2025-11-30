@@ -7,7 +7,7 @@ namespace FribergCarRentals.Mvc.ApiClients
     public class CustomerApiClient : ICRUDApiClient<CustomerDto>
     {
         private readonly HttpClient _httpClient;
-        private const string _apiPath = "api/cars";
+        private const string _apiPath = "api/customers";
         public CustomerApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;

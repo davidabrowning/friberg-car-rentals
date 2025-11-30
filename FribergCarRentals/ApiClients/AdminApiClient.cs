@@ -7,7 +7,7 @@ namespace FribergCarRentals.Mvc.ApiClients
     public class AdminApiClient : ICRUDApiClient<AdminDto>
     {
         private readonly HttpClient _httpClient;
-        private const string _apiPath = "api/cars";
+        private const string _apiPath = "api/admins";
 
         public AdminApiClient(HttpClient httpClient)
         {

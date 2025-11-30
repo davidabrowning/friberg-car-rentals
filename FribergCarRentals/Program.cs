@@ -2,6 +2,7 @@ using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
+using Polly;
 
 namespace FribergCarRentals.Mvc
 {
@@ -16,7 +17,8 @@ namespace FribergCarRentals.Mvc
             builder.Services.AddHttpClient<ICRUDApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
             builder.Services.AddHttpClient<ICRUDApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
             builder.Services.AddHttpClient<ICRUDApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<IUserApiClient, UserApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            builder.Services.AddHttpClient<IUserApiClient, UserApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"))
+                .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, retry => TimeSpan.FromMilliseconds(200)));
 
             // Add other services to the container
             builder.Services.AddControllersWithViews();
