@@ -7,51 +7,69 @@ namespace FribergCarRentals.Mvc
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        private static WebApplicationBuilder? _builder;
+        private static WebApplication? _app;
+        public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            _builder = WebApplication.CreateBuilder(args);
+            PrepDependencyInjection();
+            _app = _builder.Build();
+            ConfigureMiddleware();
+            ConfigureEndpoints();
+            _app.Run();
+        }
 
-            // Add web services to the container
-            builder.Services.AddHttpClient<ICRUDApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<ICRUDApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<ICRUDApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<ICRUDApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
-            builder.Services.AddHttpClient<IUserApiClient, UserApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+        private static void PrepDependencyInjection()
+        {
+            AddApiClient();
+            AddControllers();
+            AddUserSession();
+        }
 
-            // Add other services to the container
-            builder.Services.AddControllersWithViews();
+        private static void AddApiClient()
+        {
+            _builder!.Services.AddHttpClient<ICRUDApiClient<CarDto>, CarApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            _builder.Services.AddHttpClient<ICRUDApiClient<AdminDto>, AdminApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            _builder.Services.AddHttpClient<ICRUDApiClient<CustomerDto>, CustomerApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            _builder.Services.AddHttpClient<ICRUDApiClient<ReservationDto>, ReservationApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+            _builder.Services.AddHttpClient<IUserApiClient, UserApiClient>(client => client.BaseAddress = new Uri("https://localhost:7175"));
+        }
 
-            // Add a tracker for login status
-            builder.Services.AddSingleton<UserSession, UserSession>();
+        private static void AddControllers()
+        {
+            _builder!.Services.AddControllersWithViews();
+        }
 
-            var app = builder.Build();
+        private static void AddUserSession()
+        {
+            _builder!.Services.AddSingleton<UserSession, UserSession>();
+        }
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+        private static void ConfigureMiddleware()
+        {
+            if (_app!.Environment.IsDevelopment())
             {
             }
             else
             {
-                app.UseExceptionHandler("/Public/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                _app.UseExceptionHandler("/Public/Home/Error");
+                _app.UseHsts();
             }
+            _app.UseHttpsRedirection();
+            _app.UseRouting();
+            _app.UseAuthorization();
+            _app.MapStaticAssets();
+        }
 
-            app.UseHttpsRedirection();
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapStaticAssets();
-            app.MapControllerRoute(
+        private static void ConfigureEndpoints()
+        {
+            _app!.MapControllerRoute(
                 name: "areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-            app.MapControllerRoute(
+            _app!.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Public}/{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
-
-            app.Run();
         }
     }
 }

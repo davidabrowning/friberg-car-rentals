@@ -16,17 +16,17 @@ namespace FribergCarRentals.WebApi
 {
     public class Program
     {
-        private static WebApplicationBuilder? builder;
-        private static WebApplication? app;
+        private static WebApplicationBuilder? _builder;
+        private static WebApplication? _app;
         public static async Task Main(string[] args)
         {
-            builder = WebApplication.CreateBuilder(args);
+            _builder = WebApplication.CreateBuilder(args);
             PrepDependencyInjection();
-            app = builder.Build();
+            _app = _builder.Build();
             await PrepDatabase();
             ConfigureMiddleware();
             ConfigureEndpoints();
-            app.Run();
+            _app.Run();
         }
 
         private static void PrepDependencyInjection()
@@ -42,40 +42,40 @@ namespace FribergCarRentals.WebApi
 
         private static void AddDatabase()
         {
-            string connectionString = builder!.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-            builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningService>();
-            builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingService>();
+            string connectionString = _builder!.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            _builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            _builder.Services.AddScoped<IDatabaseCleaner, DatabaseCleaningService>();
+            _builder.Services.AddScoped<IDatabaseSeeder, DatabaseSeedingService>();
         }
 
         private static void AddRepository()
         {
-            builder!.Services.AddScoped<IRepository<Admin>, AdminRepository>();
-            builder.Services.AddScoped<IRepository<Car>, CarRepository>();
-            builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
-            builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
+            _builder!.Services.AddScoped<IRepository<Admin>, AdminRepository>();
+            _builder.Services.AddScoped<IRepository<Car>, CarRepository>();
+            _builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+            _builder.Services.AddScoped<IRepository<Reservation>, ReservationRepository>();
         }
 
         private static void AddServices()
         {
-            builder!.Services.AddScoped<IAdminService, AdminService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<ICarService, CarService>();
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddScoped<IReservationService, ReservationService>();
-            builder.Services.AddScoped<IApplicationFacade, ApplicationFacade>();
+            _builder!.Services.AddScoped<IAdminService, AdminService>();
+            _builder.Services.AddScoped<IAuthService, AuthService>();
+            _builder.Services.AddScoped<ICarService, CarService>();
+            _builder.Services.AddScoped<ICustomerService, CustomerService>();
+            _builder.Services.AddScoped<IReservationService, ReservationService>();
+            _builder.Services.AddScoped<IApplicationFacade, ApplicationFacade>();
         }
 
         private static void AddIdentity()
         {
-            builder!.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            _builder!.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
         }
 
         private static void AddJwt()
         {
-            builder!.Services.AddAuthentication("JwtBearer")
+            _builder!.Services.AddAuthentication("JwtBearer")
                 .AddJwtBearer("JwtBearer", options =>
                     {
                         options.TokenValidationParameters = new()
@@ -84,24 +84,24 @@ namespace FribergCarRentals.WebApi
                             ValidateAudience = true,
                             ValidateIssuerSigningKey = true,
                             ValidateLifetime = true,
-                            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                            ValidAudience = builder.Configuration["Jwt:Audience"],
+                            ValidIssuer = _builder.Configuration["Jwt:Issuer"],
+                            ValidAudience = _builder.Configuration["Jwt:Audience"],
                             IssuerSigningKey = new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+                                Encoding.UTF8.GetBytes(_builder.Configuration["Jwt:Key"]!)
                                 )
                         };
                     });
-            builder.Services.AddScoped<IJwtService, JwtService>();
+            _builder.Services.AddScoped<IJwtService, JwtService>();
         }
 
         private static void AddControllers()
         {
-            builder!.Services.AddControllers();
+            _builder!.Services.AddControllers();
         }
 
         private static void AddOpenApi()
         {
-            builder!.Services.AddOpenApi();
+            _builder!.Services.AddOpenApi();
         }
 
         private async static Task PrepDatabase()
@@ -112,7 +112,7 @@ namespace FribergCarRentals.WebApi
 
         private async static Task SeedDatabase()
         {
-            using (IServiceScope scope = app.Services.CreateScope())
+            using (IServiceScope scope = _app.Services.CreateScope())
             {
                 IDatabaseSeeder seedingService = scope.ServiceProvider.GetRequiredService<IDatabaseSeeder>();
                 await seedingService.SeedAsync();
@@ -121,7 +121,7 @@ namespace FribergCarRentals.WebApi
 
         private async static Task CleanDatabase()
         {
-            using (IServiceScope scope = app.Services.CreateScope())
+            using (IServiceScope scope = _app.Services.CreateScope())
             {
                 IDatabaseCleaner cleaningService = scope.ServiceProvider.GetRequiredService<IDatabaseCleaner>();
                 await cleaningService.CleanAsync();
@@ -130,19 +130,19 @@ namespace FribergCarRentals.WebApi
 
         private static void ConfigureMiddleware()
         {
-            if (app!.Environment.IsDevelopment())
+            if (_app!.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
-                app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "FribergCarRentalsApi"));
+                _app.MapOpenApi();
+                _app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "FribergCarRentalsApi"));
             }
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            _app.UseHttpsRedirection();
+            _app.UseAuthentication();
+            _app.UseAuthorization();
         }
 
         private static void ConfigureEndpoints()
         {
-            app!.MapControllers();
+            _app!.MapControllers();
         }
     }
 }
