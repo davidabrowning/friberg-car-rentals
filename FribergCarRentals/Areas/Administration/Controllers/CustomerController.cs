@@ -39,19 +39,27 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            UserDto userDto = await _userApiClient.GetAsync(userId);
-            if (userDto.UserId == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                UserDto userDto = await _userApiClient.GetAsync(userId);
+                if (userDto.UserId == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                CreateCustomerViewModel createCustomerViewModel = new()
+                {
+                    UserId = userDto.UserId,
+                    Username = userDto.Username,
+                };
+                return View(createCustomerViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            CreateCustomerViewModel createCustomerViewModel = new()
-            {
-                UserId = userDto.UserId,
-                Username = userDto.Username,
-            };
-            return View(createCustomerViewModel);
         }
 
         // POST: Customer/Create
@@ -64,25 +72,33 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(createCustomerViewModel);
             }
 
-            string userId = createCustomerViewModel.UserId;
-            UserDto userDto = await _userApiClient.GetAsync(userId);
-            if (userDto.UserId == null)
+            try
             {
-                return NotFound();
+                string userId = createCustomerViewModel.UserId;
+                UserDto userDto = await _userApiClient.GetAsync(userId);
+                if (userDto.UserId == null)
+                {
+                    return NotFound();
+                }
+
+                CustomerDto customerDto = new()
+                {
+                    UserId = userDto.UserId,
+                    FirstName = createCustomerViewModel.FirstName,
+                    LastName = createCustomerViewModel.LastName,
+                    HomeCity = createCustomerViewModel.HomeCity,
+                    HomeCountry = createCustomerViewModel.HomeCountry,
+                };
+                await _customerDtoApiClient.PostAsync(customerDto);
+
+                TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
+                return RedirectToAction("Index");
             }
-
-            CustomerDto customerDto = new()
+            catch (Exception ex)
             {
-                UserId = userDto.UserId,
-                FirstName = createCustomerViewModel.FirstName,
-                LastName = createCustomerViewModel.LastName,
-                HomeCity = createCustomerViewModel.HomeCity,
-                HomeCountry = createCustomerViewModel.HomeCountry,
-            };
-            await _customerDtoApiClient.PostAsync(customerDto);
-
-            TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
-            return RedirectToAction("Index");
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Customer/Edit/5
@@ -94,33 +110,41 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync((int)id);
-            if (customerDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                CustomerDto? customerDto = await _customerDtoApiClient.GetAsync((int)id);
+                if (customerDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                UserDto userDto = await _userApiClient.GetAsync(customerDto.UserId);
+                if (userDto.UserId == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
+                {
+                    CustomerId = customerDto.Id,
+                    UserId = customerDto.UserId,
+                    Username = userDto.Username,
+                    FirstName = customerDto.FirstName,
+                    LastName = customerDto.LastName,
+                    HomeCity = customerDto.HomeCity,
+                    HomeCountry = customerDto.HomeCountry,
+                    // ReservationIds = customerDto.Reservations.Select(c => c.Id).ToList(),
+                };
+
+                return View(editCustomerViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            UserDto userDto = await _userApiClient.GetAsync(customerDto.UserId);
-            if (userDto.UserId == null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index");
-            }
-
-            EditCustomerViewModel editCustomerViewModel = new EditCustomerViewModel()
-            {
-                CustomerId = customerDto.Id,
-                UserId = customerDto.UserId,
-                Username = userDto.Username,
-                FirstName = customerDto.FirstName,
-                LastName = customerDto.LastName,
-                HomeCity = customerDto.HomeCity,
-                HomeCountry = customerDto.HomeCountry,
-                // ReservationIds = customerDto.Reservations.Select(c => c.Id).ToList(),
-            };
-
-            return View(editCustomerViewModel);
         }
 
         // POST: Customer/Edit/5
@@ -139,22 +163,30 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(editCustomerViewModel);
             }
 
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(editCustomerViewModel.CustomerId);
-
-            if (customerDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                CustomerDto? customerDto = await _customerDtoApiClient.GetAsync(editCustomerViewModel.CustomerId);
+
+                if (customerDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                customerDto.FirstName = editCustomerViewModel.FirstName;
+                customerDto.LastName = editCustomerViewModel.LastName;
+                customerDto.HomeCity = editCustomerViewModel.HomeCity;
+                customerDto.HomeCountry = editCustomerViewModel.HomeCountry;
+                await _customerDtoApiClient.PutAsync(customerDto);
+
+                TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
                 return RedirectToAction("Index");
             }
-
-            customerDto.FirstName = editCustomerViewModel.FirstName;
-            customerDto.LastName = editCustomerViewModel.LastName;
-            customerDto.HomeCity = editCustomerViewModel.HomeCity;
-            customerDto.HomeCountry = editCustomerViewModel.HomeCountry;
-            await _customerDtoApiClient.PutAsync(customerDto);
-
-            TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Customer/DeleteAsync/5
@@ -166,32 +198,40 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            CustomerDto? customerDto = await _customerDtoApiClient.GetAsync((int)id);
-            if (customerDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                CustomerDto? customerDto = await _customerDtoApiClient.GetAsync((int)id);
+                if (customerDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                UserDto? userDto = await _userApiClient.GetAsync(customerDto.UserId);
+                if (userDto.UserId == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
+                {
+                    CustomerId = customerDto.Id,
+                    UserId = customerDto.UserId,
+                    Username = userDto.Username,
+                    FirstName = customerDto.FirstName,
+                    LastName = customerDto.LastName,
+                    HomeCity = customerDto.HomeCity,
+                    HomeCountry = customerDto.HomeCountry,
+                };
+
+                return View(deleteCustomerViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            UserDto? userDto = await _userApiClient.GetAsync(customerDto.UserId);
-            if (userDto.UserId == null)
-            {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
-                return RedirectToAction("Index");
-            }
-
-            DeleteCustomerViewModel deleteCustomerViewModel = new DeleteCustomerViewModel()
-            {
-                CustomerId = customerDto.Id,
-                UserId = customerDto.UserId,
-                Username = userDto.Username,
-                FirstName = customerDto.FirstName,
-                LastName = customerDto.LastName,
-                HomeCity = customerDto.HomeCity,
-                HomeCountry = customerDto.HomeCountry,
-            };
-
-            return View(deleteCustomerViewModel);
         }
 
         // POST: Customer/DeleteAsync/5
@@ -199,10 +239,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _customerDtoApiClient.DeleteAsync(id);
+            try
+            {
+                await _customerDtoApiClient.DeleteAsync(id);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessCustomerDeleted;
-            return RedirectToAction("Index");
+                TempData["SuccessMessage"] = UserMessage.SuccessCustomerDeleted;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }

@@ -96,10 +96,19 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
             userDto.CustomerDto.LastName = editCustomerViewModel.LastName;
             userDto.CustomerDto.HomeCity = editCustomerViewModel.HomeCity;
             userDto.CustomerDto.HomeCountry = editCustomerViewModel.HomeCountry;
-            await _customerDtoApiClient.PutAsync(userDto.CustomerDto);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
-            return RedirectToAction("Details");
+            try
+            {
+                await _customerDtoApiClient.PutAsync(userDto.CustomerDto);
+
+                TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
+                return RedirectToAction("Details");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }

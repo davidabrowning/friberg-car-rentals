@@ -58,20 +58,28 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                 return RedirectToAction("Index");
             }
 
-            CustomerDto newCustomerDto = new()
+            try
             {
-                UserId = _userSession.UserDto.UserId,
-                FirstName = populatedCustomerCreateVM.FirstName,
-                LastName = populatedCustomerCreateVM.LastName,
-                HomeCity = populatedCustomerCreateVM.HomeCity,
-                HomeCountry = populatedCustomerCreateVM.HomeCountry,
-            };
+                CustomerDto newCustomerDto = new()
+                {
+                    UserId = _userSession.UserDto.UserId,
+                    FirstName = populatedCustomerCreateVM.FirstName,
+                    LastName = populatedCustomerCreateVM.LastName,
+                    HomeCity = populatedCustomerCreateVM.HomeCity,
+                    HomeCountry = populatedCustomerCreateVM.HomeCountry,
+                };
 
-            await _customerDtoApiClient.PostAsync(newCustomerDto);
-            await _userSession.UpdateDto();
+                await _customerDtoApiClient.PostAsync(newCustomerDto);
+                await _userSession.UpdateDto();
 
-            TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
-            return RedirectToAction("Index");
+                TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }
