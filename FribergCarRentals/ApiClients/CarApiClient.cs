@@ -34,20 +34,20 @@ namespace FribergCarRentals.Mvc.ApiClients
             return dto;
         }
 
-        public async Task<CarDto> PostAsync(CarDto carDto)
+        public async Task<CarDto> PostAsync(CarDto dto)
         {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/cars", carDto);
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/cars", dto);
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
-            return carDto;
+            return dto;
         }
 
-        public async Task<CarDto> PutAsync(CarDto carDto)
+        public async Task<CarDto> PutAsync(CarDto dto)
         {
-            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/cars/{carDto.Id}", carDto);
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"api/cars/{dto.Id}", dto);
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
-            return carDto;
+            return dto;
         }
 
         public async Task DeleteAsync(int id)
