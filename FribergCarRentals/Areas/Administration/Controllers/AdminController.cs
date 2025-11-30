@@ -54,22 +54,30 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(createAdminViewModel);
             }
 
-            string userId = createAdminViewModel.UserId;
-            UserDto userDto = await _userApiClient.GetAsync(userId);
-            if (userDto.UserId == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                string userId = createAdminViewModel.UserId;
+                UserDto userDto = await _userApiClient.GetAsync(userId);
+                if (userDto.UserId == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                AdminDto adminDto = new()
+                {
+                    UserId = userDto.UserId
+                };
+                await _adminDtoApiClient.PostAsync(adminDto);
+
+                TempData["SuccessMessage"] = UserMessage.SuccessAdminCreated;
                 return RedirectToAction("Index");
             }
-
-            AdminDto adminDto = new()
+            catch (Exception ex)
             {
-                UserId = userDto.UserId
-            };
-            await _adminDtoApiClient.PostAsync(adminDto);
-
-            TempData["SuccessMessage"] = UserMessage.SuccessAdminCreated;
-            return RedirectToAction("Index");
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Admin/Edit/5
@@ -81,18 +89,26 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
-            if (adminDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
+                if (adminDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                EditAdminViewModel editAdminViewModel = new()
+                {
+                    AdminId = adminDto.Id
+                };
+                return View(editAdminViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            EditAdminViewModel editAdminViewModel = new()
-            {
-                AdminId = adminDto.Id
-            };
-            return View(editAdminViewModel);
         }
 
         // POST: Admin/Edit/5
@@ -113,17 +129,25 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return View(editAdminViewModel);
             }
 
-            AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
-            if (adminDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
+                if (adminDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                await _adminDtoApiClient.PutAsync(adminDto);
+
+                TempData["SuccessMessage"] = UserMessage.SuccessAdminUpdated;
                 return RedirectToAction("Index");
             }
-
-            await _adminDtoApiClient.PutAsync(adminDto);
-
-            TempData["SuccessMessage"] = UserMessage.SuccessAdminUpdated;
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Admin/DeleteAsync/5
@@ -135,19 +159,27 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
-            if (adminDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                AdminDto? adminDto = await _adminDtoApiClient.GetAsync((int)id);
+                if (adminDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorAdminIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                DeleteAdminViewModel deleteAdminViewModel = new DeleteAdminViewModel()
+                {
+                    AdminId = adminDto.Id,
+                };
+
+                return View(deleteAdminViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            DeleteAdminViewModel deleteAdminViewModel = new DeleteAdminViewModel()
-            {
-                AdminId = adminDto.Id,
-            };
-
-            return View(deleteAdminViewModel);
         }
 
         // POST: Admin/DeleteAsync/5
@@ -155,10 +187,18 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _adminDtoApiClient.DeleteAsync(id);
+            try
+            {
+                await _adminDtoApiClient.DeleteAsync(id);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessAdminDeleted;
-            return RedirectToAction("Index");
+                TempData["SuccessMessage"] = UserMessage.SuccessAdminDeleted;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }
