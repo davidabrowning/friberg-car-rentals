@@ -1,5 +1,4 @@
-﻿using FribergCarRentals.Mvc.Areas.Public.Views.Home;
-using FribergCarRentals.Mvc.Session;
+﻿using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
