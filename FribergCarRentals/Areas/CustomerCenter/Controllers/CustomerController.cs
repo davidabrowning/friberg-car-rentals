@@ -4,7 +4,6 @@ using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Customer;
 using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.Mvc.Session;
 using FribergCarRentals.WebApi.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
@@ -99,10 +98,19 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
             userDto.CustomerDto.LastName = editCustomerViewModel.LastName;
             userDto.CustomerDto.HomeCity = editCustomerViewModel.HomeCity;
             userDto.CustomerDto.HomeCountry = editCustomerViewModel.HomeCountry;
-            await _customerDtoApiClient.PutAsync(userDto.CustomerDto);
 
-            TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
-            return RedirectToAction("Details");
+            try
+            {
+                await _customerDtoApiClient.PutAsync(userDto.CustomerDto);
+
+                TempData["SuccessMessage"] = UserMessage.SuccessCustomerUpdated;
+                return RedirectToAction("Details");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }
