@@ -15,19 +15,16 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
         private readonly ICRUDApiClient<ReservationDto> _reservationDtoApiClient;
         private readonly ICRUDApiClient<CarDto> _carDtoApiClient;
-        private readonly IUserApiClient _userApiClient;
         private readonly UserSession _userSession;
 
         public ReservationController(ICRUDApiClient<CustomerDto> customerDtoApiClient,
             ICRUDApiClient<ReservationDto> reservationDtoApiClient,
             ICRUDApiClient<CarDto> carDtoApiClient,
-            IUserApiClient userApiClient,
             UserSession userSession)
         {
             _customerDtoApiClient = customerDtoApiClient;
             _reservationDtoApiClient = reservationDtoApiClient;
             _carDtoApiClient = carDtoApiClient;
-            _userApiClient = userApiClient;
             _userSession = userSession;
         }
 

@@ -12,14 +12,11 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
     [Area("Administration")]
     public class ApplicationUserController : Controller
     {
-        private readonly ICRUDApiClient<AdminDto> _adminDtoApiClient;
-        private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
+
         private readonly IUserApiClient _userApiClient;
 
-        public ApplicationUserController(ICRUDApiClient<AdminDto> adminDtoApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
+        public ApplicationUserController(IUserApiClient userApiClient)
         {
-            _adminDtoApiClient = adminDtoApiClient;
-            _customerDtoApiClient = customerDtoApiClient;
             _userApiClient = userApiClient;
         }
 
