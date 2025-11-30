@@ -43,5 +43,8 @@
         public const string SuccessSignedOut = "Success: User signed out.";
 
         public const string ErrorUnauthorized = "Error: Access denied.";
+
+        public const string ErrorUnableToFetchData = "Error: Unable to fetch data.";
+        public const string ErrorUnableToSendData = "Error: Unable to send data.";
     }
 }
