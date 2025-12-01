@@ -28,7 +28,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer/Details
         public async Task<IActionResult> Details()
         {
-            UserDto userDto = _userSession.UserDto;
+            UserDto userDto = await _userSession.GetUserDto();
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -50,7 +50,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Customer/Edit
         public async Task<IActionResult> Edit()
         {
-            UserDto userDto = _userSession.UserDto;
+            UserDto userDto = await _userSession.GetUserDto();
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -74,7 +74,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditCustomerViewModel editCustomerViewModel)
         {
-            UserDto userDto = _userSession.UserDto;
+            UserDto userDto = await _userSession.GetUserDto();
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;

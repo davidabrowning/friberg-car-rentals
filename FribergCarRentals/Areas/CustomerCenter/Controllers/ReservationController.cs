@@ -31,7 +31,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         // GET: CustomerCenter/Reservation
         public async Task<IActionResult> Index()
         {
-            UserDto userDto = _userSession.UserDto;
+            UserDto userDto = await _userSession.GetUserDto();
             if (userDto.UserId == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorUserIsNull;
@@ -80,7 +80,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 preselectedCarId = (int)id;
             }
 
-            UserDto userDto = _userSession.UserDto;
+            UserDto userDto = await _userSession.GetUserDto();
             if (userDto.CustomerDto == null)
             {
                 TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;
@@ -169,7 +169,7 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                     return RedirectToAction("Index");
                 }
 
-                UserDto userDto = _userSession.UserDto;
+                UserDto userDto = await _userSession.GetUserDto();
                 if (userDto.CustomerDto == null)
                 {
                     TempData["ErrorMessage"] = UserMessage.ErrorCustomerIsNull;

@@ -14,13 +14,11 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
     {
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
         private readonly IUserApiClient _userApiClient;
-        private readonly UserSession _userSession;
 
-        public CustomerController(ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient, UserSession userSession)
+        public CustomerController(ICRUDApiClient<CustomerDto> customerDtoApiClient, IUserApiClient userApiClient)
         {
             _customerDtoApiClient = customerDtoApiClient;
             _userApiClient = userApiClient;
-            _userSession = userSession;
         }
 
         // GET: Customer
