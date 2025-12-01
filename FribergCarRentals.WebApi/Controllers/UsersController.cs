@@ -101,12 +101,12 @@ namespace FribergCarRentals.WebApi.Controllers
 
         [Authorize]
         [HttpDelete("{userId}")]
-        public async Task<ActionResult> DeleteUser(string username)
+        public async Task<ActionResult> DeleteUser(string userId)
         {
-            string? userId = await _applicationFacade.GetUserIdAsync(username);
-            if (userId == null)
+            bool userIdExists = await _applicationFacade.UserIdExistsAsync(userId);
+            if (!userIdExists)
                 return NotFound();
-            await _applicationFacade.DeleteApplicationUserAsync(username);
+            await _applicationFacade.DeleteApplicationUserAsync(userId);
             return NoContent();
         }
 
