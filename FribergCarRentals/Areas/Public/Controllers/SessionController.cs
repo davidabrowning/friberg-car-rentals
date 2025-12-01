@@ -117,6 +117,16 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                     return View(populatedSigninViewModel);
                 }
 
+                var cookieOptions = new CookieOptions()
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddHours(1)
+                };
+
+                Response.Cookies.Append("jwt", jwtTokenDto.Token, cookieOptions);
+
                 _userSession.UserDto = userDto;
                 TempData["SuccessMessage"] = UserMessage.SuccessSignedIn;
                 return RedirectToAction("Index", "Home");
