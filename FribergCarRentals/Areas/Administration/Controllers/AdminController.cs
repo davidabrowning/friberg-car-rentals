@@ -28,7 +28,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
 
         // GET: Admin/Create/abcd-1234
         [HttpGet("Administration/Admin/Create/{userId}")]
-        public IActionResult Create(string? userId)
+        public async Task<IActionResult> Create(string? userId)
         {
             if (userId == null)
             {
@@ -36,11 +36,22 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            CreateAdminViewModel createAdminViewModel = new()
+            try
             {
-                UserId = userId,
-            };
-            return View(createAdminViewModel);
+                UserDto userDto = await _userApiClient.GetAsync(userId);
+
+                CreateAdminViewModel createAdminViewModel = new()
+                {
+                    UserId = userDto.UserId,
+                    Username = userDto.Username,
+                };
+                return View(createAdminViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
 
         // POST: Admin/Create
