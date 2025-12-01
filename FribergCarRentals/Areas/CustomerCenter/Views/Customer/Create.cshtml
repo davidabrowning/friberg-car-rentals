@@ -6,29 +6,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create Customer</h1>
+<h1>Fill In Your Customer Info</h1>
 
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
+                <label asp-for="FirstName" class="control-label">First Name</label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
+                <label asp-for="LastName" class="control-label">Last Name</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="HomeCity" class="control-label"></label>
+                <label asp-for="HomeCity" class="control-label">Home City</label>
                 <input asp-for="HomeCity" class="form-control" />
                 <span asp-validation-for="HomeCity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="HomeCountry" class="control-label"></label>
+                <label asp-for="HomeCountry" class="control-label">Home Country</label>
                 <input asp-for="HomeCountry" class="form-control" />
                 <span asp-validation-for="HomeCountry" class="text-danger"></span>
             </div>

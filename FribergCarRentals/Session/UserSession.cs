@@ -8,6 +8,7 @@ namespace FribergCarRentals.Mvc.Session
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserApiClient _userApiClient;
+        public bool HasBecomeCustomerMidSession { get; set; }
         public UserSession(IHttpContextAccessor httpContextAccessor, IUserApiClient userApiClient)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -50,6 +51,8 @@ namespace FribergCarRentals.Mvc.Session
         }
         public bool IsCustomer()
         {
+            if (HasBecomeCustomerMidSession)
+                return true;
             string? token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
             if (token == null)
                 return false;

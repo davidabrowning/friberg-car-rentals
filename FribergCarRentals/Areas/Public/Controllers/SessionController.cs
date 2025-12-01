@@ -50,8 +50,9 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 
             try
             {
-                UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
-                if (userDto.UserId != null)
+
+                bool usernameExists = await _userApiClient.UsernameExistsAsync(username);
+                if (usernameExists)
                 {
                     TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
                     return View(populatedRegisterViewModel);
@@ -65,6 +66,16 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                     TempData["ErrorMessage"] = UserMessage.ErrorUnableToSignIn;
                     return View(populatedRegisterViewModel);
                 }
+
+                var cookieOptions = new CookieOptions()
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddHours(1)
+                };
+
+                Response.Cookies.Append("jwt", jwtTokenDto.Token, cookieOptions);
 
                 TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
                 return RedirectToAction("Index", "Home");
@@ -140,6 +151,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         public IActionResult Signout()
         {
             Response.Cookies.Delete("jwt");
+            _userSession.HasBecomeCustomerMidSession = false;
 
             TempData["SuccessMessage"] = UserMessage.SuccessSignedOut;
             return RedirectToAction("Index", "Home");

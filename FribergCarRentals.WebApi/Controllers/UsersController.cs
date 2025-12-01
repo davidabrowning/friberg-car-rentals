@@ -42,6 +42,15 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(userDto);
         }
 
+        [HttpGet("username-exists/{username}")]
+        public async Task<ActionResult<bool>> UsernameExists(string username)
+        {
+            string? userId = await _applicationFacade.GetUserIdAsync(username);
+            if (userId == null)
+                return Ok(false);
+            return Ok(true);
+        }
+
         [HttpGet("username/{username}")]
         public async Task<ActionResult<UserDto>> GetFromUsername(string username)
         {
@@ -92,12 +101,12 @@ namespace FribergCarRentals.WebApi.Controllers
 
         [Authorize]
         [HttpDelete("{userId}")]
-        public async Task<ActionResult> DeleteUser(string username)
+        public async Task<ActionResult> DeleteUser(string userId)
         {
-            string? userId = await _applicationFacade.GetUserIdAsync(username);
-            if (userId == null)
+            bool userIdExists = await _applicationFacade.UserIdExistsAsync(userId);
+            if (!userIdExists)
                 return NotFound();
-            await _applicationFacade.DeleteApplicationUserAsync(username);
+            await _applicationFacade.DeleteApplicationUserAsync(userId);
             return NoContent();
         }
 

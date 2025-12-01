@@ -35,6 +35,15 @@ namespace FribergCarRentals.Mvc.ApiClients
             return dto;
         }
 
+        public async Task<bool> UsernameExistsAsync(string username)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"{_apiPath}/username-exists/{username}");
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
+            bool usernameExists = await response.Content.ReadFromJsonAsync<bool>();
+            return usernameExists;
+        }
+
         public async Task<UserDto> GetByUsernameAsync(string username)
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"{_apiPath}/username/{username}");

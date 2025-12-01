@@ -66,13 +66,16 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 CarDto carDto = new()
                 {
                     Id = reservationDto.CarDto.Id,
-                    Description = "Complete in ReservationController"
+                    Description = reservationDto.CarDto.Description,
+                    Year = reservationDto.CarDto.Year,
+                    Make = reservationDto.CarDto.Make,
+                    Model = reservationDto.CarDto.Model,
                 };
                 CustomerDto customerDto = new()
                 {
                     Id = reservationDto.CustomerDto.Id,
                     UserId = reservationDto.CustomerDto.UserId,
-                    FirstName = "Complete in ReservationController"
+                    FirstName = reservationDto.CustomerDto.FirstName
                 };
 
                 DeleteReservationViewModel deleteReservationViewModel = new()
