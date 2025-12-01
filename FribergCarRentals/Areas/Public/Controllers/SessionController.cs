@@ -50,8 +50,9 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 
             try
             {
-                UserDto userDto = await _userApiClient.GetByUsernameAsync(username);
-                if (userDto.UserId != null)
+
+                bool usernameExists = await _userApiClient.UsernameExistsAsync(username);
+                if (usernameExists)
                 {
                     TempData["ErrorMessage"] = UserMessage.ErrorUsernameAlreadyTaken;
                     return View(populatedRegisterViewModel);

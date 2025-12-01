@@ -42,6 +42,15 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(userDto);
         }
 
+        [HttpGet("username-exists/{username}")]
+        public async Task<ActionResult<bool>> UsernameExists(string username)
+        {
+            string? userId = await _applicationFacade.GetUserIdAsync(username);
+            if (userId == null)
+                return Ok(false);
+            return Ok(true);
+        }
+
         [HttpGet("username/{username}")]
         public async Task<ActionResult<UserDto>> GetFromUsername(string username)
         {
