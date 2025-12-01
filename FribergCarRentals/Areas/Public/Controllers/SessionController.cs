@@ -141,6 +141,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         public IActionResult Signout()
         {
             Response.Cookies.Delete("jwt");
+            _userSession.HasBecomeCustomerMidSession = false;
 
             TempData["SuccessMessage"] = UserMessage.SuccessSignedOut;
             return RedirectToAction("Index", "Home");
