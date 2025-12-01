@@ -22,18 +22,25 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         public async Task<IActionResult> Index()
         {
             List<IndexReservationViewModel> indexReservationViewModelList = new();
-            IEnumerable<ReservationDto> reservationDtos = await _reservationDtoApiClient.GetAsync();
-            foreach (ReservationDto reservationDto in reservationDtos)
+            try
             {
-                IndexReservationViewModel indexReservationViewModel = new IndexReservationViewModel()
+                IEnumerable<ReservationDto> reservationDtos = await _reservationDtoApiClient.GetAsync();
+                foreach (ReservationDto reservationDto in reservationDtos)
                 {
-                    Id = reservationDto.Id,
-                    StartDate = reservationDto.StartDate,
-                    EndDate = reservationDto.EndDate,
-                    CarDto = reservationDto.CarDto,
-                    CustomerDto = reservationDto.CustomerDto,
-                };
-                indexReservationViewModelList.Add(indexReservationViewModel);
+                    IndexReservationViewModel indexReservationViewModel = new IndexReservationViewModel()
+                    {
+                        Id = reservationDto.Id,
+                        StartDate = reservationDto.StartDate,
+                        EndDate = reservationDto.EndDate,
+                        CarDto = reservationDto.CarDto,
+                        CustomerDto = reservationDto.CustomerDto,
+                    };
+                    indexReservationViewModelList.Add(indexReservationViewModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
             }
             return View(indexReservationViewModelList);
         }
@@ -47,34 +54,42 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
                 return RedirectToAction("Index");
             }
 
-            ReservationDto? reservationDto = await _reservationDtoApiClient.GetAsync((int)id);
-            if (reservationDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                ReservationDto? reservationDto = await _reservationDtoApiClient.GetAsync((int)id);
+                if (reservationDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                CarDto carDto = new()
+                {
+                    Id = reservationDto.CarDto.Id,
+                    Description = "Complete in ReservationController"
+                };
+                CustomerDto customerDto = new()
+                {
+                    Id = reservationDto.CustomerDto.Id,
+                    UserId = reservationDto.CustomerDto.UserId,
+                    FirstName = "Complete in ReservationController"
+                };
+
+                DeleteReservationViewModel deleteReservationViewModel = new()
+                {
+                    Id = reservationDto.Id,
+                    StartDate = reservationDto.StartDate,
+                    EndDate = reservationDto.EndDate,
+                    CarDto = carDto,
+                    CustomerDto = customerDto,
+                };
+                return View(deleteReservationViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            CarDto carDto = new()
-            {
-                Id = reservationDto.CarDto.Id,
-                Description = "Complete in ReservationController"
-            };
-            CustomerDto customerDto = new()
-            {
-                Id = reservationDto.CustomerDto.Id,
-                UserId = reservationDto.CustomerDto.UserId,
-                FirstName = "Complete in ReservationController"
-            };
-
-            DeleteReservationViewModel deleteReservationViewModel = new()
-            {
-                Id = reservationDto.Id,
-                StartDate = reservationDto.StartDate,
-                EndDate = reservationDto.EndDate,
-                CarDto = carDto,
-                CustomerDto = customerDto,
-            };
-            return View(deleteReservationViewModel);
         }
 
         // POST: Reservation/DeleteAsync/5
@@ -82,17 +97,25 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            ReservationDto? reservation = await _reservationDtoApiClient.GetAsync((int)id);
-            if (reservation == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                ReservationDto? reservation = await _reservationDtoApiClient.GetAsync((int)id);
+                if (reservation == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorReservationIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                await _reservationDtoApiClient.DeleteAsync(id);
+
+                TempData["SuccessMessage"] = UserMessage.SuccessReservationDeleted;
                 return RedirectToAction("Index");
             }
-
-            await _reservationDtoApiClient.DeleteAsync(id);
-
-            TempData["SuccessMessage"] = UserMessage.SuccessReservationDeleted;
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }

@@ -16,18 +16,25 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         public async Task<IActionResult> Index()
         {
             List<IndexCarViewModel> carIndexViewModelList = new();
-            foreach (CarDto carDto in await _carDtoApiClient.GetAsync())
+            try
             {
-                IndexCarViewModel carIndexViewModel = new()
+                foreach (CarDto carDto in await _carDtoApiClient.GetAsync())
                 {
-                    Id = carDto.Id,
-                    Make = carDto.Make,
-                    Model = carDto.Model,
-                    Year = carDto.Year,
-                    Description = carDto.Description,
-                    PhotoUrl = carDto.PhotoUrls.ElementAtOrDefault(0) ?? string.Empty,
-                };
-                carIndexViewModelList.Add(carIndexViewModel);
+                    IndexCarViewModel carIndexViewModel = new()
+                    {
+                        Id = carDto.Id,
+                        Make = carDto.Make,
+                        Model = carDto.Model,
+                        Year = carDto.Year,
+                        Description = carDto.Description,
+                        PhotoUrl = carDto.PhotoUrls.ElementAtOrDefault(0) ?? string.Empty,
+                    };
+                    carIndexViewModelList.Add(carIndexViewModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
             }
             return View(carIndexViewModelList);
         }

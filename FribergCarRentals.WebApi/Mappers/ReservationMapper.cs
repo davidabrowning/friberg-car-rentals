@@ -17,6 +17,15 @@ namespace FribergCarRentals.WebApi.Mappers
             };
             return dto;
         }
+
+        public static IEnumerable<ReservationDto> ToDtos(IEnumerable<Reservation> reservations)
+        {
+            List<ReservationDto> reservationDtos = new();
+            foreach (Reservation reservation in reservations)
+                reservationDtos.Add(ToDto(reservation));
+            return reservationDtos;
+        }
+
         public static Reservation ToNewModelWithoutId(ReservationDto reservationDto, Car car, Customer customer)
         {
             Reservation model = new()

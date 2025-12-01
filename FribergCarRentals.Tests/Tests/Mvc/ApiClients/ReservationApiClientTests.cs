@@ -64,8 +64,9 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         [Fact]
         public async Task Delete_IsConfiguredCorrectly()
         {
-            ReservationDto reservationDto = new();
+            ReservationDto reservationDto = new() { Id = 42 };
             _mockHttpMessageHandler.ResponseObject = new ReservationDto();
+            await _reservationApiClient.DeleteAsync(42);
             Assert.Equal($"/api/reservations/{reservationDto.Id}", _mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Delete, _mockHttpMessageHandler.RequestMethod);
         }

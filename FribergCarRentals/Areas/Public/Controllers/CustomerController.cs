@@ -1,23 +1,20 @@
-﻿using FribergCarRentals.Mvc.Areas.Public.Views.Customer;
-using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.ApiClients;
-using FribergCarRentals.WebApi.Dtos;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using FribergCarRentals.Mvc.Areas.Public.Views.Customer;
 using FribergCarRentals.Mvc.Session;
+using FribergCarRentals.WebApi.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.Public.Controllers
 {
     [Area("Public")]
     public class CustomerController : Controller
     {
-        private readonly IUserApiClient _userApiClient;
         private readonly ICRUDApiClient<CustomerDto> _customerDtoApiClient;
         private readonly UserSession _userSession;
 
-        public CustomerController(IUserApiClient userApiClient, ICRUDApiClient<CustomerDto> customerDtoApiClient, UserSession userSession)
+        public CustomerController(ICRUDApiClient<CustomerDto> customerDtoApiClient, UserSession userSession)
         {
-            _userApiClient = userApiClient;
             _customerDtoApiClient = customerDtoApiClient;
             _userSession = userSession;
         }
@@ -61,20 +58,28 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                 return RedirectToAction("Index");
             }
 
-            CustomerDto newCustomerDto = new()
+            try
             {
-                UserId = _userSession.UserDto.UserId,
-                FirstName = populatedCustomerCreateVM.FirstName,
-                LastName = populatedCustomerCreateVM.LastName,
-                HomeCity = populatedCustomerCreateVM.HomeCity,
-                HomeCountry = populatedCustomerCreateVM.HomeCountry,
-            };
+                CustomerDto newCustomerDto = new()
+                {
+                    UserId = _userSession.UserDto.UserId,
+                    FirstName = populatedCustomerCreateVM.FirstName,
+                    LastName = populatedCustomerCreateVM.LastName,
+                    HomeCity = populatedCustomerCreateVM.HomeCity,
+                    HomeCountry = populatedCustomerCreateVM.HomeCountry,
+                };
 
-            await _customerDtoApiClient.PostAsync(newCustomerDto);
-            await _userSession.UpdateDto();
+                await _customerDtoApiClient.PostAsync(newCustomerDto);
+                await _userSession.UpdateDto();
 
-            TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
-            return RedirectToAction("Index");
+                TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FribergCarRentals.Core.Interfaces.ApiClients;
+﻿using FribergCarRentals.Core.Helpers;
+using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.WebApi.Dtos;
 
 namespace FribergCarRentals.Mvc.ApiClients
@@ -6,6 +7,7 @@ namespace FribergCarRentals.Mvc.ApiClients
     public class ReservationApiClient : ICRUDApiClient<ReservationDto>
     {
         private readonly HttpClient _httpClient;
+        private const string _apiPath = "api/reservations";
         public ReservationApiClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -13,30 +15,47 @@ namespace FribergCarRentals.Mvc.ApiClients
 
         public async Task<IEnumerable<ReservationDto>> GetAsync()
         {
-            List<ReservationDto> reservationDtos = await _httpClient.GetFromJsonAsync<List<ReservationDto>>("api/reservations") ?? new();
-            return reservationDtos;
+            HttpResponseMessage response = await _httpClient.GetAsync(_apiPath);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
+            IEnumerable<ReservationDto>? dtos = await response.Content.ReadFromJsonAsync<IEnumerable<ReservationDto>>();
+            if (dtos == null)
+                throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
+            return dtos;
         }
 
-        public async Task<ReservationDto?> GetAsync(int id)
+        public async Task<ReservationDto> GetAsync(int id)
         {
-            return await _httpClient.GetFromJsonAsync<ReservationDto>($"api/reservations/{id}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"{_apiPath}/{id}");
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToFetchDataFromApi);
+            ReservationDto? dto = await response.Content.ReadFromJsonAsync<ReservationDto>();
+            if (dto == null)
+                throw new InvalidDataException(UserMessage.ErrorResultIsNullfromApi);
+            return dto;
         }
 
-        public async Task<ReservationDto> PostAsync(ReservationDto reservationDto)
+        public async Task<ReservationDto> PostAsync(ReservationDto dto)
         {
-            await _httpClient.PostAsJsonAsync<ReservationDto>("api/reservations", reservationDto);
-            return reservationDto;
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_apiPath, dto);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
+            return dto;
         }
 
-        public async Task<ReservationDto> PutAsync(ReservationDto reservationDto)
+        public async Task<ReservationDto> PutAsync(ReservationDto dto)
         {
-            await _httpClient.PutAsJsonAsync($"api/reservations/{reservationDto.Id}", reservationDto);
-            return reservationDto;
+            HttpResponseMessage response = await _httpClient.PutAsJsonAsync($"{_apiPath}/{dto.Id}", dto);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
+            return dto;
         }
 
         public async Task DeleteAsync(int id)
         {
-            await _httpClient.DeleteAsync($"api/reservations/{id}");
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"{_apiPath}/{id}");
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(UserMessage.ErrorUnableToSendDataToApi);
         }
     }
 }

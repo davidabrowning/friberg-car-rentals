@@ -69,6 +69,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         {
             CustomerDto customerDto = new() { Id = 42 };
             _mockHttpMessageHandler.ResponseObject = new CustomerDto();
+            await _customerApiClient.DeleteAsync(42);
             Assert.Equal($"/api/customers/{customerDto.Id}", _mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Delete, _mockHttpMessageHandler.RequestMethod);
         }

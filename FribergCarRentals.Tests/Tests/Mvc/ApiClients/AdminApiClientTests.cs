@@ -1,11 +1,6 @@
 ﻿using FribergCarRentals.Mvc.ApiClients;
 using FribergCarRentals.Tests.Mock.Other;
 using FribergCarRentals.WebApi.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
 {
@@ -69,6 +64,7 @@ namespace FribergCarRentals.Tests.Tests.Mvc.ApiClients
         {
             AdminDto adminDto = new() { Id = 42 };
             _mockHttpMessageHandler.ResponseObject = new AdminDto();
+            await _adminApiClient.DeleteAsync(42);
             Assert.Equal($"/api/admins/{adminDto.Id}", _mockHttpMessageHandler.RequestPath);
             Assert.Equal(HttpMethod.Delete, _mockHttpMessageHandler.RequestMethod);
         }

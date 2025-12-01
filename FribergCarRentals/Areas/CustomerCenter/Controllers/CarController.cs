@@ -3,7 +3,6 @@ using FribergCarRentals.Core.Interfaces.ApiClients;
 using FribergCarRentals.Mvc.Areas.CustomerCenter.Views.Car;
 using FribergCarRentals.Mvc.Attributes;
 using FribergCarRentals.WebApi.Dtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
@@ -20,18 +19,25 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
         public async Task<IActionResult> Index()
         {
             List<IndexCarViewModel> indexCarViewModelList = new();
-            foreach (CarDto carDto in await _carDtoApiClient.GetAsync())
+            try
             {
-                IndexCarViewModel carIndexViewModel = new()
+                foreach (CarDto carDto in await _carDtoApiClient.GetAsync())
                 {
-                    Id = carDto.Id,
-                    Make = carDto.Make,
-                    Model = carDto.Model,
-                    Year = carDto.Year,
-                    Description = carDto.Description,
-                    PhotoUrl = carDto.PhotoUrls.ElementAtOrDefault(0) ?? string.Empty,
-                };
-                indexCarViewModelList.Add(carIndexViewModel);
+                    IndexCarViewModel carIndexViewModel = new()
+                    {
+                        Id = carDto.Id,
+                        Make = carDto.Make,
+                        Model = carDto.Model,
+                        Year = carDto.Year,
+                        Description = carDto.Description,
+                        PhotoUrl = carDto.PhotoUrls.ElementAtOrDefault(0) ?? string.Empty,
+                    };
+                    indexCarViewModelList.Add(carIndexViewModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
             }
             return View(indexCarViewModelList);
         }
@@ -45,24 +51,32 @@ namespace FribergCarRentals.Mvc.Areas.CustomerCenter.Controllers
                 return RedirectToAction("Index");
             }
 
-            CarDto? carDto = await _carDtoApiClient.GetAsync((int)id);
-            if (carDto == null)
+            try
             {
-                TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
+                CarDto? carDto = await _carDtoApiClient.GetAsync((int)id);
+                if (carDto == null)
+                {
+                    TempData["ErrorMessage"] = UserMessage.ErrorCarIsNull;
+                    return RedirectToAction("Index");
+                }
+
+                DetailsCarViewModel detailsCarViewModel = new()
+                {
+                    Id = carDto.Id,
+                    Make = carDto.Make,
+                    Model = carDto.Model,
+                    Year = carDto.Year,
+                    Description = carDto.Description,
+                    PhotoUrls = carDto.PhotoUrls.ToList(),
+                };
+
+                return View(detailsCarViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
-
-            DetailsCarViewModel detailsCarViewModel = new()
-            {
-                Id = carDto.Id,
-                Make = carDto.Make,
-                Model = carDto.Model,
-                Year = carDto.Year,
-                Description = carDto.Description,
-                PhotoUrls = carDto.PhotoUrls.ToList(),
-            };
-
-            return View(detailsCarViewModel);
         }
     }
 }
