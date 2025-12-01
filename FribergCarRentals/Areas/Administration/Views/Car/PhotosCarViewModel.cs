@@ -6,7 +6,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Views.Car
     public class PhotosCarViewModel
     {
         public int Id { get; set; }
-        public required CarDto CarDto { get; set; }
+        public CarDto CarDto { get; set; } = new();
         [Url]
         public string? PhotoUrl1 { get; set; }
         [Url]
