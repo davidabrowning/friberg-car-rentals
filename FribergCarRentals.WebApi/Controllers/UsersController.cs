@@ -2,6 +2,7 @@
 using FribergCarRentals.Services.ApplicationModels;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.WebApi.Controllers
@@ -79,6 +80,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(userDto);
         }
 
+        [Authorize]
         [HttpPut("update-username/{userId}")]
         public async Task<ActionResult> UpdateUsername(string userId, string newUsername)
         {
@@ -88,6 +90,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{userId}")]
         public async Task<ActionResult> DeleteUser(string username)
         {
