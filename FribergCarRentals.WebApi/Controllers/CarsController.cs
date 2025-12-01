@@ -37,6 +37,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(carDto);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<CarDto>> Post(CarDto carDto)
         {
@@ -46,6 +47,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(resultCarDto);
         }
 
+        [Authorize]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, CarDto carDto)
         {
@@ -59,6 +61,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
