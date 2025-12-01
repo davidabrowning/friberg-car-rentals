@@ -3,10 +3,12 @@ using FribergCarRentals.Core.Interfaces.Facades;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminsController : ControllerBase

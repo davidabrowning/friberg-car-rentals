@@ -16,6 +16,11 @@
                 <input asp-for="UserId" class="form-control" readonly placeholder="@Model.UserId" />
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" readonly placeholder="@Model.Username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
             <div class="form-group mt-4">
                 <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
                 <input type="submit" value="Make admin" class="btn btn-primary" />

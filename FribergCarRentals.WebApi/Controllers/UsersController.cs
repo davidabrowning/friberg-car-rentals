@@ -2,6 +2,7 @@
 using FribergCarRentals.Services.ApplicationModels;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.WebApi.Controllers
@@ -39,6 +40,15 @@ namespace FribergCarRentals.WebApi.Controllers
                 return NotFound();
             UserDto userDto = UserMapper.ToDtoAsync(userInfoModel);
             return Ok(userDto);
+        }
+
+        [HttpGet("username-exists/{username}")]
+        public async Task<ActionResult<bool>> UsernameExists(string username)
+        {
+            string? userId = await _applicationFacade.GetUserIdAsync(username);
+            if (userId == null)
+                return Ok(false);
+            return Ok(true);
         }
 
         [HttpGet("username/{username}")]
@@ -79,6 +89,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(userDto);
         }
 
+        [Authorize]
         [HttpPut("update-username/{userId}")]
         public async Task<ActionResult> UpdateUsername(string userId, string newUsername)
         {
@@ -88,13 +99,14 @@ namespace FribergCarRentals.WebApi.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{userId}")]
-        public async Task<ActionResult> DeleteUser(string username)
+        public async Task<ActionResult> DeleteUser(string userId)
         {
-            string? userId = await _applicationFacade.GetUserIdAsync(username);
-            if (userId == null)
+            bool userIdExists = await _applicationFacade.UserIdExistsAsync(userId);
+            if (!userIdExists)
                 return NotFound();
-            await _applicationFacade.DeleteApplicationUserAsync(username);
+            await _applicationFacade.DeleteApplicationUserAsync(userId);
             return NoContent();
         }
 

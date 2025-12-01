@@ -62,7 +62,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
             {
                 CustomerDto newCustomerDto = new()
                 {
-                    UserId = _userSession.UserDto.UserId,
+                    UserId = (await _userSession.GetUserDto()).UserId,
                     FirstName = populatedCustomerCreateVM.FirstName,
                     LastName = populatedCustomerCreateVM.LastName,
                     HomeCity = populatedCustomerCreateVM.HomeCity,
@@ -70,7 +70,7 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                 };
 
                 await _customerDtoApiClient.PostAsync(newCustomerDto);
-                await _userSession.UpdateDto();
+                _userSession.HasBecomeCustomerMidSession = true;
 
                 TempData["SuccessMessage"] = UserMessage.SuccessCustomerCreated;
                 return RedirectToAction("Index");

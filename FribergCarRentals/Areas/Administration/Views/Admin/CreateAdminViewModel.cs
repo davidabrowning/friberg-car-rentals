@@ -6,5 +6,7 @@ namespace FribergCarRentals.Mvc.Areas.Administration.Views.Admin
     {
         [Required]
         public required string UserId { get; set; }
+        [Required]
+        public required string Username { get; set; }
     }
 }

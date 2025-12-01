@@ -75,8 +75,8 @@ namespace FribergCarRentals.WebApi
 
         private static void AddJwt()
         {
-            _builder!.Services.AddAuthentication("JwtBearer")
-                .AddJwtBearer("JwtBearer", options =>
+            _builder!.Services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
                     {
                         options.TokenValidationParameters = new()
                         {
@@ -92,6 +92,7 @@ namespace FribergCarRentals.WebApi
                         };
                     });
             _builder.Services.AddScoped<IJwtService, JwtService>();
+            _builder.Services.AddAuthorization();
         }
 
         private static void AddControllers()

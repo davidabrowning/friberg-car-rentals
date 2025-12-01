@@ -6,34 +6,60 @@ namespace FribergCarRentals.Mvc.Session
 {
     public class UserSession
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserApiClient _userApiClient;
-        public UserDto UserDto { get; set; } = new();
-
-        public UserSession(IUserApiClient userApiClient)
+        public bool HasBecomeCustomerMidSession { get; set; }
+        public UserSession(IHttpContextAccessor httpContextAccessor, IUserApiClient userApiClient)
         {
+            _httpContextAccessor = httpContextAccessor;
             _userApiClient = userApiClient;
+        }
+
+        public async Task<UserDto> GetUserDto()
+        {
+            string? token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+            if (token == null)
+                return new UserDto();
+            string? userId = JwtReader.GetUserId(token);
+            if (userId == null)
+                return new UserDto();
+            try
+            {
+                UserDto userDto = await _userApiClient.GetAsync(userId);
+                return userDto;
+            }
+            catch
+            {
+                return new UserDto();
+            }
         }
         
         public bool IsSignedIn()
         {
-            return UserDto.UserId != null;
+            string? token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+            return token != null;
         }
         public bool IsAdmin()
         {
-            return UserDto.AuthRoles.Where(r => r == AuthRoleName.Admin).Any();
+            string? token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+            if (token == null)
+                return false;
+            IEnumerable<string> roles = JwtReader.GetRoles(token);
+            if (roles.Where(r => r == AuthRoleName.Admin).Any())
+                return true;
+            return false;
         }
         public bool IsCustomer()
         {
-            return UserDto.AuthRoles.Where(r => r == AuthRoleName.Customer).Any();
-        }
-        public void SignOut()
-        {
-            UserDto = new();
-        }
-        public async Task UpdateDto()
-        {
-            UserDto newUserDto = await _userApiClient.GetAsync(UserDto.UserId);
-            UserDto = newUserDto;
+            if (HasBecomeCustomerMidSession)
+                return true;
+            string? token = _httpContextAccessor.HttpContext.Request.Cookies["jwt"];
+            if (token == null)
+                return false;
+            IEnumerable<string> roles = JwtReader.GetRoles(token);
+            if (roles.Where(r => r == AuthRoleName.Customer).Any())
+                return true;
+            return false;
         }
     }
 }
