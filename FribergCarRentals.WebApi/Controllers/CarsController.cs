@@ -1,8 +1,10 @@
-﻿using FribergCarRentals.Core.Helpers;
+﻿using FribergCarRentals.Core.Constants;
+using FribergCarRentals.Core.Helpers;
 using FribergCarRentals.Core.Interfaces.Facades;
 using FribergCarRentals.Core.Models;
 using FribergCarRentals.WebApi.Dtos;
 using FribergCarRentals.WebApi.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FribergCarRentals.WebApi.Controllers
@@ -35,6 +37,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(carDto);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<CarDto>> Post(CarDto carDto)
         {
@@ -44,6 +47,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return Ok(resultCarDto);
         }
 
+        [Authorize]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, CarDto carDto)
         {
@@ -57,6 +61,7 @@ namespace FribergCarRentals.WebApi.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {

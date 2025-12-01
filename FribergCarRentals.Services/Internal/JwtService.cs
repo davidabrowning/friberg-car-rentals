@@ -16,6 +16,9 @@ namespace FribergCarRentals.Services.Services
         }
         public string GenerateJwtToken(string userId, string username, IEnumerable<string> roles)
         {
+            SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
             List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.NameIdentifier, userId),
@@ -26,9 +29,6 @@ namespace FribergCarRentals.Services.Services
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
-
-            SymmetricSecurityKey symmetricSecurityKey = new(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            SigningCredentials signingCredentials = new(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             JwtSecurityToken jwtSecurityToken = new(
                 issuer: _configuration["Jwt:Issuer"],

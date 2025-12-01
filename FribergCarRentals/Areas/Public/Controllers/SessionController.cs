@@ -66,7 +66,6 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                     return View(populatedRegisterViewModel);
                 }
 
-                _userSession.UserDto = await _userApiClient.GetByUsernameAsync(username);
                 TempData["SuccessMessage"] = UserMessage.SuccessUserCreated;
                 return RedirectToAction("Index", "Home");
             }
@@ -117,7 +116,16 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
                     return View(populatedSigninViewModel);
                 }
 
-                _userSession.UserDto = userDto;
+                var cookieOptions = new CookieOptions()
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddHours(1)
+                };
+
+                Response.Cookies.Append("jwt", jwtTokenDto.Token, cookieOptions);
+
                 TempData["SuccessMessage"] = UserMessage.SuccessSignedIn;
                 return RedirectToAction("Index", "Home");
             }
@@ -131,7 +139,8 @@ namespace FribergCarRentals.Mvc.Areas.Public.Controllers
         // GET: Public/Signout
         public IActionResult Signout()
         {
-            _userSession.SignOut();
+            Response.Cookies.Delete("jwt");
+
             TempData["SuccessMessage"] = UserMessage.SuccessSignedOut;
             return RedirectToAction("Index", "Home");
         }
